@@ -33,12 +33,20 @@ class xsenseControll  extends utils.Adapter {
 
             const response = await this.xsenseLogin();
 
-            const parsed = tools.parseXSenseOutput(response);
+            let knownDevices = [];
+
+            let iobDevices = await this.getDevicesAsync();
+
+            const parsed = tools.parseXSenseOutput(response, knownDevices );
 
             await this.json2iob.parse('xsense.0', parsed, { forceIndex: true, write: true });
 
+            this.setState('info.connection', true, true);
+
+
 
         } catch (err) {
+            this.setState('info.connection', false, true);
             this.log.error(`Fehler beim Login oder Setup: ${err.message}`);
             return;
         }
@@ -74,58 +82,6 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-
-
-    async createDeviceObjects(device) {
-        try {
-            await this.setObjectNotExistsAsync(device.id, {
-                type: 'device',
-                common: {
-                    name: device.name,
-                    statusStates: {
-                        onlineId: `${this.namespace}.${device.id}.alive`
-                    }
-                },
-                native: {}
-            });
-            await this.setObjectNotExistsAsync(device.id + '.Info', {
-                type: 'channel',
-                common: {
-                    name: 'Device Information'
-                },
-                native: {}
-            });
-            await this.setObjectNotExistsAsync(device.id + '.alive', {
-                type: 'state',
-                common: {
-                    name: 'Is Fully alive?',
-                    desc: 'If Fully Browser is alive or not',
-                    type: 'boolean',
-                    role: 'indicator.reachable',
-                    read: true,
-                    write: false
-                },
-                native: {}
-            });
-            await this.setObjectNotExistsAsync(device.id + '.lastInfoUpdate', {
-                type: 'state',
-                common: {
-                    name: 'Last information update',
-                    desc: 'Date/time of last information update from Fully Browser',
-                    type: 'number',
-                    role: 'value.time',
-                    read: true,
-                    write: false
-                },
-                native: {}
-            });
-
-            return true;
-        } catch (e) {
-            this.log.error(this.err2Str(e));
-            return false;
-        }
-    }
 
 
 }
