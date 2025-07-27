@@ -52,7 +52,6 @@
       "type": "free"
     },
     "platform": "Javascript/Node.js",
-    "mode": "daemon",
     "enabled": false,
     "tier": 2,
     "readme": "https://github.com/arteck/ioBroker.xsense/blob/master/README.md",
@@ -79,8 +78,11 @@
     "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.xsense/master/admin/fully.png",
     "type": "utility",
     "singletonHost": true,
-    "connectionType": "local",
     "dataSource": "poll",
+    "mode": "schedule",
+    "allowInit": true,
+    "schedule": "1 * * * *",
+    "connectionType": "cloud",
     "dataFolder": "xsense_%INSTANCE%",
     "adminUI": {
       "config": "json",
@@ -104,7 +106,7 @@
         "js-controller": ">=5.0.19"
       }
     ],
-    "installedFrom": "arteck/ioBroker.xsense#d7403e1dea38025d813380f0bf6aaea7869ee716"
+    "installedFrom": "arteck/ioBroker.xsense#53a44ef515273859b942a50a201d246f1b14c88a"
   },
   "native": {
     "mqttUser": "",
