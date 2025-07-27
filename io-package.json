@@ -1,0 +1,134 @@
+{
+  "common": {
+    "name": "xsense",
+    "version": "0.0.1",
+    "news": {
+      "0.0.1": {
+        "en": "initial release",
+        "de": "erste Veröffentlichung",
+        "ru": "первоначальный выпуск",
+        "pt": "inicial lançamento",
+        "nl": "eerste uitgave",
+        "fr": "première publication",
+        "it": "prima pubblicazione",
+        "es": "primera publicación",
+        "pl": "pierwsze wydanie",
+        "uk": "перше видання",
+        "zh-cn": "初始发布"
+      }
+    },
+    "titleLang": {
+      "en": "X-Sense",
+      "de": "X-Sense",
+      "ru": "X-Sense",
+      "pt": "X-Sense",
+      "nl": "X-Sense",
+      "fr": "X-Sense",
+      "it": "X-Sense ",
+      "es": "X-Sense",
+      "pl": "X-Sense",
+      "uk": "X-Sense",
+      "zh-cn": "X-Sense"
+    },
+    "desc": {
+      "en": "Manage yours X-Sense Bridge and Sensors",
+      "de": "Verwalten Sie Ihre X-Sense Bridge und Sensoren",
+      "ru": "правление вашим X-Sense Bridge и датчиками",
+      "pt": "Управление вашим X-Sense Bridge и датчиками",
+      "nl": "Beheer uw X-Sense Bridge en sensoren",
+      "fr": "Gérer votre X-Sense Bridge et capteurs",
+      "it": "Gestisci il tuo X-Sense Bridge e sensori",
+      "es": "Gestiona tu v Bridge y sensores",
+      "pl": "Zarządzaj swoim X-Sense Bridge i czujnikami",
+      "uk": "Керуйте своїм X-Sense Bridge та датчиками",
+      "zh-cn": "管理您的 X-Sense 桥接和传感器"
+    },
+    "authors": [
+      "arteck <arteck@outlook.com>"
+    ],
+    "compact": true,
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "enabled": false,
+    "tier": 2,
+    "readme": "https://github.com/arteck/ioBroker.xsense/blob/master/README.md",
+    "loglevel": "info",
+    "restartAdapters": [
+      "xsense"
+    ],
+    "keywords": [
+      "xsense", "x-sense", "XSense Bridge", "smoke", "iot", "mqtt", "sensor", "smoke detector", "fire alarm", "home automation", "home security", "smart home", "home monitoring"
+    ],
+    "icon": "xsense.png",
+    "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.xsense/master/admin/fully.png",
+    "type": "utility",
+    "singletonHost": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json",
+      "tab": "materialize"
+    },
+    "docs": {
+      "en": [
+        "docs/en/README.md"
+      ],
+      "de": [
+        "docs/de/README.md"
+      ]
+    },
+    "globalDependencies": [
+      {
+        "admin": ">=7.4.10"
+      }
+    ],
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.19"
+      }
+    ]
+  },
+  "native": {
+    "mqttUser": "",
+    "mqttPassword": "",
+    "userRegion": "",
+    "mqttPort": 3000,
+    "mqttIP": "127.0.0.1",
+    "mqttTimeout": 2000,
+    "mqttInterval": 10000
+  },
+  "encryptedNative": [
+    "mqttPassword"
+  ],
+  "protectedNative": [
+    "mqttPassword"
+  ],
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
+}
