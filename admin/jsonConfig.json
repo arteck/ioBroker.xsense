@@ -14,8 +14,20 @@
                     "text": "Welcome to X-Sense Adapter",
                     "size": 2
                 },
-
-                "mqttUser": {
+                "_textStart": {
+                    "type": "staticText",
+                    "text": "Adapter work in habrid mode",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "style": {
+                        "fontSize": 16,
+                        "marginTop": 0
+                    }
+                },
+                "userEmail": {
                     "newLine": true,
                     "type": "text",
                     "label": "User name",
@@ -27,7 +39,7 @@
                     "lg": 4,
                     "xl": 4
                 },
-                "mqttPassword": {
+                "userPassword": {
                     "type": "password",
                     "label": "Password",
                     "help": "MQTT Password",
@@ -38,50 +50,7 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4
-                },
-
-                "mqttIP": {
-                    "newLine": true,
-                    "type": "text",
-                    "default": '127.0.0.1',
-                    "label": "IP Address Bridge",
-                    "validator": "data.mqttIP != null && data.mqttIP != undefined && data.mqttIP.length > 5",
-                    "validatorNoSaveOnError": true,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-
-                "mqttTimeout": {
-                    "newLine": true,
-                    "type": "number",
-                    "min": 1000,
-                    "max": 15000,
-                    "default": 2000,
-                    "label": "Request Timeout",
-                    "help": "in milliseconds (500-15000, default: 2000)",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "mqttInterval": {
-                    "type": "number",
-                    "min": 10000,
-                    "max": 99999999,
-                    "default": 60000,
-                    "label": "Request Interval",
-                    "help": "in milliseconds (10000-99999999, default: 60000 = 1 Min.)",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
                 }
-
             }
         }
     }
