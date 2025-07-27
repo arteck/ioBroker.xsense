@@ -44,5 +44,4 @@ Example async usage
 Development
 -----------
 
-This library is in an early development stage and created primarily to
-make an integration for home assistant.
+This library is in an early development stage https://github.com/theosnel/python-xsense
