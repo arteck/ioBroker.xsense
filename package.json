@@ -25,9 +25,8 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity": "^3.848.0",
     "@iobroker/adapter-core": "^3.2.3",
-    "amazon-cognito-identity-js": "^6.3.15",
+    "python-shell": "^5.0.0",
     "mqtt": "^5.13.3",
     "node-fetch": "^3.3.2"
   },

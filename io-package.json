@@ -61,7 +61,19 @@
       "xsense"
     ],
     "keywords": [
-      "xsense", "x-sense", "XSense Bridge", "smoke", "iot", "mqtt", "sensor", "smoke detector", "fire alarm", "home automation", "home security", "smart home", "home monitoring"
+      "xsense",
+      "x-sense",
+      "XSense Bridge",
+      "smoke",
+      "iot",
+      "mqtt",
+      "sensor",
+      "smoke detector",
+      "fire alarm",
+      "home automation",
+      "home security",
+      "smart home",
+      "home monitoring"
     ],
     "icon": "xsense.png",
     "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.xsense/master/admin/fully.png",
@@ -69,6 +81,7 @@
     "singletonHost": true,
     "connectionType": "local",
     "dataSource": "poll",
+    "dataFolder": "xsense_%INSTANCE%",
     "adminUI": {
       "config": "json",
       "tab": "materialize"
@@ -90,7 +103,8 @@
       {
         "js-controller": ">=5.0.19"
       }
-    ]
+    ],
+    "installedFrom": "arteck/ioBroker.xsense#d7403e1dea38025d813380f0bf6aaea7869ee716"
   },
   "native": {
     "mqttUser": "",

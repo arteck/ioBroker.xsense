@@ -1,11 +1,11 @@
 const utils = require('@iobroker/adapter-core');
-const authenticate = require('./lib/auth');
 const connectMqtt = require('./lib/mqtt');
 const config = require('./lib/config');
 
 const default_region = 'eu-west-1'; // Default region if not specified in config
 
-
+const { PythonShell } = require('python-shell');
+const path = require('path');
 
 global.fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
 
@@ -34,18 +34,17 @@ class xsenseControll  extends utils.Adapter {
 
     async onReady() {
         try {
-            this.setState('info.connection', {val: false, ack: true});
+            this.log.info('Starte Login bei X-Sense...');
+            const credentials = await this.xsenseLogin(this); // liefert AWS-Credentials zurück
 
-            this.config.userRegion = default_region;
-
-            const credentials = await authenticate(this.config.mqttUser, this.config.mqttPassword, this.config.userRegion);
-
+            // MQTT verbinden
             this.mqttClient = connectMqtt(this, credentials, {
                 region: this.config.userRegion,
-                iotEndpoint: config.iot.endpoint
+                iotEndpoint: this.config.iotEndpoint, // z. B. aus adapter.config oder fest
             });
 
-            const devices = await this.fetchDeviceList(credentials.accessToken);
+            // Geräte abrufen (evtl. eigene Methode → musst du anpassen!)
+            const devices = await this.fetchDeviceList(credentials.aws_access_key_id); // oder wenn du accessToken bekommst: credentials.accessToken
 
             for (const dev of devices) {
                 const devicePath = `devices.${dev.uuid}`;
@@ -58,27 +57,60 @@ class xsenseControll  extends utils.Adapter {
                 });
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            this.log.info(`Es wurden ${devices.length} Geräte geladen.`);
         } catch (err) {
-            this.log.error('Auth/MQTT error: ' + err.message);
-            return;
+            this.log.error(`Fehler beim Login oder Setup: ${err.message}`);
         }
     }
+
+
+    async xsenseLogin(adapter) {
+        return new Promise((resolve, reject) => {
+            const scriptPath = path.join(__dirname, '..', 'iobroker-data', 'xsense', 'run_xsense.py');
+
+
+
+            let asda =  this.adapter.getDataFolder();
+
+            const email = this.config.mqttUser;
+            const password = this.config.mqttPassword;
+            const region = 'eu';
+
+            if (!email || !password) {
+                return reject(new Error('Benutzername oder Passwort fehlt in den Adapter-Einstellungen.'));
+            }
+
+            const options = {
+                args: [email, password, region],
+                pythonOptions: ['-u'], // unbuffered output
+            };
+
+            PythonShell.run(scriptPath, options, function (err, results) {
+                if (err) {
+                    adapter.log.error('Python-Fehler: ' + err.toString());
+                    return reject(err);
+                }
+
+                try {
+                    const output = results.join('');
+                    const json = JSON.parse(output);
+
+                    if (json.error) {
+                        adapter.log.warn('Fehler von Python: ' + json.error);
+                        return reject(new Error(json.error));
+                    }
+
+                    adapter.log.info('X-Sense Login erfolgreich. AWS-Credentials erhalten.');
+                    resolve(json); // enthält z. B. accessKeyId, secretAccessKey, sessionToken
+                } catch (e) {
+                    adapter.log.error('Fehler beim Parsen der Python-Antwort: ' + e.toString());
+                    reject(e);
+                }
+            });
+        });
+    }
+
+
 
     async onStateChange(stateId, stateObj) {
 
