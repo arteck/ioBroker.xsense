@@ -96,6 +96,9 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.4 (2025-07-28)
+* (arteck) fix language
+
 ### 0.0.3 (2025-07-28)
 * (arteck) modify Debug method
 

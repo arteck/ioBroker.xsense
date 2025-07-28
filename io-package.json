@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "news": {
+      "0.0.4": {
+        "en": "fix language",
+        "de": "sprache auswählen",
+        "ru": "исправить язык",
+        "pt": "corrigir idioma",
+        "nl": "taal repareren",
+        "fr": "corriger la langue",
+        "it": "linguaggio corretto",
+        "es": "arreglar el idioma",
+        "pl": "poprawiaj język",
+        "uk": "фіксувати мову",
+        "zh-cn": "固定语言"
+      },
       "0.0.3": {
         "en": "modify Debug method",
         "de": "debug-Methode ändern",
