@@ -65,11 +65,15 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
    ```sudo apt update
         sudo apt install python3 python3-pip -y
    ```
-    
-### 🐳 Docker   
-   ```apt update && apt install -y python3 python3-pip 
+
+### 🐳 Docker
+
+
+   ```
+      apt update && apt install -y python3 python3-pip
    ```
     
+
 ------------------------------------------------------------------------------
 
 ## Changelog
@@ -78,6 +82,6 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 
 
 
-## ?? Lizenz
+## 📜 Lizenz
 
 MIT License – siehe [LICENSE](https://github.com/arteck/ioBroker.xsense/blob/main/LICENSE) für Details.
