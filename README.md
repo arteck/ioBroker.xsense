@@ -36,8 +36,10 @@ Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet
 ?? Voraussetzungen
 - Ein XSense-Konto mit registrierten Geräten
 - Internetverbindung für Cloud-Kommunikation
+- Python = 3.10 erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
 
 ?? Vorbereitung
+
 Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, empfiehlt sich folgendes Vorgehen:
 
 - Zweitkonto erstellen: Erstelle in der XSense-App ein zweites Konto.
@@ -46,12 +48,29 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 
 ------------------------------------------------------------------------------
 
-Installation
+## ?? Installation
 
+### ?? Windows
 
-
-
-
+1. **Python installieren**
+   - Download: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
+   - Während der Installation **"Add Python to PATH" aktivieren**
+   - Danach prüfen:
+     ```powershell
+     python --version
+     pip --version
+     ```
+     
+### ?? Linux
+    ```sudo apt update
+        sudo apt install python3 python3-pip -y
+    ```
+    
+### ?? Docker   
+    
+    ```apt update && apt install -y python3 python3-pip
+    ```
+    
 ------------------------------------------------------------------------------
 
 ## Changelog
