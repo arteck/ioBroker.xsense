@@ -20,44 +20,46 @@
 xsense Adapter for ioBroker
 ------------------------------------------------------------------------------
 
-This adapter manages your xsense Devices with xsense Bridge. 
+Dieser ioBroker-Adapter ermöglicht die Integration von XSense-Geräten in das ioBroker Smart-Home-System. 
+Er wurde entwickelt, um Daten von XSense-Rauchmeldern, CO-Meldern und weiteren kompatiblen Geräten zu empfangen und für Automatisierungen und Überwachungen im ioBroker bereitzustellen.
+Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet eine einfache Möglichkeit, XSense-Geräte in bestehende ioBroker-Setups zu integrieren.
+
+?? Unterstützte Geräte
+- Rauchmelder
+- Kohlenmonoxidmelder
+- Hitzemelder
+- Wassermelder
+- Hygrometer
+- Basisstationen (sofern unterstützt)
 
 
-<!--
-    Placeholder for the next version (at the beginning of the line):
-    
-    https://github.com/AlCalzone/release-script#usage
-    npm run release minor -- --all 0.9.8 -> 0.10.0
-    npm run release patch -- --all 0.9.8 -> 0.9.9
-    npm run release prerelease beta -- --all v0.2.1 -> v0.2.2-beta.0
-    Placeholder for the next version (at the beginning of the line):
-    ### **WORK IN PROGRESS**
--->
+?? Voraussetzungen
+- Ein XSense-Konto mit registrierten Geräten
+- Internetverbindung für Cloud-Kommunikation
+
+?? Vorbereitung
+Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, empfiehlt sich folgendes Vorgehen:
+
+- Zweitkonto erstellen: Erstelle in der XSense-App ein zweites Konto.
+- Geräte teilen: Teile die gewünschten Geräte vom Hauptkonto mit dem neuen Konto.
+- Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
+
+------------------------------------------------------------------------------
+
+Installation
+
+
+
+
+
+------------------------------------------------------------------------------
 
 ## Changelog
 ### 0.0.1 (2025-07-27)
 * (arteck) initial release
 
 
-## License
-The MIT License (MIT)
 
-Copyright (c) 2014-2025 Arthur Rupp arteck@outlook.com
+## ?? Lizenz
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+MIT License – siehe [LICENSE](https://github.com/arteck/ioBroker.xsense/blob/main/LICENSE) für Details.

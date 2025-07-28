@@ -24,8 +24,9 @@ class xsenseControll  extends utils.Adapter {
 
         this.json2iob = new Json2iobXSense(this);
 
+        this._requestInterval = 0;
+
         this.on('ready', this.onReady.bind(this));
-        this.on('schedule', this.onSchedule.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
@@ -43,6 +44,8 @@ class xsenseControll  extends utils.Adapter {
             await this.datenVerarbeiten();
             this.setState('info.connection', true, true);
 
+            this.startIntervall();
+
         } catch (err) {
             this.setState('info.connection', false, true);
             this.log.error(`Error on Login or Setup: ${err.message}`);
@@ -50,7 +53,7 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-    async onSchedule() {
+    async startIntervall() {
         if (!this.python) {
             this.log.warn('Python environment not initialized. Trying again...');
             this.python = await this.setupXSenseEnvironment();
@@ -62,14 +65,21 @@ class xsenseControll  extends utils.Adapter {
 
         await this.datenVerarbeiten();
 
+        if (!this._requestInterval) {
+            this.log.info(` Start XSense request intervall`);
+            this._requestInterval = setInterval(async () => {
+                await this.startIntervall();
+            }, this.config.polltime * 1000);
+        }
     }
 
     async datenVerarbeiten() {
         const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
 
         if (response) {
-            let knownDevices = [];
-            let iobDevices = await this.getDevicesAsync();
+            // hole alle devices und vergleiche ob was offline ist
+            const devices = await this.getDevicesAsync();
+            let knownDevices = tools.extractDeviceIds(devices);
 
             const parsed = tools.parseXSenseOutput(response, knownDevices);
 
@@ -77,7 +87,6 @@ class xsenseControll  extends utils.Adapter {
 
         }
     }
-
 
     async setupXSenseEnvironment() {
         try {
@@ -140,6 +149,7 @@ class xsenseControll  extends utils.Adapter {
 
     async onUnload(callback) {
         try {
+            if (this._requestInterval) clearInterval(this._requestInterval);
             callback();
         } catch (e) {
             callback();
