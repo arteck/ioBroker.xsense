@@ -24,6 +24,7 @@ Dieser ioBroker-Adapter ermöglicht die Integration von XSense-Geräten in das i
 Er wurde entwickelt, um Daten von XSense-Rauchmeldern, CO-Meldern und weiteren kompatiblen Geräten zu empfangen und für Automatisierungen und Überwachungen im ioBroker bereitzustellen.
 Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet eine einfache Möglichkeit, XSense-Geräte in bestehende ioBroker-Setups zu integrieren.
 
+
 🔧 Unterstützte Geräte
 - Rauchmelder
 - Kohlenmonoxidmelder
@@ -38,6 +39,8 @@ Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet
 - Internetverbindung für Cloud-Kommunikation
 - **Python > = 3.10** erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
 
+
+
 📦 Vorbereitung
 
 Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, empfiehlt sich folgendes Vorgehen:
@@ -50,7 +53,7 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 - erst dann 
 - Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
 
-  
+  ### oder man nutzt nur ein Konto, mit der prämisse dass man ständig ausgeloggt wird
 
 ------------------------------------------------------------------------------
 
