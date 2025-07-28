@@ -93,10 +93,13 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.2 (2025-07-28)
+* (arteck) initial release
+* 
+*
+
 ### 0.0.1 (2025-07-27)
 * (arteck) initial release
-
-
 
 ## 📜 Lizenz
 

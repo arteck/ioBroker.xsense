@@ -82,7 +82,7 @@ class xsenseControll  extends utils.Adapter {
         if (response) {
             // hole alle devices und vergleiche ob was offline ist
             const devices = await this.getDevicesAsync();
-            let knownDevices = tools.extractDeviceIds(devices);
+            const knownDevices = tools.extractDeviceIds(devices);
 
             const parsed = tools.parseXSenseOutput(response, knownDevices);
 

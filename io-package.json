@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "news": {
+      "0.0.2": {
+        "en": "initial release\n\n",
+        "de": "erstausstrahlung\n\n",
+        "ru": "первоначальное освобождение\n\n",
+        "pt": "libertação inicial\n\n",
+        "nl": "eerste release\n\n",
+        "fr": "libération initiale\n\n",
+        "it": "rilascio iniziale\n\n",
+        "es": "liberación inicial\n\n",
+        "pl": "początkowe zwolnienie\n\n",
+        "uk": "початковий реліз\n\n",
+        "zh-cn": "初步释放\n\n"
+      },
       "0.0.1": {
         "en": "Initial release",
         "de": "Erste Veröffentlichung",
