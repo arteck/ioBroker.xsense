@@ -27,6 +27,11 @@
                         "marginTop": 0
                     }
                 },
+                "header2": {
+                    "type": "header",
+                    "text": " ",
+                    "size": 2
+                },
                 "userEmail": {
                     "newLine": true,
                     "type": "text",
@@ -71,19 +76,18 @@
                     "type": "select",
                     "label": "Python Version",
                     "help": "Python Version to use for the adapter",
-                    "def": "3.13",
                     "options": [
                         {
-                            "value": "3.13",
-                            "text": "3.13"
+                            "label": "3.13",
+                            "value": "3.13"
                         },
                         {
-                            "value": "3.12",
-                            "text": "3.12"
+                            "label": "3.12",
+                            "value": "3.12"
                         },
                         {
-                            "value": "3.11",
-                            "text": "3.11"
+                            "label": "3.11",
+                            "value": "3.11"
                         }
                     ],
                     "xs": 12,
