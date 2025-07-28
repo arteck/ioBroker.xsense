@@ -79,21 +79,19 @@
     "type": "utility",
     "singletonHost": true,
     "dataSource": "poll",
-    "mode": "schedule",
+    "mode": "daemon",
     "allowInit": true,
-    "schedule": "1 * * * *",
     "connectionType": "cloud",
-    "dataFolder": "xsense_%INSTANCE%",
     "adminUI": {
       "config": "json",
       "tab": "materialize"
     },
     "docs": {
       "en": [
-        "docs/en/README.md"
+        "README_en.md"
       ],
       "de": [
-        "docs/de/README.md"
+        "README.md"
       ]
     },
     "globalDependencies": [
@@ -106,17 +104,16 @@
         "js-controller": ">=5.0.19"
       }
     ],
-    "installedFrom": "arteck/ioBroker.xsense#e701b2d714e493e828960cd8fee019ee204f3077"
   },
   "native": {
     "userEmail": "",
     "userPassword": ""
   },
   "encryptedNative": [
-    "mqttPassword"
+    "userPassword"
   ],
   "protectedNative": [
-    "mqttPassword"
+    "userPassword"
   ],
   "objects": [],
   "instanceObjects": [
