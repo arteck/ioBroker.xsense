@@ -43,7 +43,12 @@ Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet
 Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, empfiehlt sich folgendes Vorgehen:
 
 - Zweitkonto erstellen: Erstelle in der XSense-App ein zweites Konto.
+- Login mit dem neuen Konto, dann ausloggen
+- Login mit dem alten Konto und 
 - Geräte teilen: Teile die gewünschten Geräte vom Hauptkonto mit dem neuen Konto.
+- dann Login wieder mit dem neuen Konto und einladung akzeptieren
+
+- erst dann 
 - Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
 
 ------------------------------------------------------------------------------
