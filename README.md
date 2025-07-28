@@ -20,53 +20,53 @@
 xsense Adapter for ioBroker
 ------------------------------------------------------------------------------
 
-Dieser ioBroker-Adapter ermöglicht die Integration von XSense-Geräten in das ioBroker Smart-Home-System. 
-Er wurde entwickelt, um Daten von XSense-Rauchmeldern, CO-Meldern und weiteren kompatiblen Geräten zu empfangen und für Automatisierungen und Überwachungen im ioBroker bereitzustellen.
-Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet eine einfache Möglichkeit, XSense-Geräte in bestehende ioBroker-Setups zu integrieren.
+Dieser ioBroker-Adapter ermÃ¶glicht die Integration von XSense-GerÃ¤ten in das ioBroker Smart-Home-System. 
+Er wurde entwickelt, um Daten von XSense-Rauchmeldern, CO-Meldern und weiteren kompatiblen GerÃ¤ten zu empfangen und fÃ¼r Automatisierungen und Ãœberwachungen im ioBroker bereitzustellen.
+Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet eine einfache MÃ¶glichkeit, XSense-GerÃ¤te in bestehende ioBroker-Setups zu integrieren.
 
-?? Unterstützte Geräte
+ğŸ”§ UnterstÃ¼tzte GerÃ¤te
 - Rauchmelder
 - Kohlenmonoxidmelder
 - Hitzemelder
 - Wassermelder
 - Hygrometer
-- Basisstationen (sofern unterstützt)
+- Basisstationen (sofern unterstÃ¼tzt)
 
 
-?? Voraussetzungen
-- Ein XSense-Konto mit registrierten Geräten
-- Internetverbindung für Cloud-Kommunikation
-- Python = 3.10 erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
+âš ï¸ Voraussetzungen
+- Ein XSense-Konto mit registrierten GerÃ¤ten
+- Internetverbindung fÃ¼r Cloud-Kommunikation
+- Python = 3.10 erforderlich (fÃ¼r die X-Sense-Kommunikation via Python-Wrapper).
 
-?? Vorbereitung
+ğŸ“¦ Vorbereitung
 
 Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, empfiehlt sich folgendes Vorgehen:
 
 - Zweitkonto erstellen: Erstelle in der XSense-App ein zweites Konto.
-- Geräte teilen: Teile die gewünschten Geräte vom Hauptkonto mit dem neuen Konto.
-- Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
+- GerÃ¤te teilen: Teile die gewÃ¼nschten GerÃ¤te vom Hauptkonto mit dem neuen Konto.
+- Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto fÃ¼r die Verbindung im ioBroker.
 
 ------------------------------------------------------------------------------
 
-## ?? Installation
+## ğŸš€ Installation
 
-### ?? Windows
+### ğŸ’» Windows
 
 1. **Python installieren**
    - Download: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
-   - Während der Installation **"Add Python to PATH" aktivieren**
-   - Danach prüfen:
+   - WÃ¤hrend der Installation **"Add Python to PATH" aktivieren**
+   - Danach prÃ¼fen:
      ```powershell
      python --version
      pip --version
      ```
      
-### ?? Linux
+### ğŸ§ Linux
     ```sudo apt update
         sudo apt install python3 python3-pip -y
     ```
     
-### ?? Docker   
+### ğŸ³ Docker   
     
     ```apt update && apt install -y python3 python3-pip
     ```
@@ -81,4 +81,4 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 
 ## ?? Lizenz
 
-MIT License – siehe [LICENSE](https://github.com/arteck/ioBroker.xsense/blob/main/LICENSE) für Details.
+MIT License â€“ siehe [LICENSE](https://github.com/arteck/ioBroker.xsense/blob/main/LICENSE) fÃ¼r Details.
