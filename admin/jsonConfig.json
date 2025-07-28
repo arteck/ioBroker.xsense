@@ -50,7 +50,22 @@
                     "md": 6,
                     "lg": 4,
                     "xl": 4
-                }
+                },
+                "polltime": {
+                    "newLine": true,
+                    "type": "number",
+                    "label": "Polling interval",
+                    "help": "Polling interval in seconds",
+                    "def": 60,
+                    "min": 60,
+                    "max": 3600,
+                    "step": 1,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
             }
         }
     }

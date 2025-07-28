@@ -107,7 +107,8 @@
   },
   "native": {
     "userEmail": "",
-    "userPassword": ""
+    "userPassword": "",
+    "polltime": 60
   },
   "encryptedNative": [
     "userPassword"
