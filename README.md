@@ -50,7 +50,7 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 - erst dann 
 - Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
 
-  ### oder man nutzt nur das eine Konto, mit der prämisse dass man ständig ausgeloggt wird
+  ### oder man nutzt nur ein Konto, mit der prämisse dass man ständig ausgeloggt wird
 
 ------------------------------------------------------------------------------
 
