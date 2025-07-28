@@ -57,7 +57,7 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 
 ------------------------------------------------------------------------------
 
-## 🚀 Installation Python falls noch KEINE installiert ist
+## 🚀 Installation Python falls noch **KEIN** installiert ist
 
 ### 💻 Windows
 
