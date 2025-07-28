@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "news": {
+      "0.0.3": {
+        "en": "modify Debug method",
+        "de": "debug-Methode ändern",
+        "ru": "модифицировать метод Debug",
+        "pt": "modificar o método de depuração",
+        "nl": "debugmethode wijzigen",
+        "fr": "modifier la méthode de débogage",
+        "it": "modificare il metodo Debug",
+        "es": "modificar el método Debug",
+        "pl": "modyfikacja metody debugowania",
+        "uk": "змінити метод Debug",
+        "zh-cn": "修改调试方法"
+      },
       "0.0.2": {
         "en": "initial release\n\n",
         "de": "erstausstrahlung\n\n",
@@ -116,8 +129,7 @@
       {
         "js-controller": ">=5.0.19"
       }
-    ],
-    "installedFrom": "arteck/ioBroker.xsense#c9c5776e2671d53d7b2ecb14b5fcb94616c3f8cc"
+    ]
   },
   "native": {
     "userEmail": "",

@@ -57,6 +57,7 @@ class xsenseControll  extends utils.Adapter {
     }
 
     async startIntervall() {
+        this.log.debug('[XSense] Start intervall');
         if (!this.python) {
             this.log.warn('Python environment not initialized. Trying again...');
             this.python = await this.setupXSenseEnvironment();
@@ -77,6 +78,8 @@ class xsenseControll  extends utils.Adapter {
     }
 
     async datenVerarbeiten() {
+        this.log.debug('[XSense] datenVerarbeiten called');
+
         const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
 
         if (response) {
@@ -85,6 +88,8 @@ class xsenseControll  extends utils.Adapter {
             const knownDevices = tools.extractDeviceIds(devices);
 
             const parsed = tools.parseXSenseOutput(response, knownDevices);
+
+            this.log.debug('[XSense] parsed ' + JSON.stringify(parsed));
 
             await this.json2iob.parse('xsense.0', parsed, {forceIndex: true, write: true});
 
@@ -109,7 +114,7 @@ class xsenseControll  extends utils.Adapter {
                 ]
             });
 
-            this.log.debug('[XSense] Python environment ready at ' + python.path);
+            this.log.debug('[XSense] Python environment ready ');
 
             return python;
         } catch (err) {
@@ -120,6 +125,8 @@ class xsenseControll  extends utils.Adapter {
     }
 
     async callBridge(python, email, password) {
+        this.log.debug('[XSense] callBridge ');
+
         return new Promise((resolve, reject) => {
             const scriptPath = path.join(__dirname, 'python', 'run_xsense.py');
             const proc = python('python3', [scriptPath, email, password]);
@@ -128,6 +135,7 @@ class xsenseControll  extends utils.Adapter {
 
             proc.stdout?.on('data', data => {
                 result += data.toString();
+                this.log.debug('[XSense] callBridge result ' + data.toString());
             });
 
             proc.stderr?.on('data', data => {
