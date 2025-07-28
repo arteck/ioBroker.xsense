@@ -79,7 +79,7 @@ class xsenseControll  extends utils.Adapter {
         if (response) {
             // hole alle devices und vergleiche ob was offline ist
             const devices = await this.getDevicesAsync();
-            const knownDevices = tools.extractDeviceIds(devices);
+            let knownDevices = tools.extractDeviceIds(devices);
 
             const parsed = tools.parseXSenseOutput(response, knownDevices);
 
@@ -96,7 +96,7 @@ class xsenseControll  extends utils.Adapter {
 
             const python = await getVenv({
                 name: 'xsense-env',
-                pythonVersion: '~3.13',
+                pythonVersion: this.config.pythonVersion,
                 requirements: [
                     { name: 'requests', version: '' },
                     { name: 'aiohttp', version: '' }

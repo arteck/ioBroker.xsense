@@ -30,8 +30,8 @@
                 "userEmail": {
                     "newLine": true,
                     "type": "text",
-                    "label": "User name",
-                    "help": "MQTT User name",
+                    "label": "User email",
+                    "help": "login email for X-Sense Cloud",
                     "hidden": "data.mqttDoNotVerifyUserPw",
                     "xs": 12,
                     "sm": 12,
@@ -42,7 +42,7 @@
                 "userPassword": {
                     "type": "password",
                     "label": "Password",
-                    "help": "MQTT Password",
+                    "help": "Password for X-Sense Cloud",
                     "hidden": "data.mqttDoNotVerifyUserPw",
                     "repeat": true,
                     "xs": 12,
@@ -66,6 +66,32 @@
                     "lg": 4,
                     "xl": 4
                 },
+                "pythonVersion": {
+                    "newLine": true,
+                    "type": "select",
+                    "label": "Python Version",
+                    "help": "Python Version to use for the adapter",
+                    "def": "3.13",
+                    "options": [
+                        {
+                            "value": "3.13",
+                            "text": "3.13"
+                        },
+                        {
+                            "value": "3.12",
+                            "text": "3.12"
+                        },
+                        {
+                            "value": "3.11",
+                            "text": "3.11"
+                        }
+                    ],
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                }
             }
         }
     }

@@ -62,6 +62,7 @@
   "files": [
     "admin{,/!(src)/**}/!(tsconfig|tsconfig.*).json",
     "admin{,/!(src)/**}/*.{html,css,png,svg,jpg,js}",
+    "admin/i18n/",
     "lib/",
     "python/",
     "io-package.json",

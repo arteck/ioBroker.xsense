@@ -109,7 +109,8 @@
   "native": {
     "userEmail": "",
     "userPassword": "",
-    "polltime": 60
+    "polltime": 60,
+    "pythonVersion": "3.13"
   },
   "encryptedNative": [
     "userPassword"
