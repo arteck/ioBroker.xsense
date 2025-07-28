@@ -34,6 +34,8 @@ class xsenseControll  extends utils.Adapter {
         try {
             this.log.info('Start X-Sense...');
 
+            this.setAllAvailableToFalse();
+
             this.python = await this.setupXSenseEnvironment();
 
             if (!this.python) {
@@ -151,13 +153,19 @@ class xsenseControll  extends utils.Adapter {
     async onUnload(callback) {
         try {
             if (this._requestInterval) clearInterval(this._requestInterval);
+            this.setAllAvailableToFalse();
             callback();
         } catch (e) {
             callback();
         }
     }
 
-
+    async setAllAvailableToFalse() {
+        const availableStates = await this.getStatesAsync('*.online');
+        for (const availableState in availableStates) {
+            await this.setStateChangedAsync(availableState, false, true);
+        }
+    }
 
 }
 
