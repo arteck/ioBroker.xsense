@@ -49,6 +49,7 @@ class xsenseControll  extends utils.Adapter {
         } catch (err) {
             this.setState('info.connection', false, true);
             this.log.error(`Error on Login or Setup: ${err.message}`);
+            this.log.error(`if this is the first start, restart the adapter to try again.`);
             return;
         }
     }
@@ -79,7 +80,7 @@ class xsenseControll  extends utils.Adapter {
         if (response) {
             // hole alle devices und vergleiche ob was offline ist
             const devices = await this.getDevicesAsync();
-            const knownDevices = tools.extractDeviceIds(devices);
+            let knownDevices = tools.extractDeviceIds(devices);
 
             const parsed = tools.parseXSenseOutput(response, knownDevices);
 
