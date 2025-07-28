@@ -1,7 +1,7 @@
 {
     "Main Settings": "主要设置",
     "Welcome to X-Sense Adapter": "欢迎使用 X-Sense 适配器",
-    "Adapter work in hybrid mode, it work with X-Sense Bridge with MQTT client but the login request is sent to the X-Sense Cloud. You can use this adapter to control your X-Sense Bridge and Sensors.": "适配器以混合模式工作，它与带有 MQTT 客户端的 X-Sense 桥接器一起工作，但登录请求会发送到 X-Sense 云。您可以使用此适配器控制您的 X-Sense 桥接器和传感器。",
+    "Adapter work in hybrid mode, it work with X-Sense Bridge with MQTT client but the login request is sent to the X-Sense Cloud.": "适配器以混合模式工作，它与带有 MQTT 客户端的 X-Sense 桥接器一起工作，但登录请求会发送到 X-Sense 云。您可以使用此适配器控制您的 X-Sense 桥接器和传感器。",
     "User email": "用户邮箱",
     "login email for X-Sense Cloud": "X-Sense 云的登录邮箱",
     "Password": "密码",

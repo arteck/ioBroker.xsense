@@ -16,7 +16,7 @@
                 },
                 "_textStart": {
                     "type": "staticText",
-                    "text": "Adapter work in hybrid mode, it work with X-Sense Bridge with MQTT client but the login request is sent to the X-Sense Cloud. You can use this adapter to control your X-Sense Bridge and Sensors.",
+                    "text": "Adapter work in hybrid mode, it work with X-Sense Bridge with MQTT client but the login request is sent to the X-Sense Cloud.",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -27,6 +27,37 @@
                         "marginTop": 0
                     }
                 },
+                "_documentationLinkGerman": {
+                    "type": "staticLink",
+                    "label": "🇩🇪 Deutsche Dokumentation",
+                    "button": true,
+                    "href": "https://github.com/arteck/ioBroker.xsense/blob/main/README.md",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "style": {
+                        "fontSize": 16,
+                        "marginTop": 0
+                    }
+                },
+                "_documentationLinkEnglish": {
+                    "type": "staticLink",
+                    "label": "🇬🇧 English Documentation",
+                    "button": true,
+                    "href": "https://github.com/arteck/ioBroker.xsense/blob/main/README_en.md",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
+                    "style": {
+                        "fontSize": 16,
+                        "marginTop": 0
+                    }
+                },
+
                 "header2": {
                     "type": "header",
                     "text": " ",

@@ -1,7 +1,7 @@
 {
     "Main Settings": "Hoofdinstellingen",
     "Welcome to X-Sense Adapter": "Welkom bij de X-Sense-adapter",
-    "Adapter work in hybrid mode, it work with X-Sense Bridge with MQTT client but the login request is sent to the X-Sense Cloud. You can use this adapter to control your X-Sense Bridge and Sensors.": "De adapter werkt in hybride modus, het werkt met de X-Sense Bridge met MQTT-client maar de inlogaanvraag wordt naar de X-Sense Cloud gestuurd. U kunt deze adapter gebruiken om uw X-Sense Bridge en sensoren te bedienen.",
+    "Adapter work in hybrid mode, it work with X-Sense Bridge with MQTT client but the login request is sent to the X-Sense Cloud.": "De adapter werkt in hybride modus, het werkt met de X-Sense Bridge met MQTT-client maar de inlogaanvraag wordt naar de X-Sense Cloud gestuurd.",
     "User email": "E-mailadres gebruiker",
     "login email for X-Sense Cloud": "Inlog-e-mailadres voor X-Sense Cloud",
     "Password": "Wachtwoord",
