@@ -47,9 +47,10 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 - Login mit dem alten Konto und 
 - Geräte teilen: Teile die gewünschten Geräte vom Hauptkonto mit dem neuen Konto.
 - dann Login wieder mit dem neuen Konto und einladung akzeptieren
-
 - erst dann 
 - Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
+
+  
 
 ------------------------------------------------------------------------------
 
