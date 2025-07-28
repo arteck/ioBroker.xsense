@@ -4,16 +4,16 @@
     "version": "0.0.1",
     "news": {
       "0.0.1": {
-        "en": "initial release",
-        "de": "erste Veröffentlichung",
-        "ru": "первоначальный выпуск",
-        "pt": "inicial lançamento",
-        "nl": "eerste uitgave",
-        "fr": "première publication",
-        "it": "prima pubblicazione",
-        "es": "primera publicación",
-        "pl": "pierwsze wydanie",
-        "uk": "перше видання",
+        "en": "Initial release",
+        "de": "Erste Veröffentlichung",
+        "ru": "Первоначальный выпуск",
+        "pt": "Lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première publication",
+        "it": "Prima pubblicazione",
+        "es": "Primera publicación",
+        "pl": "Pierwsze wydanie",
+        "uk": "Перше видання",
         "zh-cn": "初始发布"
       }
     },
@@ -24,24 +24,24 @@
       "pt": "X-Sense",
       "nl": "X-Sense",
       "fr": "X-Sense",
-      "it": "X-Sense ",
+      "it": "X-Sense",
       "es": "X-Sense",
       "pl": "X-Sense",
       "uk": "X-Sense",
       "zh-cn": "X-Sense"
     },
     "desc": {
-      "en": "Manage yours X-Sense Bridge and Sensors",
-      "de": "Verwalten Sie Ihre X-Sense Bridge und Sensoren",
-      "ru": "правление вашим X-Sense Bridge и датчиками",
-      "pt": "Управление вашим X-Sense Bridge и датчиками",
-      "nl": "Beheer uw X-Sense Bridge en sensoren",
-      "fr": "Gérer votre X-Sense Bridge et capteurs",
-      "it": "Gestisci il tuo X-Sense Bridge e sensori",
-      "es": "Gestiona tu v Bridge y sensores",
-      "pl": "Zarządzaj swoim X-Sense Bridge i czujnikami",
-      "uk": "Керуйте своїм X-Sense Bridge та датчиками",
-      "zh-cn": "管理您的 X-Sense 桥接和传感器"
+      "en": "Manage your X-Sense Bridge and sensors",
+      "de": "Verwalten Sie Ihre X-Sense-Bridge und Sensoren",
+      "ru": "Управляйте своим мостом и датчиками X-Sense",
+      "pt": "Gerencie sua ponte e sensores X-Sense",
+      "nl": "Beheer uw X-Sense-bridge en sensoren",
+      "fr": "Gérez votre passerelle et vos capteurs X-Sense",
+      "it": "Gestisci il tuo bridge e i sensori X-Sense",
+      "es": "Gestiona tu puente y sensores X-Sense",
+      "pl": "Zarządzaj swoim mostkiem i czujnikami X-Sense",
+      "uk": "Керуйте своїм мостом і датчиками X-Sense",
+      "zh-cn": "管理您的 X-Sense 桥接器和传感器"
     },
     "authors": [
       "arteck <arteck@outlook.com>"
@@ -103,7 +103,7 @@
       {
         "js-controller": ">=5.0.19"
       }
-    ],
+    ]
   },
   "native": {
     "userEmail": "",
