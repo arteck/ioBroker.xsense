@@ -36,19 +36,25 @@ Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet
 ⚠️ Voraussetzungen
 - Ein XSense-Konto mit registrierten Geräten
 - Internetverbindung für Cloud-Kommunikation
-- Python = 3.13 erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
+- **Python > = 3.10** erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
 
 📦 Vorbereitung
 
 Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, empfiehlt sich folgendes Vorgehen:
 
 - Zweitkonto erstellen: Erstelle in der XSense-App ein zweites Konto.
+- Login mit dem neuen Konto, dann ausloggen
+- Login mit dem alten Konto und 
 - Geräte teilen: Teile die gewünschten Geräte vom Hauptkonto mit dem neuen Konto.
+- dann Login wieder mit dem neuen Konto und einladung akzeptieren
+- erst dann 
 - Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
+
+  
 
 ------------------------------------------------------------------------------
 
-## 🚀 Installation
+## 🚀 Installation Python falls noch KEINE installiert ist
 
 ### 💻 Windows
 
@@ -72,6 +78,16 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
    ```
       apt update && apt install -y python3 python3-pip
    ```
+------------------------------------------------------------------------------
+
+
+## ❗  Es ist notwendig die installierte Python Version anzugeben
+```
+      python3 --version
+ ```
+
+<img width="1029" height="438" alt="grafik" src="https://github.com/user-attachments/assets/86e4fd1c-1d4e-4234-a2ad-48b8dd9f418e" />
+
     
 
 ------------------------------------------------------------------------------
