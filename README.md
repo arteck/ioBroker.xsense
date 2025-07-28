@@ -77,7 +77,7 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 
 ## ❗  Es ist notwendig die installierte Python Version anzugeben
 ```
-      python --version
+      python3 --version
  ```
 
 <img width="1029" height="438" alt="grafik" src="https://github.com/user-attachments/assets/86e4fd1c-1d4e-4234-a2ad-48b8dd9f418e" />
