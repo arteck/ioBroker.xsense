@@ -62,14 +62,13 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
      ```
      
 ### 🐧 Linux
-    ```sudo apt update
+   ```sudo apt update
         sudo apt install python3 python3-pip -y
-    ```
+   ```
     
 ### 🐳 Docker   
-    
-    ```apt update && apt install -y python3 python3-pip
-    ```
+   ```apt update && apt install -y python3 python3-pip 
+   ```
     
 ------------------------------------------------------------------------------
 
