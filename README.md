@@ -37,7 +37,7 @@ Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet
 ⚠️ Voraussetzungen
 - Ein XSense-Konto mit registrierten Geräten
 - Internetverbindung für Cloud-Kommunikation
-- **Python > = 3.11** erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
+- **Python > = 3.10** in der öffentlich publizierten Version erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
 
 
 
