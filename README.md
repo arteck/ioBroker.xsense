@@ -96,6 +96,9 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.5 (2025-07-29)
+* (arteck) serialnumber is a string
+
 ### 0.0.4 (2025-07-28)
 * (arteck) fix language
 

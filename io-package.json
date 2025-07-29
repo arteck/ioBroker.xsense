@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "news": {
+      "0.0.5": {
+        "en": "serialnumber is a string",
+        "de": "serialnumber ist ein string",
+        "ru": "серийный номер - строка",
+        "pt": "número de série é uma string",
+        "nl": "serienummer is een tekenreeks",
+        "fr": "serialnumber est une chaîne",
+        "it": "serialnumber è una stringa",
+        "es": "número de serie es una cadena",
+        "pl": "serialnumber to ciąg znaków",
+        "uk": "серійнийnumber є рядок",
+        "zh-cn": "序列号是一个字符串"
+      },
       "0.0.4": {
         "en": "fix language",
         "de": "sprache auswählen",
