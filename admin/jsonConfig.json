@@ -93,7 +93,7 @@
                     "label": "Polling interval",
                     "help": "Polling interval in seconds",
                     "def": 60,
-                    "min": 60,
+                    "min": 30,
                     "max": 3600,
                     "step": 1,
                     "xs": 12,
@@ -119,7 +119,11 @@
                         {
                             "label": "3.11",
                             "value": "3.11"
-                        }
+                        },
+                        {
+                            "label": "3.10",
+                            "value": "3.10"
+                        }                        
                     ],
                     "xs": 12,
                     "sm": 12,
