@@ -98,6 +98,9 @@ es muss eine offizielle und veröffentliche Python Version sein
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.6 (2025-07-29)
+* (arteck) new error message
+
 ### 0.0.5 (2025-07-29)
 * (arteck) serialnumber is a string
 

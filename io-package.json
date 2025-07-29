@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "news": {
+      "0.0.6": {
+        "en": "new error message",
+        "de": "neue fehlermeldung",
+        "ru": "новое сообщение об ошибке",
+        "pt": "nova mensagem de erro",
+        "nl": "nieuwe foutmelding",
+        "fr": "nouveau message d'erreur",
+        "it": "nuovo messaggio di errore",
+        "es": "nuevo mensaje de error",
+        "pl": "nowy komunikat błędu",
+        "uk": "нове повідомлення про помилку",
+        "zh-cn": "新错误消息"
+      },
       "0.0.5": {
         "en": "serialnumber is a string",
         "de": "serialnumber ist ein string",
