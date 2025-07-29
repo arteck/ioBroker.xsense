@@ -119,6 +119,7 @@ class xsenseControll  extends utils.Adapter {
             return python;
         } catch (err) {
             this.log.error('[XSense] Error on create ' + err.message);
+            this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
             this.log.debug(err.stack);
             return null;
         }
