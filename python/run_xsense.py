@@ -35,9 +35,9 @@ def main():
         xsense.login(email, password)
         xsense.load_all()
 
-        for _, h in xsense.houses.items():
-            for _, s in h.stations.items():
-                xsense.get_state(s)
+#        for _, h in xsense.houses.items():
+#            for _, s in h.stations.items():
+#                xsense.get_state(s)
 
         dump_environment(xsense)
 
