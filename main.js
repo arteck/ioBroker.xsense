@@ -24,7 +24,6 @@ class xsenseControll  extends utils.Adapter {
 
         this.json2iob = new Json2iobXSense(this);
 
-
         this._requestInterval = 0;
 
         this.on('ready', this.onReady.bind(this));
@@ -33,20 +32,31 @@ class xsenseControll  extends utils.Adapter {
 
     async onReady() {
         try {
+            let loginGo = true;
             this.log.info('Start X-Sense...');
 
-            this.callPython = (await this.getState('info.callPython'))?.val
+            if (this.config.userEmail == '') {
+                this.log.error('Check Settings. No Username set');
+                loginGo = false;
+            }
+            if (this.config.userPassword == '') {
+                this.log.error('Check Settings. No Password set');
+                loginGo = false;
+            }
 
-            this.setAllAvailableToFalse();
-
-            this.python = await this.setupXSenseEnvironment(true);
-
-            if (this.python) {
-
-                await this.datenVerarbeiten(true);
-                this.setState('info.connection', true, true);
-
-                this.startIntervall();
+            if (loginGo) {
+            
+                this.callPython = (await this.getState('info.callPython'))?.val;
+                this.setAllAvailableToFalse();
+                this.python = await this.setupXSenseEnvironment(true);
+    
+                if (this.python) {
+    
+                    await this.datenVerarbeiten(true);
+                    this.setState('info.connection', true, true);
+    
+                    this.startIntervall();
+                }
             }
         } catch (err) {
             this.setState('info.connection', false, true);
@@ -140,8 +150,8 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.stderr?.on('data', data => {
-                this.log.warn('[XSense]   callBridge warning: ' + data.toString());
-                this.log.warn(`[XSense]    check ${this.namespace}.info.callPython and set it to "python"`);
+                this.log.warn('[XSense]   callBridge request error ';
+                this.log.warn(`[XSense]   If it is the first run of the adapter, restart it manually and check again. `);
             });
 
             proc.on('error', err => {
@@ -179,14 +189,13 @@ class xsenseControll  extends utils.Adapter {
 
     async errorMessage(err, firstTry) {
         if (firstTry) {
-            this.log.error(`[XSense] Fatal error starting Python | ${err} | ${err.stack}`);
+            this.log.error(`[XSense] Fatal error starting Python | ${err} .`);
             this.log.error(`[XSense] ------------------------------------------------------`);
         }
-        this.log.error(`[XSense] Python environment could not be initialized or Error on Login or Setup: ${err.message}`);
+        this.log.error(`[XSense] Python environment could not be initialized.`);
 
         if (firstTry) {
-            this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
-            this.log.error('[XSense] !!!!!!!!!!!!!!!!  check /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg  for more env. Python Version Information ');
+            this.log.error(`[XSense] Restart the adapter manually.`);
             this.terminate();
         }
     }
