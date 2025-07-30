@@ -91,6 +91,20 @@ es muss eine offizielle und veröffentliche Python Version sein
       python3 --version
  ```
 
+## ❗ bei Problemen 
+
+ist dir richtige version installiert aber der Adapter hat schon was falsches gezogen 
+zuerst die Umgebung löschen
+```
+  rm -Rf /home/iobroker/.cache/autopy/venv/xsense-env
+ ```
+dann Adapter neu starten
+sollte es immer noch nicht laufen die Datei /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg sich anschauen
+hier stehen Python Versionen die für die Umgebung relevant sind. Diese gegenenfals anpassen.
+
+
+
+
 <img width="1029" height="438" alt="grafik" src="https://github.com/user-attachments/assets/86e4fd1c-1d4e-4234-a2ad-48b8dd9f418e" />
 
     
