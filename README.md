@@ -74,14 +74,14 @@ es muss eine offizielle und veröffentliche Python Version sein
      
 ### 🐧 Linux
    ```sudo apt update
-        sudo apt install python3-(version) python3-pip -y
+        sudo apt install python3-(gültige Version) python3-pip -y
    ```
 
 ### 🐳 Docker
 
 
    ```
-      apt update && apt install -y python3-(Version) python3-pip
+      apt update && apt install -y python3-(gültige Version) python3-pip
    ```
 ------------------------------------------------------------------------------
 
