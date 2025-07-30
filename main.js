@@ -90,6 +90,8 @@ class xsenseControll  extends utils.Adapter {
 
     async datenVerarbeiten(firstTry) {
         this.log.debug('[XSense] datenVerarbeiten called');
+        this.log.debug('[XSense] This may take up to 1 minute. Please wait');
+        
         try {
             const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
 
@@ -197,7 +199,7 @@ class xsenseControll  extends utils.Adapter {
         if (firstTry) {
             this.log.error(`[XSense] Restart the adapter manually.`);
             this.setState('info.connection', false, true, () => {
-                adapter.terminate('[XSense]  terminated', 1);
+                this.terminate('[XSense]  terminated', 1);
             });            
         }
     }
