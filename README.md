@@ -72,25 +72,8 @@ es muss eine offizielle und veröffentliche Python Version sein
      pip --version
      ```
     
-     
-🐧 Linux
-   ```sudo apt update
-        sudo apt install python3-(gültige Version) python3-pip -y
-   ```
-
-🐳 Docker
-
-
-   ```
-      apt update && apt install -y python3-(gültige Version) python3-pip
-   ```
 ------------------------------------------------------------------------------
 
-
-❗ danach Version rausfinden und in Adapter Einstellungen einstellen
-```
-      python3 --version
- ```
   für 💻 Windows im Adapter Baum unter xsense.0.info.callPython -> python eintragen. Als detault Wert steht dort python3. 
   
 ------------------------------------------------------------------------------
