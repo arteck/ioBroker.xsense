@@ -150,7 +150,7 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.stderr?.on('data', data => {
-                this.log.warn('[XSense]   callBridge request error ';
+                this.log.warn(`[XSense]   callBridge request error `);
                 this.log.warn(`[XSense]   If it is the first run of the adapter, restart it manually and check again. `);
             });
 
