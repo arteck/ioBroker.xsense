@@ -203,6 +203,17 @@
         "write": false,
         "def": false
       },
+      {
+      "_id": "info.pythonCall",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "call python or python3",
+        "type": "string",
+        "read": true,
+        "write": false,
+        "def": "python3"
+      },
       "native": {}
     }
   ]
