@@ -4,7 +4,7 @@ const Json2iobXSense = require('./lib/json2iob');
 
 const exec = util.promisify(require('child_process').exec);
 const path = require('path');
-
+const util = require('util');
 
 global.fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
 

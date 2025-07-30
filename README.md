@@ -106,6 +106,9 @@ hier stehen Python Versionen die für die Umgebung relevant sind. Diese gegenenf
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.11 (2025-07-30)
+* (arteck) fix util missing
+
 ### 0.0.10 (2025-07-30)
 * (arteck) pip auto install for linux
 

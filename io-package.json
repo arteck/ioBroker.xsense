@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "news": {
+      "0.0.11": {
+        "en": "fix util missing",
+        "de": "fehlerbehebung",
+        "ru": "исчезновение util missing",
+        "pt": "corrigir o util em falta",
+        "nl": "fix util ontbreekt",
+        "fr": "réparer util manquant",
+        "it": "correzione mancante",
+        "es": "reparación utilidad faltante",
+        "pl": "fix util brakujący",
+        "uk": "виправити util відсутні",
+        "zh-cn": "修补乌蒂缺失"
+      },
       "0.0.10": {
         "en": "pip auto install for linux",
         "de": "pip auto install für linux",
@@ -80,19 +93,6 @@
         "pl": "poprawiaj język",
         "uk": "фіксувати мову",
         "zh-cn": "固定语言"
-      },
-      "0.0.3": {
-        "en": "modify Debug method",
-        "de": "debug-Methode ändern",
-        "ru": "модифицировать метод Debug",
-        "pt": "modificar o método de depuração",
-        "nl": "debugmethode wijzigen",
-        "fr": "modifier la méthode de débogage",
-        "it": "modificare il metodo Debug",
-        "es": "modificar el método Debug",
-        "pl": "modyfikacja metody debugowania",
-        "uk": "змінити метод Debug",
-        "zh-cn": "修改调试方法"
       }
     },
     "titleLang": {
