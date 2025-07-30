@@ -40,6 +40,7 @@ class xsenseControll  extends utils.Adapter {
 
             if (!this.python) {
                 this.log.error('Python environment could not be initialized.');
+                this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
                 return;
             }
 
@@ -118,9 +119,7 @@ class xsenseControll  extends utils.Adapter {
 
             return python;
         } catch (err) {
-            this.log.error('[XSense] Error on create ' + err.message);
-            this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
-            this.log.debug(err.stack);
+            this.log.error(`[XSense] Fatal error starting Python | ${err} | ${err.stack}`);
             return null;
         }
     }
