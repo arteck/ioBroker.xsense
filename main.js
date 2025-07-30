@@ -43,10 +43,10 @@ class xsenseControll  extends utils.Adapter {
 
             if (this.python) {
 
-              await this.datenVerarbeiten(true);
-              this.setState('info.connection', true, true);
+                await this.datenVerarbeiten(true);
+                this.setState('info.connection', true, true);
 
-              this.startIntervall();
+                this.startIntervall();
             }
         } catch (err) {
             this.setState('info.connection', false, true);
@@ -59,13 +59,13 @@ class xsenseControll  extends utils.Adapter {
         this.log.debug('[XSense] Start intervall');
 
         if (!this.python) {
-          this.log.warn('Python environment not initialized. Trying again...');
-          this.python = await this.setupXSenseEnvironment();
+            this.log.warn('Python environment not initialized. Trying again...');
+            this.python = await this.setupXSenseEnvironment();
 
-          if (!this.python) {
-              this.setState('info.connection', false, true);
-              return;
-          }
+            if (!this.python) {
+                this.setState('info.connection', false, true);
+                return;
+            }
         }
 
         await this.datenVerarbeiten(false);

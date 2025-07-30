@@ -98,7 +98,7 @@ es muss eine offizielle und veröffentliche Python Version sein
 ------------------------------------------------------------------------------
 
 ## Changelog
-### 0.0.7 (2025-07-30)
+### 0.0.8 (2025-07-30)
 * (arteck) add callPython Object
 
 ### 0.0.6 (2025-07-29)
