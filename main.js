@@ -81,7 +81,7 @@ class xsenseControll  extends utils.Adapter {
         await this.datenVerarbeiten(false);
 
         if (!this._requestInterval) {
-            this.log.info(` Start XSense request intervall`);
+            this.log.debug(` Start XSense request intervall`);
             this._requestInterval = setInterval(async () => {
                 await this.startIntervall();
             }, this.config.polltime * 1000);
@@ -161,7 +161,8 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.on('close', code => {
-                this.log.info('[XSense] callBridge script exited with code ' + code);
+                this.log.debug('[XSense] callBridge script exited with code ' + code);
+                
                 if (code === 0) {
                     resolve(result.trim());
                 } else {
