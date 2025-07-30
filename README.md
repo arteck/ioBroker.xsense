@@ -73,7 +73,7 @@ es muss eine offizielle und veröffentliche Python Version sein
      ```
 🐧 Linux 🐳 Docker
 
-     passiert automatisch im Adapter Einstellungen auswählen welche Version gezogen werden soll
+     passiert automatisch, nur in Adapter Einstellungen auswählen welche Version bevorzugt wird
 
 ------------------------------------------------------------------------------
 
