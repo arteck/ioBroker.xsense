@@ -1,8 +1,7 @@
-bugconst utils = require('@iobroker/adapter-core');
+const utils = require('@iobroker/adapter-core');
 const tools = require('./lib/tools');
 const Json2iobXSense = require('./lib/json2iob');
 
-const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const path = require('path');
 
@@ -45,16 +44,16 @@ class xsenseControll  extends utils.Adapter {
             }
 
             if (loginGo) {
-            
+
                 this.callPython = (await this.getState('info.callPython'))?.val;
                 this.setAllAvailableToFalse();
                 this.python = await this.setupXSenseEnvironment(true);
-    
+
                 if (this.python) {
-    
+
                     await this.datenVerarbeiten(true);
                     this.setState('info.connection', true, true);
-    
+
                     this.startIntervall();
                 }
             }
@@ -91,7 +90,7 @@ class xsenseControll  extends utils.Adapter {
     async datenVerarbeiten(firstTry) {
         this.log.debug('[XSense] datenVerarbeiten called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
-        
+
         try {
             const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
 
@@ -162,7 +161,7 @@ class xsenseControll  extends utils.Adapter {
 
             proc.on('close', code => {
                 this.log.debug('[XSense] callBridge script exited with code ' + code);
-                
+
                 if (code === 0) {
                     resolve(result.trim());
                 } else {
@@ -201,7 +200,7 @@ class xsenseControll  extends utils.Adapter {
             this.log.error(`[XSense] Restart the adapter manually.`);
             this.setState('info.connection', false, true, () => {
                 this.terminate('[XSense]  terminated', 1);
-            });            
+            });
         }
     }
 }

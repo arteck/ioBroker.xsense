@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "news": {
+      "0.0.10": {
+        "en": "pip auto install for linux",
+        "de": "pip auto install für linux",
+        "ru": "pip auto для linux",
+        "pt": "instalação automática do pip para o linux",
+        "nl": "pip auto installatie voor linux",
+        "fr": "pip installation automatique pour linux",
+        "it": "pip auto install per linux",
+        "es": "pip auto install for linux",
+        "pl": "pip auto install for linux",
+        "uk": "pip автоматична установка для linux",
+        "zh-cn": "linux 的 pip 自动安装"
+      },
       "0.0.9": {
         "en": "fix callPython Object\n",
         "de": "telefonieren Python Objekt\n",
@@ -80,19 +93,6 @@
         "pl": "modyfikacja metody debugowania",
         "uk": "змінити метод Debug",
         "zh-cn": "修改调试方法"
-      },
-      "0.0.2": {
-        "en": "initial release\n\n",
-        "de": "erstausstrahlung\n\n",
-        "ru": "первоначальное освобождение\n\n",
-        "pt": "libertação inicial\n\n",
-        "nl": "eerste release\n\n",
-        "fr": "libération initiale\n\n",
-        "it": "rilascio iniziale\n\n",
-        "es": "liberación inicial\n\n",
-        "pl": "początkowe zwolnienie\n\n",
-        "uk": "початковий реліз\n\n",
-        "zh-cn": "初步释放\n\n"
       }
     },
     "titleLang": {
