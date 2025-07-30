@@ -196,7 +196,9 @@ class xsenseControll  extends utils.Adapter {
 
         if (firstTry) {
             this.log.error(`[XSense] Restart the adapter manually.`);
-            this.terminate();
+            this.setState('info.connection', false, true, () => {
+                adapter.terminate('[XSense]  terminated', 1);
+            });            
         }
     }
 }
