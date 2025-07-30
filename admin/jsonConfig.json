@@ -107,10 +107,7 @@
                     "label": "Python Version",
                     "help": "Python Version to use for the adapter",
                     "options": [
-                        {
-                            "label": "3.13.5",
-                            "value": "3.13.5"
-                        },
+                
                         {
                             "label": "3.12.9",
                             "value": "3.12.9"
