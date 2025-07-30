@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "news": {
+      "0.0.12": {
+        "en": "fix util",
+        "de": "fixieren",
+        "ru": "ремонтировать",
+        "pt": "corrigir util",
+        "nl": "fix util",
+        "fr": "réparer l'utilitaire",
+        "it": "correzione dell'util",
+        "es": "fijar utilidad",
+        "pl": "fix util",
+        "uk": "фіксувати util",
+        "zh-cn": "修补工具"
+      },
       "0.0.11": {
         "en": "fix util missing",
         "de": "fehlerbehebung",
@@ -80,19 +93,6 @@
         "pl": "serialnumber to ciąg znaków",
         "uk": "серійнийnumber є рядок",
         "zh-cn": "序列号是一个字符串"
-      },
-      "0.0.4": {
-        "en": "fix language",
-        "de": "sprache auswählen",
-        "ru": "исправить язык",
-        "pt": "corrigir idioma",
-        "nl": "taal repareren",
-        "fr": "corriger la langue",
-        "it": "linguaggio corretto",
-        "es": "arreglar el idioma",
-        "pl": "poprawiaj język",
-        "uk": "фіксувати мову",
-        "zh-cn": "固定语言"
       }
     },
     "titleLang": {

@@ -106,6 +106,9 @@ hier stehen Python Versionen die für die Umgebung relevant sind. Diese gegenenf
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.12 (2025-07-30)
+* (arteck) fix util
+
 ### 0.0.11 (2025-07-30)
 * (arteck) fix util missing
 
