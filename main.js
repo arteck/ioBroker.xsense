@@ -36,13 +36,9 @@ class xsenseControll  extends utils.Adapter {
 
             this.setAllAvailableToFalse();
 
-            this.python = await this.setupXSenseEnvironment();
+            this.python = await this.setupXSenseEnvironment();    
 
-            if (!this.python) {
-                this.log.error('Python environment could not be initialized.');
-                this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
-                this.terminate();
-            }
+            this.log.debug('[XSense] Python environment ready ');
 
             await this.datenVerarbeiten();
             this.setState('info.connection', true, true);
@@ -52,7 +48,7 @@ class xsenseControll  extends utils.Adapter {
         } catch (err) {
             this.setState('info.connection', false, true);
             this.log.error(`Error on Login or Setup: ${err.message}`);
-            this.log.error(`if this is the first start, restart the adapter to try again.`);
+            this.log.error(`If this is the first start, restart the Adapter to try again.`);
             return;
         }
     }
@@ -115,12 +111,14 @@ class xsenseControll  extends utils.Adapter {
                 ]
             });
 
-            this.log.debug('[XSense] Python environment ready ');
-
             return python;
         } catch (err) {
             this.log.error(`[XSense] Fatal error starting Python | ${err} | ${err.stack}`);
-            return null;
+            this.log.error(`[XSense] ------------------------------------------------------`);
+            this.log.error('Python environment could not be initialized.');
+            this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
+            this.log.error('[XSense] !!!!!!!!!!!!!!!!  check /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg  for more env. Python Version Information ');
+            this.terminate();
         }
     }
 
