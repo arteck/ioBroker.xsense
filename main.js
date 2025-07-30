@@ -24,6 +24,7 @@ class xsenseControll  extends utils.Adapter {
 
         this.json2iob = new Json2iobXSense(this);
 
+
         this._requestInterval = 0;
 
         this.on('ready', this.onReady.bind(this));
@@ -34,41 +35,40 @@ class xsenseControll  extends utils.Adapter {
         try {
             this.log.info('Start X-Sense...');
 
+            this.pythonCall = this.getState(`${this.namespace}.info.callPython`).val || 'python3';
+
             this.setAllAvailableToFalse();
 
-            this.python = await this.setupXSenseEnvironment();
+            this.python = await this.setupXSenseEnvironment(true);
 
-            if (!this.python) {
-                this.log.error('Python environment could not be initialized.');
-                this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
-                this.terminate();
+            if (this.python) {
+
+                await this.datenVerarbeiten(true);
+                this.setState('info.connection', true, true);
+
+                this.startIntervall();
             }
-
-            await this.datenVerarbeiten();
-            this.setState('info.connection', true, true);
-
-            this.startIntervall();
-
         } catch (err) {
             this.setState('info.connection', false, true);
-            this.log.error(`Error on Login or Setup: ${err.message}`);
-            this.log.error(`if this is the first start, restart the adapter to try again.`);
+            this.log.error(`Error : ${err.message}`);
             return;
         }
     }
 
     async startIntervall() {
         this.log.debug('[XSense] Start intervall');
+
         if (!this.python) {
             this.log.warn('Python environment not initialized. Trying again...');
             this.python = await this.setupXSenseEnvironment();
+
             if (!this.python) {
                 this.setState('info.connection', false, true);
                 return;
             }
         }
 
-        await this.datenVerarbeiten();
+        await this.datenVerarbeiten(false);
 
         if (!this._requestInterval) {
             this.log.info(` Start XSense request intervall`);
@@ -78,26 +78,28 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-    async datenVerarbeiten() {
+    async datenVerarbeiten(firstTry) {
         this.log.debug('[XSense] datenVerarbeiten called');
+        try {
+            const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
 
-        const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
+            if (response) {
+                // hole alle devices und vergleiche ob was offline ist
+                const devices = await this.getDevicesAsync();
+                const knownDevices = tools.extractDeviceIds(devices);
 
-        if (response) {
-            // hole alle devices und vergleiche ob was offline ist
-            const devices = await this.getDevicesAsync();
-            const knownDevices = tools.extractDeviceIds(devices);
+                const parsed = tools.parseXSenseOutput(response, knownDevices);
 
-            const parsed = tools.parseXSenseOutput(response, knownDevices);
+                this.log.debug('[XSense] parsed ' + JSON.stringify(parsed));
 
-            this.log.debug('[XSense] parsed ' + JSON.stringify(parsed));
-
-            await this.json2iob.parse('xsense.0', parsed, {forceIndex: true, write: true});
-
+                await this.json2iob.parse('xsense.0', parsed, {forceIndex: true, write: true});
+            }
+        } catch (err) {
+            this.errorMessage(err, firstTry);
         }
     }
 
-    async setupXSenseEnvironment() {
+    async setupXSenseEnvironment(firstTry) {
         try {
             const { getVenv } = await import('autopy');
             const pfadPythonScript = tools.getDataFolder(this);
@@ -119,8 +121,7 @@ class xsenseControll  extends utils.Adapter {
 
             return python;
         } catch (err) {
-            this.log.error(`[XSense] Fatal error starting Python | ${err} | ${err.stack}`);
-            return null;
+            this.errorMessage(err, firstTry);
         }
     }
 
@@ -129,7 +130,7 @@ class xsenseControll  extends utils.Adapter {
 
         return new Promise((resolve, reject) => {
             const scriptPath = path.join(__dirname, 'python', 'run_xsense.py');
-            const proc = python('python3', [scriptPath, email, password]);
+            const proc = python(this.pythonCall, [scriptPath, email, password]);
 
             let result = '';
 
@@ -139,7 +140,8 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.stderr?.on('data', data => {
-                this.log.warn('callBridge warning: ' + data.toString());
+                this.log.warn('[XSense]   callBridge warning: ' + data.toString());
+                this.log.warn(`[XSense]    check ${this.namespace}.info.callPython and set it to "python"`);
             });
 
             proc.on('error', err => {
@@ -147,11 +149,11 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.on('close', code => {
-                this.log.info('callBridge script exited with code ' + code);
+                this.log.info('[XSense] callBridge script exited with code ' + code);
                 if (code === 0) {
                     resolve(result.trim());
                 } else {
-                    reject(new Error(`callBridge Python script exited with code ${code}`));
+                    reject(new Error(`[XSense] callBridge Python script exited with code ${code}`));
                 }
             });
         });
@@ -175,6 +177,19 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
+    async errorMessage(err, firstTry) {
+        if (firstTry) {
+            this.log.error(`[XSense] Fatal error starting Python | ${err} | ${err.stack}`);
+            this.log.error(`[XSense] ------------------------------------------------------`);
+        }
+        this.log.error(`[XSense] Python environment could not be initialized or Error on Login or Setup: ${err.message}`);
+
+        if (firstTry) {
+            this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
+            this.log.error('[XSense] !!!!!!!!!!!!!!!!  check /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg  for more env. Python Version Information ');
+            this.terminate();
+        }
+    }
 }
 
 // @ts-ignore parent is a valid property on module

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "news": {
+      "0.0.7": {
+        "en": "add callPython Object",
+        "de": "! Python Objekt",
+        "ru": "добавить звонок Python объект",
+        "pt": "adicionar chamada Objecto Python",
+        "nl": "oproep toevoegen Python-object",
+        "fr": "ajouter l'appel Objet Python",
+        "it": "aggiungi chiamata Oggetto",
+        "es": "agregar llamada Python Object",
+        "pl": "dodaj wywołanie Obiekt Python",
+        "uk": "додати дзвінок Об'єкт Python",
+        "zh-cn": "添加调用 Python 对象"
+      },
       "0.0.6": {
         "en": "new error message",
         "de": "neue fehlermeldung",
