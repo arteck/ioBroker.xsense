@@ -92,6 +92,7 @@ zuerst die Umgebung löschen
 dann Adapter neu starten
 sollte es immer noch nicht laufen die Datei /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg sich anschauen
 hier stehen Python Versionen die für die Umgebung relevant sind. Diese gegenenfals anpassen.
+ist die Datei nicht vorhanden habt ihr nicht lang genug gewartet bis der Adapter gestartet wurde.
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
