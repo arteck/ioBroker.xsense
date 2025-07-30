@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "news": {
+      "0.0.9": {
+        "en": "fix callPython Object\n",
+        "de": "telefonieren Python Objekt\n",
+        "ru": "фиксировать Python объект\n",
+        "pt": "corrigir chamada Objecto Python\n",
+        "nl": "fix call Python-object\n",
+        "fr": "correction de l'appel Objet Python\n",
+        "it": "correzione della chiamata Oggetto\n",
+        "es": "correr llamada Python Object\n",
+        "pl": "fix call Obiekt Python\n",
+        "uk": "фіксувати дзвінок Об'єкт Python\n",
+        "zh-cn": "固定调用 Python 对象\n"
+      },
       "0.0.8": {
         "en": "add callPython Object",
         "de": "! Python Objekt",
@@ -80,19 +93,6 @@
         "pl": "początkowe zwolnienie\n\n",
         "uk": "початковий реліз\n\n",
         "zh-cn": "初步释放\n\n"
-      },
-      "0.0.1": {
-        "en": "Initial release",
-        "de": "Erste Veröffentlichung",
-        "ru": "Первоначальный выпуск",
-        "pt": "Lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première publication",
-        "it": "Prima pubblicazione",
-        "es": "Primera publicación",
-        "pl": "Pierwsze wydanie",
-        "uk": "Перше видання",
-        "zh-cn": "初始发布"
       }
     },
     "titleLang": {

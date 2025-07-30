@@ -35,7 +35,7 @@ class xsenseControll  extends utils.Adapter {
         try {
             this.log.info('Start X-Sense...');
 
-            this.callPython = this.getState(`${this.namespace}.info.callPython`).val || 'python3';
+            this.callPython = (await this.getState('info.callPython'))?.val
 
             this.setAllAvailableToFalse();
 
