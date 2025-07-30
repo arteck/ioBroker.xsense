@@ -1,4 +1,4 @@
-const utils = require('@iobroker/adapter-core');
+bugconst utils = require('@iobroker/adapter-core');
 const tools = require('./lib/tools');
 const Json2iobXSense = require('./lib/json2iob');
 
