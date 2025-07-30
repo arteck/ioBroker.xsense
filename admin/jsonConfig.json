@@ -108,20 +108,20 @@
                     "help": "Python Version to use for the adapter",
                     "options": [
                         {
-                            "label": "3.13",
-                            "value": "~3.13"
+                            "label": "3.13.5",
+                            "value": "3.13.5"
                         },
                         {
-                            "label": "3.12",
-                            "value": "~3.12"
+                            "label": "3.12.9",
+                            "value": "3.12.9"
                         },
                         {
-                            "label": "3.11",
-                            "value": "~3.11"
+                            "label": "3.11.8",
+                            "value": "3.11.8"
                         },
                         {
-                            "label": "3.10",
-                            "value": "~3.10"
+                            "label": "3.10.10",
+                            "value": "3.10.10"
                         }                        
                     ],
                     "xs": 12,
