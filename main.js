@@ -41,7 +41,7 @@ class xsenseControll  extends utils.Adapter {
             if (!this.python) {
                 this.log.error('Python environment could not be initialized.');
                 this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
-                return;
+                this.terminate();
             }
 
             await this.datenVerarbeiten();
