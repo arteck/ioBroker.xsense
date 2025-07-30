@@ -61,7 +61,7 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 
 es muss eine offizielle und veröffentliche Python Version sein
 
-### 💻 Windows
+💻 Windows
 
 1. **Python installieren**
    - Download: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
@@ -71,13 +71,14 @@ es muss eine offizielle und veröffentliche Python Version sein
      python --version
      pip --version
      ```
+    
      
-### 🐧 Linux
+🐧 Linux
    ```sudo apt update
         sudo apt install python3-(gültige Version) python3-pip -y
    ```
 
-### 🐳 Docker
+🐳 Docker
 
 
    ```
@@ -86,10 +87,14 @@ es muss eine offizielle und veröffentliche Python Version sein
 ------------------------------------------------------------------------------
 
 
-## ❗  Es ist notwendig die installierte Python Version anzugeben in Adapter Einstellungen
+❗ danach Version rausfinden und in Adapter Einstellungen einstellen
 ```
       python3 --version
  ```
+  für 💻 Windows im Adapter Baum unter xsense.0.info.callPython -> python eintragen. Als detault Wert steht dort python3. 
+  
+------------------------------------------------------------------------------
+#  ------------------------------------------------------------------------------
 
 ## ❗ bei Problemen 
 
@@ -102,12 +107,15 @@ dann Adapter neu starten
 sollte es immer noch nicht laufen die Datei /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg sich anschauen
 hier stehen Python Versionen die für die Umgebung relevant sind. Diese gegenenfals anpassen.
 
-
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 
 <img width="1029" height="438" alt="grafik" src="https://github.com/user-attachments/assets/86e4fd1c-1d4e-4234-a2ad-48b8dd9f418e" />
 
     
+<img width="1387" height="779" alt="grafik" src="https://github.com/user-attachments/assets/f065c43d-125b-4ca4-a053-bbf4b926e1f6" />
+
 
 ------------------------------------------------------------------------------
 
