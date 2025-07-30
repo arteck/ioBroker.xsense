@@ -188,7 +188,7 @@
     "userEmail": "",
     "userPassword": "",
     "polltime": 60,
-    "pythonVersion": "3.13"
+    "pythonVersion": "3.12.9"
   },
   "encryptedNative": [
     "userPassword"
