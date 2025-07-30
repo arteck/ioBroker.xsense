@@ -31,20 +31,22 @@ class xsenseControll  extends utils.Adapter {
     }
 
     async onReady() {
-        try {
+        
             this.log.info('Start X-Sense...');
 
             this.setAllAvailableToFalse();
 
-            this.python = await this.setupXSenseEnvironment();    
+            this.python = await this.setupXSenseEnvironment(true);   
+             
+        try {
+            if (this.python) {
+              this.log.debug('[XSense] Python environment ready ');
 
-            this.log.debug('[XSense] Python environment ready ');
+              await this.datenVerarbeiten();
+              this.setState('info.connection', true, true);
 
-            await this.datenVerarbeiten();
-            this.setState('info.connection', true, true);
-
-            this.startIntervall();
-
+              this.startIntervall();
+            }
         } catch (err) {
             this.setState('info.connection', false, true);
             this.log.error(`Error on Login or Setup: ${err.message}`);
@@ -55,15 +57,16 @@ class xsenseControll  extends utils.Adapter {
 
     async startIntervall() {
         this.log.debug('[XSense] Start intervall');
+        
         if (!this.python) {
-            this.log.warn('Python environment not initialized. Trying again...');
-            this.python = await this.setupXSenseEnvironment();
-            if (!this.python) {
-                this.setState('info.connection', false, true);
-                return;
-            }
+          this.log.warn('Python environment not initialized. Trying again...');
+          this.python = await this.setupXSenseEnvironment();
+          if (!this.python) {
+              this.setState('info.connection', false, true);
+              return;
+          }
         }
-
+        
         await this.datenVerarbeiten();
 
         if (!this._requestInterval) {
@@ -93,7 +96,7 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-    async setupXSenseEnvironment() {
+    async setupXSenseEnvironment(firstTry) {
         try {
             const { getVenv } = await import('autopy');
             const pfadPythonScript = tools.getDataFolder(this);
@@ -113,12 +116,16 @@ class xsenseControll  extends utils.Adapter {
 
             return python;
         } catch (err) {
-            this.log.error(`[XSense] Fatal error starting Python | ${err} | ${err.stack}`);
-            this.log.error(`[XSense] ------------------------------------------------------`);
-            this.log.error('Python environment could not be initialized.');
-            this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
-            this.log.error('[XSense] !!!!!!!!!!!!!!!!  check /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg  for more env. Python Version Information ');
-            this.terminate();
+            if (firstTry) {
+              this.log.error(`[XSense] Fatal error starting Python | ${err} | ${err.stack}`);
+              this.log.error(`[XSense] ------------------------------------------------------`);
+            }          
+            this.log.error('[XSense] Python environment could not be initialized.');
+            if (firstTry) {
+              this.log.error('[XSense] !!!!!!!!!!!!!!!!            Unsupported Python version found. Please install an official version. https://www.python.org/downloads/source/ ');
+              this.log.error('[XSense] !!!!!!!!!!!!!!!!  check /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg  for more env. Python Version Information ');
+              this.terminate();
+            }
         }
     }
 
