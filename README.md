@@ -72,13 +72,14 @@ es muss eine offizielle und veröffentliche Python Version sein
      python --version
      pip --version
      ```
+      danach im Objekten unter xsense.0.info.callPython -> python eintragen. Als detault Wert steht dort python3. 
 🐧 Linux 🐳 Docker
 
      passiert automatisch, nur in Adapter Einstellungen auswählen welche Version bevorzugt wird
 
 ------------------------------------------------------------------------------
 
-  für 💻 Windows im Adapter Baum unter xsense.0.info.callPython -> python eintragen. Als detault Wert steht dort python3. 
+ 
   
 ------------------------------------------------------------------------------
 #  ------------------------------------------------------------------------------
