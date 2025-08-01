@@ -135,6 +135,12 @@ class xsenseControll  extends utils.Adapter {
     async datenVerarbeiten(firstTry, apiData);
         this.log.debug('[XSense] datenVerarbeiten called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
+        let apiData = 
+            {
+                "token" : '',
+                "user_id" : '',
+                "user_email" : ''
+            }
 
         try {
             const response = await this.callBridge(this.python, apiData);
@@ -148,11 +154,18 @@ class xsenseControll  extends utils.Adapter {
 
                 this.log.debug('[XSense] parsed ' + JSON.stringify(parsed));
 
+                apiData.token =  response.token;
+                apiData.user_id =  response.user.id;
+                apiData.user_email =  response.user_email;
+              
                 await this.json2iob.parse('xsense.0', parsed, {forceIndex: true, write: true});
             }
         } catch (err) {
             this.errorMessage(err, firstTry);
+            return;
         }
+
+       return apiData;
     }
 
     async setupXSenseEnvironment(firstTry) {
