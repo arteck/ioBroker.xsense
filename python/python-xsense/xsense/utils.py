@@ -29,8 +29,10 @@ def get_credentials():
 
     raise ValueError('Username and password not provided')
 
-
 def dump_environment(env: XSenseBase):
+    print(f'Token     : {env.token}')
+    print(f'User ID   : {env.user_id}')
+    print(f'User Email: {env.user_email}')
     for h_id, h in env.houses.items():
         print(f'----[ {h.name} ({h_id}) ]-----------------')
         for s_id, s in h.stations.items():
@@ -38,7 +40,7 @@ def dump_environment(env: XSenseBase):
             print(f'# {s.name} ({s_id})')
             for d_id, d in s.devices.items():
                 dump_device(d)
-                
+              
 def environment_to_dict(env: XSenseBase):
     result = {}
     for h_id, h in env.houses.items():
