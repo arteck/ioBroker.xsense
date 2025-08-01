@@ -61,7 +61,7 @@ class xsenseControll  extends utils.Adapter {
                         
                         this.setState('info.connection', true, true);
     
-                        this.startIntervall();
+                        this.startIntervall(apiData);
                     }
                 }
             }
@@ -72,7 +72,7 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-    async startIntervall() {
+    async startIntervall(apiDataIn) {
         this.log.debug('[XSense] Start intervall');
 
         if (!this.python) {
@@ -85,12 +85,12 @@ class xsenseControll  extends utils.Adapter {
             }
         }
 
-        await this.datenVerarbeiten(false);
+        const apiData = await this.datenVerarbeiten(false, apiDataIn);
 
         if (!this._requestInterval) {
             this.log.debug(` Start XSense request intervall`);
             this._requestInterval = setInterval(async () => {
-                await this.startIntervall();
+                await this.startIntervall(apiData);
             }, this.config.polltime * 1000);
         }
     }
