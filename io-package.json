@@ -231,6 +231,19 @@
         "def": "python3"
       },
       "native": {}
+    },
+    {
+      "_id": "info.token",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "xsense token",
+        "type": "string",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
     }
   ]
 }
