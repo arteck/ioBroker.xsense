@@ -31,6 +31,8 @@ Es ist eine XSense Bridge SBS50 notwendig.
  Der Adapter dient nicht der Alarmierung, es soll eher zur überwachung der Gerätebatterie dienen.
 
 
+------------------------------------------------------------------------------
+
 🔧 Unterstützte Geräte
 - Rauchmelder
 - Kohlenmonoxidmelder
