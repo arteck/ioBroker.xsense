@@ -104,7 +104,17 @@ class xsenseControll  extends utils.Adapter {
             const proc = python(this.callPython, [scriptPath, this.config.userEmail, this.config.userPassword]);
     
             let result = '';
-    
+            let errorOutput = '';
+
+            
+            // Timeout nach 60 Sekunden
+            const timeout = setTimeout(() => {
+                this.log.warn('[XSense] Login script timed out. Killing process...');
+                proc.kill('SIGTERM');
+                reject(new Error('[XSense] Login script timed out'));
+            }, 1000 * 60);
+
+            
             proc.stdout?.on('data', data => {
                 result += data.toString();
                 this.log.debug('[XSense] login result ' + data.toString());
@@ -116,10 +126,12 @@ class xsenseControll  extends utils.Adapter {
             });
     
             proc.on('error', err => {
+                clearTimeout(timeout);
                 reject(err);
             });
     
             proc.on('close', code => {
+                clearTimeout(timeout);
                 this.log.debug('[XSense] Login script exited with code ' + code);
     
                 if (code === 0) {
@@ -202,6 +214,13 @@ class xsenseControll  extends utils.Adapter {
 
             let result = '';
 
+            // Timeout nach 60 Sekunden
+            const timeout = setTimeout(() => {
+                this.log.warn('[XSense] callBridge script timed out. Killing process...');
+                proc.kill('SIGTERM');
+                reject(new Error('[XSense] Login script timed out'));
+            }, 1000 * 60);
+
             proc.stdout?.on('data', data => {
                 result += data.toString();
                 this.log.debug('[XSense] callBridge result ' + data.toString());
@@ -212,10 +231,12 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.on('error', err => {
+                clearTimeout(timeout);
                 reject(err);
             });
 
             proc.on('close', code => {
+                clearTimeout(timeout);
                 this.log.debug('[XSense] callBridge script exited with code ' + code);
 
                 if (code === 0) {
