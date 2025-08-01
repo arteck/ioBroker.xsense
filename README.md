@@ -27,7 +27,7 @@ Es ist eine XSense Bridge SBS50 notwendig.
 
 
 ## ❗ ACHTUNG 
- ein zu häufiges Abfrageintervall verkürzt die Batterielebensdauer der Geräte, da diese explizit IMMER geweckt werden
+ ein zu häufiges Abfrageintervall (default : 5 min)  verkürzt die Batterielebensdauer der Geräte, da diese explizit IMMER geweckt werden
  Der Adapter dient nicht der Alarmierung, es soll eher zur überwachung der Gerätebatterie dienen.
 
 
