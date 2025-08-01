@@ -51,7 +51,7 @@ class xsenseControll  extends utils.Adapter {
 
                 if (this.python) {
 
-                    await this.datenVerarbeiten(true);
+                    await this.loginXsense(true);
                     this.setState('info.connection', true, true);
 
                     this.startIntervall();
@@ -87,6 +87,32 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
+    async loginXsense(firstTry) {
+        this.log.debug('[XSense] Login called');
+        this.log.debug('[XSense] This may take up to 1 minute. Please wait');
+        
+          return new Promise((resolve, reject) => {
+            // Schritt 1: Login-Skript ausführen
+            execFile("python", ["login_async.py", username, password], (err, stdout, stderr) => {
+              if (err) {
+                console.error("Login-Fehler:", stderr);
+                return reject(err);
+              }
+        
+              let sessionJson;
+              try {
+                sessionJson = JSON.parse(stdout.trim());
+              } catch (parseErr) {
+                console.error("Fehler beim Parsen der Session-Daten:", parseErr);
+                return reject(parseErr);
+              }
+        
+              const sessionArg = JSON.stringify(sessionJson);
+            });
+          });
+    }
+
+    
     async datenVerarbeiten(firstTry) {
         this.log.debug('[XSense] datenVerarbeiten called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
