@@ -24,7 +24,7 @@ class xsenseControll  extends utils.Adapter {
         this.json2iob = new Json2iobXSense(this);
 
         this._requestInterval = 0;
-
+        
         this.on('ready', this.onReady.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
@@ -44,17 +44,25 @@ class xsenseControll  extends utils.Adapter {
             }
 
             if (loginGo) {
-
                 this.callPython = (await this.getState('info.callPython'))?.val;
                 this.setAllAvailableToFalse();
                 this.python = await this.setupXSenseEnvironment(true);
 
                 if (this.python) {
+                    const reponse = await this.loginXsense(true);
+                    if (!reponse.includes('Error')) {
 
-                    await this.loginXsense(true);
-                    this.setState('info.connection', true, true);
-
-                    this.startIntervall();
+                        const apiData = {
+                                "token" : response.token,
+                                "user_id" : response.user.id,
+                                "user_email" : response.user_email
+                        }
+                        this.datenverarbeiten(true, apiData);
+                        
+                        this.setState('info.connection', true, true);
+    
+                        this.startIntervall();
+                    }
                 }
             }
         } catch (err) {
@@ -91,34 +99,45 @@ class xsenseControll  extends utils.Adapter {
         this.log.debug('[XSense] Login called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
         
-          return new Promise((resolve, reject) => {
-            // Schritt 1: Login-Skript ausführen
-            execFile("python", ["login_async.py", username, password], (err, stdout, stderr) => {
-              if (err) {
-                console.error("Login-Fehler:", stderr);
-                return reject(err);
-              }
-        
-              let sessionJson;
-              try {
-                sessionJson = JSON.parse(stdout.trim());
-              } catch (parseErr) {
-                console.error("Fehler beim Parsen der Session-Daten:", parseErr);
-                return reject(parseErr);
-              }
-        
-              const sessionArg = JSON.stringify(sessionJson);
+        return new Promise((resolve, reject) => {
+            const scriptPath = path.join(__dirname, 'python', 'login.py');
+            const proc = python(this.callPython, [scriptPath, this.config.userEmail, this.config.userPassword]);
+
+            let result = '';
+
+            proc.stdout?.on('data', data => {
+                result += data.toString();
+                this.log.debug('[XSense] login result ' + data.toString());
             });
-          });
+
+            proc.stderr?.on('data', data => {
+                this.log.warn(`[XSense]  Login Error `);
+                this.log.warn(`[XSense]  If it is the first run of the adapter, restart it manually and check again. `);
+            });
+
+            proc.on('error', err => {
+                reject(err);
+            });
+
+            proc.on('close', code => {
+                this.log.debug('[XSense] Login script exited with code ' + code);
+
+                if (code === 0) {
+                    resolve(result.trim());
+                } else {
+                    reject(new Error(`[XSense] Login Error function exited with code ${code}`));
+                }
+            });
+        });
     }
 
     
-    async datenVerarbeiten(firstTry) {
+    async datenVerarbeiten(firstTry, apiData);
         this.log.debug('[XSense] datenVerarbeiten called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
 
         try {
-            const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
+            const response = await this.callBridge(this.python, apiData);
 
             if (response) {
                 // hole alle devices und vergleiche ob was offline ist
@@ -162,12 +181,12 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-    async callBridge(python, email, password) {
+    async callBridge(python,apiData) {
         this.log.debug('[XSense] callBridge ');
 
         return new Promise((resolve, reject) => {
-            const scriptPath = path.join(__dirname, 'python', 'run_xsense.py');
-            const proc = python(this.callPython, [scriptPath, email, password]);
+            const scriptPath = path.join(__dirname, 'python', 'hol_ab.py');
+            const proc = python(this.callPython, [scriptPath, apiData]);
 
             let result = '';
 
@@ -177,8 +196,7 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.stderr?.on('data', data => {
-                this.log.warn(`[XSense]   callBridge request error `);
-                this.log.warn(`[XSense]   If it is the first run of the adapter, restart it manually and check again. `);
+                this.log.warn(`[XSense] callBridge request error `);               
             });
 
             proc.on('error', err => {
