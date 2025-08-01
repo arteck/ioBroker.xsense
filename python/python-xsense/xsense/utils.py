@@ -42,7 +42,11 @@ def dump_environment(env: XSenseBase):
                 dump_device(d)
               
 def environment_to_dict(env: XSenseBase):
-    result = {}
+    result = {
+        'token': env.token,
+        'user_id': env.user_id,
+        'user_email': env.user_email
+    }
     for h_id, h in env.houses.items():
         house = {
             'name': h.name,
