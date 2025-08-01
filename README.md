@@ -26,6 +26,11 @@ Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet
 Es ist eine XSense Bridge SBS50 notwendig.
 
 
+## ❗ ACHTUNG 
+ ein zu häufiges Abfrageintervall verkürzt die Batterielebensdauer der Geräte, da diese explizit IMMER geweckt werden
+ Der Adapter dient nicht der Alarmierung, es soll eher zur überwachung der Gerätebatterie dienen.
+
+
 🔧 Unterstützte Geräte
 - Rauchmelder
 - Kohlenmonoxidmelder
