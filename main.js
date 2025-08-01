@@ -98,30 +98,30 @@ class xsenseControll  extends utils.Adapter {
     async loginXsense(firstTry) {
         this.log.debug('[XSense] Login called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
-        
+
         return new Promise((resolve, reject) => {
             const scriptPath = path.join(__dirname, 'python', 'login.py');
             const proc = python(this.callPython, [scriptPath, this.config.userEmail, this.config.userPassword]);
-
+    
             let result = '';
-
+    
             proc.stdout?.on('data', data => {
                 result += data.toString();
                 this.log.debug('[XSense] login result ' + data.toString());
             });
-
+    
             proc.stderr?.on('data', data => {
-                this.log.warn(`[XSense]  Login Error `);
-                this.log.warn(`[XSense]  If it is the first run of the adapter, restart it manually and check again. `);
+                this.log.warn('[XSense] Login Error');
+                this.log.warn('[XSense] If it is the first run of the adapter, restart it manually and check again.');
             });
-
+    
             proc.on('error', err => {
                 reject(err);
             });
-
+    
             proc.on('close', code => {
                 this.log.debug('[XSense] Login script exited with code ' + code);
-
+    
                 if (code === 0) {
                     resolve(result.trim());
                 } else {
@@ -130,7 +130,6 @@ class xsenseControll  extends utils.Adapter {
             });
         });
     }
-
     
     async datenVerarbeiten(firstTry, apiData);
         this.log.debug('[XSense] datenVerarbeiten called');
