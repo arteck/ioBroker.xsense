@@ -8,7 +8,7 @@ const path = require('path');
 
 global.fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
 
-
+let pythonEnv = null;
 /**
  * -------------------------------------------------------------------
  * ioBroker X-Sense Adapter
@@ -24,7 +24,7 @@ class xsenseControll  extends utils.Adapter {
         this.json2iob = new Json2iobXSense(this);
 
         this._requestInterval = 0;
-        
+
         this.on('ready', this.onReady.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
@@ -46,22 +46,20 @@ class xsenseControll  extends utils.Adapter {
             if (loginGo) {
                 this.callPython = (await this.getState('info.callPython'))?.val;
                 this.setAllAvailableToFalse();
-                this.python = await this.setupXSenseEnvironment(true);
+                pythonEnv = await this.setupXSenseEnvironment(true);
 
-                if (this.python) {
-                    const reponse = await this.loginXsense(true);
-                    if (!reponse.includes('Error')) {
+                if (pythonEnv) {
+                    const reponse = await this.loginXsense(pythonEnv, true);
+                    const respJson = JSON.parse(reponse);
 
-                        const apiData = {
-                                "token" : response.token,
-                                "user_id" : response.user.id,
-                                "user_email" : response.user_email
-                        }
-                        this.datenverarbeiten(true, apiData);
-                        
+                    if (!reponse.includes('Error') || response != null) {
+                        this.setState('info.token', JSON.stringify(respJson), true);
+
+                        await this.datenVerarbeiten(pythonEnv,true, respJson);
+
                         this.setState('info.connection', true, true);
-    
-                        this.startIntervall(apiData);
+
+                        this.startIntervall(pythonEnv, apiData);
                     }
                 }
             }
@@ -72,14 +70,14 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-    async startIntervall(apiDataIn) {
+    async startIntervall(pythonEnv, apiDataIn) {
         this.log.debug('[XSense] Start intervall');
 
-        if (!this.python) {
+        if (!pythonEnv) {
             this.log.warn('Python environment not initialized. Trying again...');
-            this.python = await this.setupXSenseEnvironment();
+            pythonEnv = await this.setupXSenseEnvironment();
 
-            if (!this.python) {
+            if (!pythonEnv) {
                 this.setState('info.connection', false, true);
                 return;
             }
@@ -90,23 +88,23 @@ class xsenseControll  extends utils.Adapter {
         if (!this._requestInterval) {
             this.log.debug(` Start XSense request intervall`);
             this._requestInterval = setInterval(async () => {
-                await this.startIntervall(apiData);
+                await this.startIntervall(pythonEnv, apiData);
             }, this.config.polltime * 1000);
         }
     }
 
-    async loginXsense(firstTry) {
+    async loginXsense(python, firstTry) {
         this.log.debug('[XSense] Login called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
 
         return new Promise((resolve, reject) => {
             const scriptPath = path.join(__dirname, 'python', 'login.py');
             const proc = python(this.callPython, [scriptPath, this.config.userEmail, this.config.userPassword]);
-    
+
             let result = '';
             let errorOutput = '';
 
-            
+
             // Timeout nach 60 Sekunden
             const timeout = setTimeout(() => {
                 this.log.warn('[XSense] Login script timed out. Killing process...');
@@ -114,26 +112,26 @@ class xsenseControll  extends utils.Adapter {
                 reject(new Error('[XSense] Login script timed out'));
             }, 1000 * 60);
 
-            
+
             proc.stdout?.on('data', data => {
                 result += data.toString();
                 this.log.debug('[XSense] login result ' + data.toString());
             });
-    
+
             proc.stderr?.on('data', data => {
-                this.log.warn('[XSense] Login Error');
+                this.log.warn('[XSense] Login Error ' + data.toString());
                 this.log.warn('[XSense] If it is the first run of the adapter, restart it manually and check again.');
             });
-    
+
             proc.on('error', err => {
                 clearTimeout(timeout);
                 reject(err);
             });
-    
+
             proc.on('close', code => {
                 clearTimeout(timeout);
                 this.log.debug('[XSense] Login script exited with code ' + code);
-    
+
                 if (code === 0) {
                     resolve(result.trim());
                 } else {
@@ -142,19 +140,13 @@ class xsenseControll  extends utils.Adapter {
             });
         });
     }
-    
-    async datenVerarbeiten(firstTry, apiData);
+
+    async datenVerarbeiten(pythonEnv, firstTry, apiData){
         this.log.debug('[XSense] datenVerarbeiten called');
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
-        let apiData = 
-            {
-                "token" : '',
-                "user_id" : '',
-                "user_email" : ''
-            }
 
         try {
-            const response = await this.callBridge(this.python, apiData);
+            const response = await this.callBridge(pythonEnv, apiData);
 
             if (response) {
                 // hole alle devices und vergleiche ob was offline ist
@@ -165,10 +157,10 @@ class xsenseControll  extends utils.Adapter {
 
                 this.log.debug('[XSense] parsed ' + JSON.stringify(parsed));
 
-                apiData.token =  response.token;
-                apiData.user_id =  response.user.id;
-                apiData.user_email =  response.user_email;
-              
+                apiData.access_token =  response.token;
+                apiData.userid =  response.userid;
+                apiData.username =  response.username;
+
                 await this.json2iob.parse('xsense.0', parsed, {forceIndex: true, write: true});
             }
         } catch (err) {
@@ -205,12 +197,12 @@ class xsenseControll  extends utils.Adapter {
         }
     }
 
-    async callBridge(python,apiData) {
+    async callBridge(pythonEnv, apiData) {
         this.log.debug('[XSense] callBridge ');
 
         return new Promise((resolve, reject) => {
-            const scriptPath = path.join(__dirname, 'python', 'hol_ab.py');
-            const proc = python(this.callPython, [scriptPath, apiData]);
+            const scriptPath = path.join(__dirname, 'python', 'holab.py');
+            const proc = pythonEnv(this.callPython, [scriptPath, JSON.stringify(apiData)]);
 
             let result = '';
 
@@ -227,7 +219,8 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.stderr?.on('data', data => {
-                this.log.warn(`[XSense] callBridge request error `);               
+                this.log.warn('[XSense] callBridge Error ' + data.toString());
+                this.log.warn(`[XSense] callBridge request error `);
             });
 
             proc.on('error', err => {
