@@ -156,7 +156,7 @@ ist die Datei nicht vorhanden habt ihr nicht lang genug gewartet bis der Adapter
 ### 0.0.1 (2025-07-27)
 * (arteck) initial release
 
-## 📜 Lizenz
+## Lizenz
 
 MIT License
 
