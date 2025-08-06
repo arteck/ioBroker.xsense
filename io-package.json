@@ -29,58 +29,6 @@
         "uk": "фіксувати util",
         "zh-cn": "修补工具"
       },
-      "0.0.11": {
-        "en": "fix util missing",
-        "de": "fehlerbehebung",
-        "ru": "исчезновение util missing",
-        "pt": "corrigir o util em falta",
-        "nl": "fix util ontbreekt",
-        "fr": "réparer util manquant",
-        "it": "correzione mancante",
-        "es": "reparación utilidad faltante",
-        "pl": "fix util brakujący",
-        "uk": "виправити util відсутні",
-        "zh-cn": "修补乌蒂缺失"
-      },
-      "0.0.10": {
-        "en": "pip auto install for linux",
-        "de": "pip auto install für linux",
-        "ru": "pip auto для linux",
-        "pt": "instalação automática do pip para o linux",
-        "nl": "pip auto installatie voor linux",
-        "fr": "pip installation automatique pour linux",
-        "it": "pip auto install per linux",
-        "es": "pip auto install for linux",
-        "pl": "pip auto install for linux",
-        "uk": "pip автоматична установка для linux",
-        "zh-cn": "linux 的 pip 自动安装"
-      },
-      "0.0.9": {
-        "en": "fix callPython Object\n",
-        "de": "telefonieren Python Objekt\n",
-        "ru": "фиксировать Python объект\n",
-        "pt": "corrigir chamada Objecto Python\n",
-        "nl": "fix call Python-object\n",
-        "fr": "correction de l'appel Objet Python\n",
-        "it": "correzione della chiamata Oggetto\n",
-        "es": "correr llamada Python Object\n",
-        "pl": "fix call Obiekt Python\n",
-        "uk": "фіксувати дзвінок Об'єкт Python\n",
-        "zh-cn": "固定调用 Python 对象\n"
-      },
-      "0.0.8": {
-        "en": "add callPython Object",
-        "de": "! Python Objekt",
-        "ru": "добавить звонок Python объект",
-        "pt": "adicionar chamada Objecto Python",
-        "nl": "oproep toevoegen Python-object",
-        "fr": "ajouter l'appel Objet Python",
-        "it": "aggiungi chiamata Oggetto",
-        "es": "agregar llamada Python Object",
-        "pl": "dodaj wywołanie Obiekt Python",
-        "uk": "додати дзвінок Об'єкт Python",
-        "zh-cn": "添加调用 Python 对象"
-      },
       "0.0.6": {
         "en": "new error message",
         "de": "neue fehlermeldung",
@@ -133,11 +81,11 @@
     "enabled": false,
     "tier": 2,
     "readme": "https://github.com/arteck/ioBroker.xsense/blob/master/README.md",
-    "loglevel": "info",
-    "restartAdapters": [
-      "xsense"
-    ],
+    "loglevel": "info",    
     "keywords": [
+      "iobroker",
+      "adapter", 
+      "smart home", 
       "xsense",
       "x-sense",
       "XSense Bridge",
@@ -155,7 +103,6 @@
     "icon": "xsense.png",
     "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.xsense/master/admin/xsense.png",
     "type": "utility",
-    "singletonHost": true,
     "dataSource": "poll",
     "mode": "daemon",
     "allowInit": true,
