@@ -150,7 +150,7 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ### 0.0.1 (2025-07-27)
 * (arteck) initial release
 
-## Lizenz
+## License
 
 MIT License
 
