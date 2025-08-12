@@ -17,96 +17,87 @@
 ![Stable](https://iobroker.live/badges/xsense-stable.svg)
 
 
-xsense Adapter for ioBroker
-------------------------------------------------------------------------------
+## XSense Adapter for ioBroker
 
-Dieser ioBroker-Adapter ermöglicht die Integration von XSense-Geräten in das ioBroker Smart-Home-System. 
-Er wurde entwickelt, um Daten von XSense-Rauchmeldern, CO-Meldern und weiteren kompatiblen Geräten zu empfangen und für Automatisierungen und Überwachungen im ioBroker bereitzustellen.
-Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet eine einfache Möglichkeit, XSense-Geräte in bestehende ioBroker-Setups zu integrieren.
-Es ist eine XSense Bridge SBS50 notwendig.
+This ioBroker adapter allows the integration of XSense devices into the ioBroker smart home system.  
+It is designed to receive data from XSense smoke detectors, CO detectors, and other compatible devices, making them available in ioBroker for automation and monitoring.  
+The adapter communicates with the XSense cloud server and provides an easy way to integrate XSense devices into existing ioBroker setups.  
+An XSense Bridge SBS50 is required.
 
+---
 
-## ❗ ACHTUNG 
- ein zu häufiges Abfrageintervall (default : 5 min)  verkürzt die Batterielebensdauer der Geräte, da diese explizit IMMER geweckt werden
- Der Adapter dient nicht der Alarmierung, es soll eher zur überwachung der Gerätebatterie dienen.
+## ❗ WARNING
+A too frequent polling interval (default: 5 min) will shorten the device battery life, as the devices are **always** explicitly woken up.  
+The adapter is **not** intended for alarm purposes — it is primarily for monitoring the device battery status.
 
+---
 
-------------------------------------------------------------------------------
+### 🔧 Supported Devices
+- Smoke detectors  
+- Carbon monoxide detectors  
+- Heat detectors  
+- Water leak detectors  
+- Hygrometers  
+- Base stations (if supported)  
 
-🔧 Unterstützte Geräte
-- Rauchmelder
-- Kohlenmonoxidmelder
-- Hitzemelder
-- Wassermelder
-- Hygrometer
-- Basisstationen (sofern unterstützt)
+---
 
+### ⚠️ Requirements
+- An XSense account with registered devices  
+- Internet connection for cloud communication  
+- **Python version 3.10.0 or higher** from the [official public release](https://www.python.org/downloads/source/) (required for XSense communication via Python wrapper)  
 
-⚠️ Voraussetzungen
-- Ein XSense-Konto mit registrierten Geräten
-- Internetverbindung für Cloud-Kommunikation
-- **Python mind. Version 3.10.0** in der [öffentlich publizierten Version](https://www.python.org/downloads/source/) erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
+---
 
+### 📦 Preparation
 
+Since XSense does not allow simultaneous login from the app and third-party software, it is recommended to follow this procedure:
 
-📦 Vorbereitung
+- Create a second account in the XSense app  
+- Log in with the new account, then log out  
+- Log in again with your original account  
+- Share the desired devices from the main account with the new account  
+- Log back into the new account and accept the invitation  
+- Finally, enter the new account credentials in the adapter settings  
 
-Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, empfiehlt sich folgendes Vorgehen:
+  **Alternatively:** You can use only one account, with the drawback that you will constantly be logged out of the app.
 
-- Zweitkonto erstellen: Erstelle in der XSense-App ein zweites Konto.
-- Login mit dem neuen Konto, dann ausloggen
-- Login mit dem alten Konto und 
-- Geräte teilen: Teile die gewünschten Geräte vom Hauptkonto mit dem neuen Konto.
-- dann Login wieder mit dem neuen Konto und einladung akzeptieren
-- erst dann 
-- Zugangsdaten im Adapter eintragen: Verwende das Zweitkonto für die Verbindung im ioBroker.
+---
 
-  ### oder man nutzt nur ein Konto, mit der prämisse dass man ständig ausgeloggt wird
+## 🚀 Installing Python (if not already installed)
 
-------------------------------------------------------------------------------
+It must be an official and publicly released Python version.
 
-## 🚀 Installation Python falls noch -KEIN- installiert ist
+💻 **Windows**
 
-es muss eine offizielle und veröffentliche Python Version sein
-
-💻 Windows
-
-1. **Python installieren**
-   - Download: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
-   - Während der Installation **"Add Python to PATH" aktivieren**
-   - Danach prüfen:
+1. **Install Python**  
+   - Download: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)  
+   - During installation, **enable “Add Python to PATH”**  
+   - Then verify:  
      ```powershell
      python --version
      pip --version
      ```
-      danach im Objekten unter xsense.0.info.callPython -> python eintragen. Als detault Wert steht dort python3.
+   - Afterwards, in the objects under `xsense.0.info.callPython`, enter `python` (default value is `python3`).
 
+🐧 **Linux / Docker**  
+- This happens automatically — just select the preferred version in the adapter settings.
 
+---
 
-     
-🐧 Linux 🐳 Docker
+## ❗ Troubleshooting
 
-  - passiert automatisch, nur in Adapter Einstellungen auswählen welche Version bevorzugt wird
+If the correct version is installed but the adapter has already fetched the wrong one,  
+first delete the environment:
 
-------------------------------------------------------------------------------
-
- 
-  
-------------------------------------------------------------------------------
-#  ------------------------------------------------------------------------------
-
-## ❗ bei Problemen 
-
-ist dir richtige version installiert aber der Adapter hat schon was falsches gezogen 
-zuerst die Umgebung löschen
 ```
   rm -Rf /home/iobroker/.cache/autopy/venv/xsense-env
  ```
-dann Adapter neu starten
-sollte es immer noch nicht laufen die Datei /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg sich anschauen
-hier stehen Python Versionen die für die Umgebung relevant sind. Diese gegenenfals anpassen.
-ist die Datei nicht vorhanden habt ihr nicht lang genug gewartet bis der Adapter gestartet wurde.
 
+Then restart the adapter.
+If it still doesn’t work, check the file /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg.
+It lists the Python versions relevant to the environment — adjust if necessary.
+If the file does not exist, you did not wait long enough for the adapter to start.
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
