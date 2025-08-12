@@ -94,10 +94,13 @@ first delete the environment:
   rm -Rf /home/iobroker/.cache/autopy/venv/xsense-env
  ```
 
+
 Then restart the adapter.
 If it still doesn’t work, check the file /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg.
 It lists the Python versions relevant to the environment — adjust if necessary.
 If the file does not exist, you did not wait long enough for the adapter to start.
+
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
