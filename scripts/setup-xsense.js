@@ -14,11 +14,8 @@ const { getVenv } = require('autopy');
         const python = await getVenv({
             name: 'xsense-env',
             pythonVersion: '~3.11',
-            requirements: [
-                { name: 'requests' },
-                { name: 'aiohttp' }
-            ],
-            extraPackages: ['git+https://github.com/theosnel/python-xsense.git']
+            requirements: [{ name: 'requests' }, { name: 'aiohttp' }],
+            extraPackages: ['git+https://github.com/theosnel/python-xsense.git'],
         });
 
         console.log('XSense-Umgebung erfolgreich eingerichtet.');

@@ -8,17 +8,16 @@ const path = require('path');
 
 global.fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
 
-
 /**
  * -------------------------------------------------------------------
  * ioBroker X-Sense Adapter
  * -------------------------------------------------------------------
  */
-class xsenseControll  extends utils.Adapter {
+class xsenseControll extends utils.Adapter {
     constructor(options = {}) {
         super({
             ...options,
-            name: 'xsense'
+            name: 'xsense',
         });
 
         this.json2iob = new Json2iobXSense(this);
@@ -44,13 +43,11 @@ class xsenseControll  extends utils.Adapter {
             }
 
             if (loginGo) {
-
                 this.callPython = (await this.getState('info.callPython'))?.val;
                 this.setAllAvailableToFalse();
                 this.python = await this.setupXSenseEnvironment(true);
 
                 if (this.python) {
-
                     await this.datenVerarbeiten(true);
                     this.setState('info.connection', true, true);
 
@@ -101,9 +98,9 @@ class xsenseControll  extends utils.Adapter {
 
                 const parsed = tools.parseXSenseOutput(response, knownDevices);
 
-                this.log.debug('[XSense] parsed ' + JSON.stringify(parsed));
+                this.log.debug(`[XSense] parsed ${JSON.stringify(parsed)}`);
 
-                await this.json2iob.parse('xsense.0', parsed, {forceIndex: true, write: true});
+                await this.json2iob.parse(this.namespace, parsed);
             }
         } catch (err) {
             this.errorMessage(err, firstTry);
@@ -121,11 +118,9 @@ class xsenseControll  extends utils.Adapter {
                 pythonVersion: this.config.pythonVersion,
                 requirements: [
                     { name: 'requests', version: '' },
-                    { name: 'aiohttp', version: '' }
+                    { name: 'aiohttp', version: '' },
                 ],
-                extraPackages: [
-                    pfadPythonScript + 'python-xsense'
-                ]
+                extraPackages: [`${pfadPythonScript}python-xsense`],
             });
 
             this.log.debug('[XSense] Python environment ready ');
@@ -147,12 +142,14 @@ class xsenseControll  extends utils.Adapter {
 
             proc.stdout?.on('data', data => {
                 result += data.toString();
-                this.log.debug('[XSense] callBridge result ' + data.toString());
+                this.log.debug(`[XSense] callBridge result ${data.toString()}`);
             });
 
             proc.stderr?.on('data', data => {
                 this.log.warn(`[XSense]   callBridge request error `);
-                this.log.warn(`[XSense]   If it is the first run of the adapter, restart it manually and check again. `);
+                this.log.warn(
+                    `[XSense]   If it is the first run of the adapter, restart it manually and check again. `,
+                );
             });
 
             proc.on('error', err => {
@@ -160,7 +157,7 @@ class xsenseControll  extends utils.Adapter {
             });
 
             proc.on('close', code => {
-                this.log.debug('[XSense] callBridge script exited with code ' + code);
+                this.log.debug(`[XSense] callBridge script exited with code ${code}`);
 
                 if (code === 0) {
                     resolve(result.trim());
@@ -171,10 +168,11 @@ class xsenseControll  extends utils.Adapter {
         });
     }
 
-
     async onUnload(callback) {
         try {
-            if (this._requestInterval) clearInterval(this._requestInterval);
+            if (this._requestInterval) {
+                clearInterval(this._requestInterval);
+            }
             this.setAllAvailableToFalse();
             callback();
         } catch (e) {
@@ -205,13 +203,12 @@ class xsenseControll  extends utils.Adapter {
     }
 }
 
-// @ts-ignore parent is a valid property on module
 if (module.parent) {
     // Export the constructor in compact mode
     /**
-   * @param {Partial<utils.AdapterOptions>} [options={}]
-   */
-    module.exports = (options) => new xsenseControll(options);
+     * @param {Partial<utils.AdapterOptions>} [options]
+     */
+    module.exports = options => new xsenseControll(options);
 } else {
     // otherwise start the instance directly
     new xsenseControll();
