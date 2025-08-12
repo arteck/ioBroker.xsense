@@ -171,7 +171,7 @@ class xsenseControll extends utils.Adapter {
     async onUnload(callback) {
         try {
             if (this._requestInterval) {
-                clearInterval(this._requestInterval);
+                this.clearInterval(this._requestInterval);
             }
             this.setAllAvailableToFalse();
             callback();
