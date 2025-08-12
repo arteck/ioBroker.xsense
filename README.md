@@ -19,7 +19,7 @@
 
 ## XSense Adapter for ioBroker
 
-This ioBroker adapter allows the integration of XSense devices into the ioBroker smart home system.  
+This ioBroker adapter allows the integration of [XSense devices](https://de.x-sense.com/) into the ioBroker smart home system.  
 It is designed to receive data from XSense smoke detectors, CO detectors, and other compatible devices, making them available in ioBroker for automation and monitoring.  
 The adapter communicates with the XSense cloud server and provides an easy way to integrate XSense devices into existing ioBroker setups.  
 An XSense Bridge SBS50 is required.
