@@ -1,3 +1,6 @@
+![Logo](admin/xsense.png)
+# ioBroker.xsense
+=================
 
 xsense Adapter for ioBroker
 ------------------------------------------------------------------------------
@@ -92,9 +95,7 @@ ist die Datei nicht vorhanden habt ihr nicht lang genug gewartet bis der Adapter
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
-
 <img width="1029" height="438" alt="grafik" src="https://github.com/user-attachments/assets/86e4fd1c-1d4e-4234-a2ad-48b8dd9f418e" />
 
     
 <img width="1387" height="779" alt="grafik" src="https://github.com/user-attachments/assets/f065c43d-125b-4ca4-a053-bbf4b926e1f6" />
-
