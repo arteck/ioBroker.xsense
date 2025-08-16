@@ -9,5 +9,8 @@
     "Polling interval": "轮询间隔",
     "Polling interval in seconds": "轮询间隔（秒）",
     "Python Version": "Python 版本",
-    "Python Version to use for the adapter": "适配器使用的 Python 版本"
+    "Python Version to use for the adapter": "适配器使用的 Python 版本",
+    "is adapter running under Windows?" : "适配器是否在 Windows 上运行？",
+    "timeout for Python script" : "Python 脚本的超时时间",
+    "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval." : "可能与轮询间隔冲突。请勿设置低于 20 秒或高于设置的轮询间隔。"
 }

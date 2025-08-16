@@ -9,5 +9,8 @@
     "Polling interval": "Intervalle d'interrogation",
     "Polling interval in seconds": "Intervalle d'interrogation en secondes",
     "Python Version": "Version de Python",
-    "Python Version to use for the adapter": "Version de Python à utiliser pour l'adaptateur"
+    "Python Version to use for the adapter": "Version de Python à utiliser pour l'adaptateur",
+    "is adapter running under Windows?" : "l'adaptateur fonctionne-t-il sous Windows ?",
+    "timeout for Python script" : "délai d'attente pour le script Python",
+    "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval." : "peut-être un conflit avec l'intervalle d'interrogation. Ne pas définir en dessous de 20 secondes ou au-dessus de l'intervalle d'interrogation défini."
 }

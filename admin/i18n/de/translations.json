@@ -9,5 +9,8 @@
     "Polling interval": "Abfrageintervall",
     "Polling interval in seconds": "Abfrageintervall in Sekunden",
     "Python Version": "Python-Version",
-    "Python Version to use for the adapter": "Python-Version, die für den Adapter verwendet werden soll"
+    "Python Version to use for the adapter": "Python-Version, die für den Adapter verwendet werden soll",
+    "is adapter running under Windows?" : "läuft der Adapter unter Windows?",
+    "timeout for Python script" : "Zeitüberschreitung für das Python-Skript",
+    "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval." : "vielleicht Konflikt mit dem Abfrageintervall. Nicht unter 20 Sekunden oder über dem festgelegten Abfrageintervall einstellen."
 }

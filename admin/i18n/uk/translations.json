@@ -9,5 +9,8 @@
     "Polling interval": "Інтервал опитування",
     "Polling interval in seconds": "Інтервал опитування в секундах",
     "Python Version": "Версія Python",
-    "Python Version to use for the adapter": "Версія Python для використання з адаптером"
+    "Python Version to use for the adapter": "Версія Python для використання з адаптером",
+    "is adapter running under Windows?" : "Чи працює адаптер під Windows?",
+    "timeout for Python script" : "тайм-аут для скрипту Python",
+    "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval." : "можливий конфлікт з інтервалом опитування. не встановлюйте нижче 20 секунд або вище встановленого інтервалу опитування."
 }

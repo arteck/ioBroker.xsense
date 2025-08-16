@@ -31,7 +31,7 @@
                     "type": "staticLink",
                     "label": "🇩🇪 Deutsche Dokumentation",
                     "button": true,
-                    "href": "https://github.com/arteck/ioBroker.xsense/blob/main/README_de.md",
+                    "href": "https://github.com/arteck/ioBroker.xsense/blob/main/README.md",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -46,7 +46,7 @@
                     "type": "staticLink",
                     "label": "🇬🇧 English Documentation",
                     "button": true,
-                    "href": "https://github.com/arteck/ioBroker.xsense/blob/main/README.md",
+                    "href": "https://github.com/arteck/ioBroker.xsense/blob/main/README_en.md",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -91,7 +91,7 @@
                     "newLine": true,
                     "type": "number",
                     "label": "Polling interval",
-                    "help": "Polling interval in seconds",                    
+                    "help": "Polling interval in seconds",
                     "min": 30,
                     "max": 3600,
                     "step": 1,
@@ -107,7 +107,7 @@
                     "label": "Python Version",
                     "help": "Python Version to use for the adapter",
                     "options": [
-                
+
                         {
                             "label": "3.12.9",
                             "value": "3.12.9"
@@ -119,11 +119,33 @@
                         {
                             "label": "3.10.10",
                             "value": "3.10.10"
-                        }                        
+                        }
                     ],
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "pythonTimeout": {
+                    "type": "number",
+                    "label": "timeout for Python script",
+                    "help": "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval.",
+                    "min": 20,
+                    "max": 90,
+                    "step": 1,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "isWindowsSystem": {
+                    "type": "checkbox",
+                    "label": "is adapter running under Windows?",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 8,
                     "lg": 4,
                     "xl": 4
                 }

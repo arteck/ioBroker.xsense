@@ -1,9 +1,6 @@
 const utils = require('@iobroker/adapter-core');
 const tools = require('./lib/tools');
 const Json2iobXSense = require('./lib/json2iob');
-
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
 const path = require('path');
 
 global.fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
@@ -44,6 +41,10 @@ class xsenseControll extends utils.Adapter {
 
             if (loginGo) {
                 this.callPython = (await this.getState('info.callPython'))?.val;
+                if (this.config.isWindowsSystem) {
+                    this.callPython = 'python';
+                }
+
                 this.setAllAvailableToFalse();
                 this.python = await this.setupXSenseEnvironment(true);
 
@@ -140,6 +141,14 @@ class xsenseControll extends utils.Adapter {
 
             let result = '';
 
+            const timeout = setTimeout(() => {
+                this.log.error(
+                    `[XSense] callBridge timeout nach ${this.config.pythonTimeout}ms – Prozess wird beendet`,
+                );
+                proc.kill('SIGKILL'); // Prozess hart beenden
+                reject(new Error(`[XSense] callBridge Timeout nach ${this.config.pythonTimeout}ms`));
+            }, 1000 * this.config.pythonTimeout);
+
             proc.stdout?.on('data', data => {
                 result += data.toString();
                 this.log.debug(`[XSense] callBridge result ${data.toString()}`);
@@ -153,10 +162,12 @@ class xsenseControll extends utils.Adapter {
             });
 
             proc.on('error', err => {
+                this.clearTimeout(timeout);
                 reject(err);
             });
 
             proc.on('close', code => {
+                this.clearTimeout(timeout);
                 this.log.debug(`[XSense] callBridge script exited with code ${code}`);
 
                 if (code === 0) {

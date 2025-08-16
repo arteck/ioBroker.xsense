@@ -81,9 +81,11 @@
     "enabled": false,
     "tier": 2,
     "readme": "https://github.com/arteck/ioBroker.xsense/blob/master/README.md",
-    "loglevel": "info",    
+    "loglevel": "info",
     "keywords": [
-      "iobroker","adapter","smart home", 
+      "iobroker",
+      "adapter",
+      "smart home",
       "xsense",
       "x-sense",
       "XSense Bridge",
@@ -132,7 +134,9 @@
     "userEmail": "",
     "userPassword": "",
     "polltime": 300,
-    "pythonVersion": "3.12.9"
+    "pythonVersion": "3.12.9",
+    "isWindowsSystem": false,
+    "pythonTimeout": 20
   },
   "encryptedNative": [
     "userPassword"
