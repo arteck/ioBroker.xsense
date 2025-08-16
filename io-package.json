@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "news": {
+      "0.0.14": {
+        "en": "add checkbox for windows\nadd timeout for python\nfix state roles",
+        "de": "checkbox für fenster hinzufügen\nzeitout für python hinzufügen\nzustandsrollen beheben",
+        "ru": "добавить checkbox для windows\nдобавить тайм-аут для python\nисправить государственные роли",
+        "pt": "adicionar caixa de seleção para janelas\nadicionar tempo limite para python\ncorrigir funções de estado",
+        "nl": "selectievakje toevoegen voor vensters\ntimeout toevoegen voor python\nfix state rollen",
+        "fr": "ajouter une case à cocher pour les fenêtres\najouter le timeout pour python\nfixer les rôles d'état",
+        "it": "aggiungere la casella di controllo per le finestre\naggiungere timeout per pitone\nrisolvere i ruoli dello stato",
+        "es": "añadir casilla para ventanas\nañadir tiempo para pitón\nfijar funciones estatales",
+        "pl": "dodaj pole wyboru dla okien\ndodaj timeout dla pythona\nustaw role stanu",
+        "uk": "додати прапорець для вікон\nadd timeout для python\nфіксувати ролі держави",
+        "zh-cn": "添加窗口的复选框\n为蟒蛇添加超时\n固定状态角色"
+      },
       "0.0.13": {
         "en": "fix io-package",
         "de": "fix io-package",

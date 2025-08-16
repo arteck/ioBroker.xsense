@@ -114,7 +114,7 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.0.14 (2025-08-16)
 * (arteck) add checkbox for windows
 * (arteck) add timeout for python
 * (arteck) fix state roles
