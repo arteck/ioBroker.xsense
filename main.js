@@ -22,6 +22,7 @@ class xsenseControll extends utils.Adapter {
         this._requestInterval = 0;
 
         this.on('ready', this.onReady.bind(this));
+        this.on('stateChange', this.onStateChange.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
@@ -29,6 +30,8 @@ class xsenseControll extends utils.Adapter {
         try {
             let loginGo = true;
             this.log.info('Start X-Sense...');
+
+            await this.json2iob.createStaticDeviceObject();
 
             if (this.config.userEmail == '') {
                 this.log.error('Check Settings. No Username set');
@@ -179,6 +182,26 @@ class xsenseControll extends utils.Adapter {
         });
     }
 
+    async onStateChange(id, state) {
+        if (state) {
+            this.log.debug(`New Event for state: ${JSON.stringify(state)}`);
+            this.log.debug(`ID: ${JSON.stringify(id)}`);
+
+            const tmpControl = id.split('.')[3];
+
+            try {
+                switch (tmpControl) {
+                    case 'forceRefresh':
+                        await this.datenVerarbeiten(false);
+                        break;
+                    default:
+                        this.log.error('No command for Control found');
+                }
+            } catch (err) {
+                this.log.error(`Error onStateChange ${err}`);
+            }
+        }
+    }
     async onUnload(callback) {
         try {
             if (this._requestInterval) {

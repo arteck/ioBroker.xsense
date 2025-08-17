@@ -114,6 +114,9 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.15 (2025-08-17)
+* (arteck) add forceRefresh button for manual refresh of device data
+
 ### 0.0.14 (2025-08-16)
 * (arteck) add checkbox for windows
 * (arteck) add timeout for python

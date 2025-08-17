@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "news": {
+      "0.0.15": {
+        "en": "add forceRefresh button for manual refresh of device data",
+        "de": "kraft hinzufügenRefresh-Taste für manuelle Aktualisierung der Gerätedaten",
+        "ru": "добавить кнопку forceRefresh для ручного обновления данных устройства",
+        "pt": "adicionar o botão forceRefresh para atualização manual dos dados do dispositivo",
+        "nl": "voeg krachtVernieuwen knop voor handmatige vernieuwing van apparaatgegevens",
+        "fr": "ajouter forceRefresh bouton pour le rafraîchissement manuel des données de l'appareil",
+        "it": "aggiungere pulsante forceRefresh per aggiornamento manuale dei dati del dispositivo",
+        "es": "añadir forceRefresh botón para la actualización manual de datos del dispositivo",
+        "pl": "dodaj przycisk forceRefresh do ręcznego odświeżania danych urządzenia",
+        "uk": "додати силуРефреш кнопка для ручного оновлення даних пристрою",
+        "zh-cn": "添加强制"
+      },
       "0.0.14": {
         "en": "add checkbox for windows\nadd timeout for python\nfix state roles",
         "de": "checkbox für fenster hinzufügen\nzeitout für python hinzufügen\nzustandsrollen beheben",
@@ -141,7 +154,8 @@
       {
         "js-controller": ">=6.0.11"
       }
-    ]
+    ],
+    "installedFrom": "arteck/ioBroker.xsense#169e6dbe8954f0109bdbc2277e1e4b849bb638a2"
   },
   "native": {
     "userEmail": "",
@@ -149,7 +163,8 @@
     "polltime": 300,
     "pythonVersion": "3.12.9",
     "isWindowsSystem": false,
-    "pythonTimeout": 20
+    "pythonTimeout": 20,
+    "forceUpdate": false
   },
   "encryptedNative": [
     "userPassword"
@@ -188,7 +203,7 @@
         "name": "call python or python3",
         "type": "string",
         "read": true,
-        "write": false,
+        "write": true,
         "def": "python3"
       },
       "native": {}
