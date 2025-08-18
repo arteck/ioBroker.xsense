@@ -30,8 +30,6 @@ Es ist eine XSense Bridge SBS50 notwendig.
 ⚠️ Voraussetzungen
 - Ein XSense-Konto mit registrierten Geräten
 - Internetverbindung für Cloud-Kommunikation
-- **Python mind. Version 3.10.0** in der [öffentlich publizierten Version](https://www.python.org/downloads/source/) erforderlich (für die X-Sense-Kommunikation via Python-Wrapper).
-
 
 
 📦 Vorbereitung
