@@ -45,7 +45,7 @@ The adapter is **not** intended for alarm purposes — it is primarily for monit
 ### ⚠️ Requirements
 - An XSense account with registered devices  
 - Internet connection for cloud communication  
-- **Python version 3.10.0 or higher** from the [official public release](https://www.python.org/downloads/source/) (required for XSense communication via Python wrapper)  
+
 
 ---
 
