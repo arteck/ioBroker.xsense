@@ -154,8 +154,7 @@
       {
         "js-controller": ">=6.0.11"
       }
-    ],
-    "installedFrom": "arteck/ioBroker.xsense#169e6dbe8954f0109bdbc2277e1e4b849bb638a2"
+    ]
   },
   "native": {
     "userEmail": "",
