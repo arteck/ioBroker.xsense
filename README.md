@@ -114,6 +114,9 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.0.17 (2025-09-06)
+* (arteck) Dependencies have been updated
+
 ### 0.0.16 (2025-09-06)
 * (arteck) Dependencies have been updated
 
