@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "news": {
+      "0.0.18": {
+        "en": "fix time state from device",
+        "de": "fixzeitzustand vom gerät",
+        "ru": "время фиксации состояния устройства",
+        "pt": "fixar o estado do tempo do dispositivo",
+        "nl": "fix time state from device",
+        "fr": "fixer l'état du temps à partir du dispositif",
+        "it": "fissare lo stato di tempo dal dispositivo",
+        "es": "fijar tiempo estado desde el dispositivo",
+        "pl": "ustaw stan czasowy z urządzenia",
+        "uk": "зафіксувати часовий стан від пристрою",
+        "zh-cn": "从设备中固定时间状态"
+      },
       "0.0.17": {
         "en": "Dependencies have been updated",
         "de": "Abhängigkeiten wurden aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "fix util",
         "uk": "фіксувати util",
         "zh-cn": "修补工具"
-      },
-      "0.0.6": {
-        "en": "new error message",
-        "de": "neue fehlermeldung",
-        "ru": "новое сообщение об ошибке",
-        "pt": "nova mensagem de erro",
-        "nl": "nieuwe foutmelding",
-        "fr": "nouveau message d'erreur",
-        "it": "nuovo messaggio di errore",
-        "es": "nuevo mensaje de error",
-        "pl": "nowy komunikat błędu",
-        "uk": "нове повідомлення про помилку",
-        "zh-cn": "新错误消息"
       }
     },
     "titleLang": {
