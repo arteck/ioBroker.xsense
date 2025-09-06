@@ -1,6 +1,6 @@
 {
   "name": "iobroker.xsense",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Manage your xsense Bridge and Sensors",
   "main": "main.js",
   "repository": {
@@ -37,7 +37,7 @@
     "@alcalzone/release-script-plugin-manual-review": "^3.7.0",
     "@iobroker/adapter-dev": "^1.4.0",
     "@iobroker/eslint-config": "^2.1.0",
-    "@iobroker/testing": "^5.1.1",   
+    "@iobroker/testing": "^5.1.1",
     "@types/node": "^24.3.0",
     "rimraf": "^6.0.1",
     "source-map-support": "^0.5.21",
