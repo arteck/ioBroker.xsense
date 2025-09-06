@@ -114,6 +114,9 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (arteck) Dependencies have been updated
+
 ### 0.0.15 (2025-08-17)
 * (arteck) add forceRefresh button for manual refresh of device data
 

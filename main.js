@@ -3,7 +3,7 @@ const tools = require('./lib/tools');
 const Json2iobXSense = require('./lib/json2iob');
 const path = require('path');
 
-global.fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
+global.fetch = require('node-fetch-commonjs');
 
 /**
  * -------------------------------------------------------------------
@@ -144,7 +144,7 @@ class xsenseControll extends utils.Adapter {
 
             let result = '';
 
-            const timeout = setTimeout(() => {
+            const timeout = this.setTimeout(() => {
                 this.log.error(
                     `[XSense] callBridge timeout nach ${this.config.pythonTimeout}ms – Prozess wird beendet`,
                 );
