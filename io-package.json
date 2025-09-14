@@ -135,9 +135,6 @@
     "readme": "https://github.com/arteck/ioBroker.xsense/blob/master/README.md",
     "loglevel": "info",
     "keywords": [
-      "iobroker",
-      "adapter",
-      "smart home",
       "xsense",
       "x-sense",
       "XSense Bridge",
