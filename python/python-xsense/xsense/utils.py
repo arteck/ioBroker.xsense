@@ -4,7 +4,6 @@ import json
 
 from xsense.base import XSenseBase
 
-
 def get_credentials():
     parser = argparse.ArgumentParser()
     parser.add_argument('--username', help='Username')
@@ -38,7 +37,17 @@ def dump_environment(env: XSenseBase):
             print(f'# {s.name} ({s_id})')
             for d_id, d in s.devices.items():
                 dump_device(d)
-                
+
+
+def dump_aws(env: XSenseBase):
+    aws_data = {
+        "aws_access_key": env.aws_access_key,
+        "aws_secret_access_key": env.aws_secret_access_key,
+        "aws_session_token": env.aws_session_token
+    }
+    print(json.dumps(aws_data, indent=2, ensure_ascii=False))
+    return aws_data
+
 def environment_to_dict(env: XSenseBase):
     result = {}
     for h_id, h in env.houses.items():
