@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "fix",
+        "de": "fixieren",
+        "ru": "исправлять",
+        "pt": "corrigir",
+        "nl": "fix",
+        "fr": "correction",
+        "it": "correzione",
+        "es": "arregle",
+        "pl": "fix",
+        "uk": "фіксація",
+        "zh-cn": "固定"
+      },
       "0.1.0": {
         "en": "improved query handling\nadd Test button with answer message\nshorter request interval (min 10 sec)",
         "de": "verbesserte abfragehandling\nhinzufügen Prüftaste mit Antwortnachricht\nkürzeres anforderungsintervall (min 10 sec)",
@@ -80,19 +93,6 @@
         "pl": "dodaj pole wyboru dla okien\ndodaj timeout dla pythona\nustaw role stanu",
         "uk": "додати прапорець для вікон\nadd timeout для python\nфіксувати ролі держави",
         "zh-cn": "添加窗口的复选框\n为蟒蛇添加超时\n固定状态角色"
-      },
-      "0.0.13": {
-        "en": "fix io-package",
-        "de": "fix io-package",
-        "ru": "фиксировать io-пакет",
-        "pt": "corrigir io-pacote",
-        "nl": "fix io-package",
-        "fr": "correction de l'emballage",
-        "it": "correzione del pacchetto io",
-        "es": "arreglar io-paquete",
-        "pl": "naprawić pakiet jo-",
-        "uk": "фіксація io-package",
-        "zh-cn": "固定电离包装"
       }
     },
     "titleLang": {

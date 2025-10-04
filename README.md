@@ -114,6 +114,9 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.1.1 (2025-10-04)
+* (arteck) fix
+
 ### 0.1.0 (2025-10-04)
 * (arteck) improved query handling
 * (arteck) add Test button with answer message
