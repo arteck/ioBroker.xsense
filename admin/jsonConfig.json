@@ -92,7 +92,7 @@
                     "type": "number",
                     "label": "Polling interval",
                     "help": "Polling interval in seconds",
-                    "min": 30,
+                    "min": 10,
                     "max": 3600,
                     "step": 1,
                     "xs": 12,

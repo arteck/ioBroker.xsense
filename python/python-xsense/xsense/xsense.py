@@ -13,6 +13,7 @@ from xsense.station import Station
 
 
 class XSense(XSenseBase):
+
     def api_call(self, code, unauth=False, **kwargs):
         data = {
             **kwargs

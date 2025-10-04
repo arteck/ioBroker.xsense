@@ -5,6 +5,9 @@ const path = require('path');
 
 global.fetch = require('node-fetch-commonjs');
 
+let _outputBuffer = Buffer.alloc(0);
+
+let index = 0;
 /**
  * -------------------------------------------------------------------
  * ioBroker X-Sense Adapter
@@ -20,6 +23,8 @@ class xsenseControll extends utils.Adapter {
         this.json2iob = new Json2iobXSense(this);
 
         this._requestInterval = 0;
+        this._loginInProgress = false;
+        this._bridgeInterval = null;
 
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
@@ -52,10 +57,12 @@ class xsenseControll extends utils.Adapter {
                 this.python = await this.setupXSenseEnvironment(true);
 
                 if (this.python) {
-                    await this.datenVerarbeiten(true);
-                    this.setState('info.connection', true, true);
+                    const resp = await this.callLogin(this.config.userEmail, this.config.userPassword);
 
-                    this.startIntervall();
+                    if (resp) {
+                        this.setState('info.connection', true, true);
+                        this.startIntervall();
+                    }
                 }
             }
         } catch (err) {
@@ -93,9 +100,9 @@ class xsenseControll extends utils.Adapter {
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
 
         try {
-            const response = await this.callBridge(this.python, this.config.userEmail, this.config.userPassword);
+            const response = await this.callBridge();
 
-            if (response) {
+            if (response.length > 30) {
                 // hole alle devices und vergleiche ob was offline ist
                 const devices = await this.getDevicesAsync();
                 const knownDevices = tools.extractDeviceIds(devices);
@@ -105,6 +112,8 @@ class xsenseControll extends utils.Adapter {
                 this.log.debug(`[XSense] parsed ${JSON.stringify(parsed)}`);
 
                 await this.json2iob.parse(this.namespace, parsed);
+            } else {
+                this.log.error(`[XSense] No data received from bridge: ${response}`);
             }
         } catch (err) {
             this.errorMessage(err, firstTry);
@@ -135,73 +144,186 @@ class xsenseControll extends utils.Adapter {
         }
     }
 
-    async callBridge(python, email, password) {
-        this.log.debug('[XSense] callBridge ');
+    async callLogin(email, password) {
+        this.log.debug('[XSense] callLogin ');
+
+        if (this._loginInProgress) {
+            this.log.warn('[XSense] callLogin already running – skipping');
+            return;
+        }
+        this._loginInProgress = true;
 
         return new Promise((resolve, reject) => {
-            const scriptPath = path.join(__dirname, 'python', 'run_xsense.py');
-            const proc = python(this.callPython, [scriptPath, email, password]);
+            const scriptPath = path.join(__dirname, 'python', 'login.py');
+            const proc = this.python(this.callPython, [scriptPath, email, password]);
 
-            let result = '';
+            let finished = false; // Guard-Flag
+            let output = Buffer.alloc(0);
 
             const timeout = this.setTimeout(() => {
-                this.log.error(
-                    `[XSense] callBridge timeout nach ${this.config.pythonTimeout}ms – Prozess wird beendet`,
-                );
-                proc.kill('SIGKILL'); // Prozess hart beenden
-                reject(new Error(`[XSense] callBridge Timeout nach ${this.config.pythonTimeout}ms`));
+                if (finished) {
+                    return;
+                }
+                finished = true;
+
+                this.log.error(`[XSense] callLogin timeout nach ${this.config.pythonTimeout}ms – Prozess wird beendet`);
+                proc.kill('SIGKILL');
+                reject(new Error(`[XSense] callLogin Timeout nach ${this.config.pythonTimeout}ms`));
             }, 1000 * this.config.pythonTimeout);
 
-            proc.stdout?.on('data', data => {
-                result += data.toString();
-                this.log.debug(`[XSense] callBridge result ${data.toString()}`);
+            proc.stdout?.on('data', chunk => {
+                output = Buffer.concat([output, chunk]);
+                this.log.debug(`[XSense] callLogin received ${chunk.length} bytes`);
+                this.log.debug(`[XSense] callLogin : ${chunk.toString()}`);
+            });
+
+            proc.stdout?.on('end', () => {
+                if (finished) {
+                    return;
+                }
+                finished = true;
+
+                this.clearTimeout(timeout);
+                _outputBuffer = output; // Pickle zwischenspeichern
+                this._loginInProgress = false;
+                this.log.debug(`[XSense] Pickle Bytes length: ${output.length}`);
+                resolve(true);
             });
 
             proc.stderr?.on('data', data => {
-                this.log.warn(`[XSense]   callBridge request error `);
-                this.log.warn(
-                    `[XSense]   If it is the first run of the adapter, restart it manually and check again. `,
-                );
-            });
-
-            proc.on('error', err => {
-                this.clearTimeout(timeout);
-                reject(err);
-            });
-
-            proc.on('close', code => {
-                this.clearTimeout(timeout);
-                this.log.debug(`[XSense] callBridge script exited with code ${code}`);
-
-                if (code === 0) {
-                    resolve(result.trim());
-                } else {
-                    reject(new Error(`[XSense] callBridge Python script exited with code ${code}`));
+                if (finished) {
+                    return;
                 }
+                finished = true;
+
+                this.clearTimeout(timeout);
+                this._loginInProgress = false;
+                this.log.warn(`[XSense] callLogin request error: ${data.toString()}`);
+                reject(new Error(`[XSense] Python error: ${data.toString()}`));
+            });
+        });
+    }
+    async callBridge() {
+        this.log.debug('[XSense] callBridge ');
+
+        if (!_outputBuffer) {
+            throw new Error('No Pickle buffer available – callLogin first!');
+        }
+
+        let result = '';
+
+        return new Promise((resolve, reject) => {
+            const scriptPath = path.join(__dirname, 'python', 'getData.py');
+            const proc = this.python(this.callPython, [scriptPath]);
+
+            let output = Buffer.alloc(0);
+            let finished = false; // schützt vor doppeltem resolve/reject
+
+            proc.stdin.write(_outputBuffer);
+            proc.stdin.end();
+
+            proc.stdout.on('data', chunk => {
+                output = Buffer.concat([output, chunk]);
+                result = chunk.toString();
+                this.log.debug(`[XSense] chunck callBridge ${chunk.toString()}`);
+            });
+
+            proc.stdout.on('end', () => {
+                if (finished) {
+                    return;
+                }
+                finished = true;
+
+                this.log.debug(`[XSense] total Pickle Bytes received: ${output.length}`);
+                index = 0;
+                resolve(result);
+            });
+
+            proc.stderr.on('data', err => {
+                if (finished) {
+                    return;
+                }
+                index = 0;
+                finished = true;
+                reject(new Error(`process_pickle error: ${err.toString()}`));
             });
         });
     }
 
-    async onStateChange(id, state) {
-        if (state) {
-            this.log.debug(`New Event for state: ${JSON.stringify(state)}`);
-            this.log.debug(`ID: ${JSON.stringify(id)}`);
+    async onStateChange(stateId, stateObj) {
+        if (!stateObj) {
+            return;
+        }
 
-            const tmpControl = id.split('.')[3];
+        if (stateObj.ack) {
+            return;
+        }
 
-            try {
-                switch (tmpControl) {
-                    case 'forceRefresh':
-                        await this.datenVerarbeiten(false);
-                        break;
-                    default:
-                        this.log.error('No command for Control found');
-                }
-            } catch (err) {
-                this.log.error(`Error onStateChange ${err}`);
+        this.log.debug(`New Event for state: ${JSON.stringify(stateObj)}`);
+        this.log.debug(`ID: ${JSON.stringify(stateId)}`);
+
+        let tmpControl = stateId.split('.')[3];
+
+        try {
+            switch (tmpControl) {
+                case 'forceRefresh':
+                    await this.datenVerarbeiten(false);
+                    break;
+                default:
+                    tmpControl = stateId.split('.')[4];
+                    if (tmpControl === 'test_Alarm') {
+                        await this.testAlarm(stateId);
+                    }
             }
+        } catch (err) {
+            this.log.error(`Error onStateChange ${err}`);
         }
     }
+
+    async testAlarm(idDeviceState) {
+        this.log.debug(`Test Alarm for device: ${idDeviceState}`);
+
+        const id = idDeviceState.split('.')[3];
+        await this.setStateAsync(`${idDeviceState}_Message`, { val: 'in progress', ack: true });
+
+        return new Promise((resolve, reject) => {
+            const scriptPath = path.join(__dirname, 'python', 'checkAlarm.py');
+            const proc = this.python(this.callPython, [scriptPath, id]);
+
+            let output = Buffer.alloc(0);
+            let finished = false; // schützt vor doppeltem resolve/reject
+
+            proc.stdin.write(_outputBuffer);
+            proc.stdin.end();
+
+            proc.stdout.on('data', chunk => {
+                output = Buffer.concat([output, chunk]);
+                this.log.debug(`[XSense] chunck testAlarm ${chunk.toString()}`);
+                this.setStateAsync(`${idDeviceState}_Message`, { val: chunk.toString(), ack: true });
+            });
+
+            proc.stdout.on('end', () => {
+                if (finished) {
+                    return;
+                }
+                finished = true;
+
+                this.log.debug(`[XSense] total Pickle Bytes received: ${output.length}`);
+                index = 0;
+                resolve(true);
+            });
+
+            proc.stderr.on('data', err => {
+                if (finished) {
+                    return;
+                }
+                index = 0;
+                finished = true;
+                reject(new Error(`process_pickle error: ${err.toString()}`));
+            });
+        });
+    }
+
     async onUnload(callback) {
         try {
             if (this._requestInterval) {
@@ -226,7 +348,12 @@ class xsenseControll extends utils.Adapter {
             this.log.error(`[XSense] Fatal error starting Python | ${err} .`);
             this.log.error(`[XSense] ------------------------------------------------------`);
         }
-        this.log.error(`[XSense] Python environment could not be initialized.`);
+
+        if (err.hasOwnProperty('message')) {
+            this.log.error(`[XSense] ${err.message}`);
+        } else {
+            this.log.error(`[XSense] Python environment could not be initialized.`);
+        }
 
         if (firstTry) {
             this.log.error(`[XSense] Restart the adapter manually.`);
