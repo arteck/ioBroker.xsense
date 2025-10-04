@@ -13,7 +13,6 @@ MODULE_PATH = os.path.join(os.path.dirname(__file__), 'python-xsense')
 try:
     from xsense.xsense import XSense
     from xsense.utils import dump_environment
-
 except ImportError:
     try:
         print("XSense-Modul nicht gefunden. Installiere lokal mit pip...")
@@ -25,7 +24,10 @@ except ImportError:
         print(json.dumps({"error": f"Installation fehlgeschlagen: {str(e)}"}))
         sys.exit(1)
 
-def main():    
+def main():
+    
+    testDevice = sys.argv[1]
+    
     try:
         # Daten von stdin lesen
         input_data = sys.stdin.buffer.read()
@@ -34,11 +36,12 @@ def main():
 
         xsense.load_all()
 
-        for _, h in xsense.houses.items():
-            for _, s in h.stations.items():
-                xsense.get_state(s)
-
-        dump_environment(xsense)
+        for house_id, house in xsense.houses.items():
+            for station_id, station in house.stations.items():
+                for device_id, device in station.devices.items():
+                    if device.sn == testDevice:
+                        xsense.action(device, "test")
+                        print(f'  Test Alarm  : {device.sn}')
 
     except Exception as e:
         error_buffer = io.BytesIO()

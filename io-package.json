@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.0.18",
+    "version": "0.1.0",
     "news": {
+      "0.1.0": {
+        "en": "improved query handling\nadd Test button with answer message\nshorter request interval (min 10 sec)",
+        "de": "verbesserte abfragehandling\nhinzufügen Prüftaste mit Antwortnachricht\nkürzeres anforderungsintervall (min 10 sec)",
+        "ru": "улучшенная обработка запросов\nдобавлять Кнопка тестирования с сообщением ответа\nболее короткий интервал запроса (мин 10 сек)",
+        "pt": "melhor manuseio de consultas\nadicionar Botão de teste com mensagem de resposta\nintervalo de solicitação mais curto (min 10 seg)",
+        "nl": "verbeterde query-behandeling\ntoevoegen Testknop met antwoordbericht\nkorter verzoekinterval (min 10 sec)",
+        "fr": "amélioration du traitement des requêtes\najouter Bouton de test avec message de réponse\ndélai de demande plus court (min 10 sec)",
+        "it": "migliore gestione delle query\naggiungere Pulsante di prova con messaggio di risposta\nintervallo di richiesta più breve (min 10 sec)",
+        "es": "mejor gestión de consultas\nañadir Botón de prueba con mensaje de respuesta\nintervalo de solicitud más corto (min 10 sec)",
+        "pl": "ulepszona obsługa zapytań\ndodaj Przycisk testowy z wiadomością o odpowiedzi\nkrótszy czas oczekiwania (min. 10 sekund)",
+        "uk": "поліпшення обробки запитів\nдодати Тестувати кнопку з повідомленням\nкороткий інтервал запиту (min 10 сек)",
+        "zh-cn": "改进查询处理\n添加 测试带答覆消息的按钮\n缩短请求间隔( 10 秒)"
+      },
       "0.0.18": {
         "en": "fix time state from device",
         "de": "fixzeitzustand vom gerät",
@@ -80,19 +93,6 @@
         "pl": "naprawić pakiet jo-",
         "uk": "фіксація io-package",
         "zh-cn": "固定电离包装"
-      },
-      "0.0.12": {
-        "en": "fix util",
-        "de": "fixieren",
-        "ru": "ремонтировать",
-        "pt": "corrigir util",
-        "nl": "fix util",
-        "fr": "réparer l'utilitaire",
-        "it": "correzione dell'util",
-        "es": "fijar utilidad",
-        "pl": "fix util",
-        "uk": "фіксувати util",
-        "zh-cn": "修补工具"
       }
     },
     "titleLang": {
@@ -135,9 +135,6 @@
     "readme": "https://github.com/arteck/ioBroker.xsense/blob/master/README.md",
     "loglevel": "info",
     "keywords": [
-      "iobroker",
-      "adapter",
-      "smart home",
       "xsense",
       "x-sense",
       "XSense Bridge",
@@ -185,7 +182,7 @@
   "native": {
     "userEmail": "",
     "userPassword": "",
-    "polltime": 300,
+    "polltime": 60,
     "pythonVersion": "3.12.9",
     "isWindowsSystem": false,
     "pythonTimeout": 20,

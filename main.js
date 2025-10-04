@@ -100,7 +100,6 @@ class xsenseControll extends utils.Adapter {
         this.log.debug('[XSense] This may take up to 1 minute. Please wait');
 
         try {
-
             const response = await this.callBridge();
 
             if (response.length > 30) {
@@ -116,7 +115,6 @@ class xsenseControll extends utils.Adapter {
             } else {
                 this.log.error(`[XSense] No data received from bridge: ${response}`);
             }
-
         } catch (err) {
             this.errorMessage(err, firstTry);
         }
@@ -156,19 +154,19 @@ class xsenseControll extends utils.Adapter {
         this._loginInProgress = true;
 
         return new Promise((resolve, reject) => {
-            const scriptPath = path.join(__dirname, 'python', 'run_xsense.py');
+            const scriptPath = path.join(__dirname, 'python', 'login.py');
             const proc = this.python(this.callPython, [scriptPath, email, password]);
 
             let finished = false; // Guard-Flag
             let output = Buffer.alloc(0);
 
             const timeout = this.setTimeout(() => {
-                if (finished) return;
+                if (finished) {
+                    return;
+                }
                 finished = true;
 
-                this.log.error(
-                    `[XSense] callLogin timeout nach ${this.config.pythonTimeout}ms – Prozess wird beendet`,
-                );
+                this.log.error(`[XSense] callLogin timeout nach ${this.config.pythonTimeout}ms – Prozess wird beendet`);
                 proc.kill('SIGKILL');
                 reject(new Error(`[XSense] callLogin Timeout nach ${this.config.pythonTimeout}ms`));
             }, 1000 * this.config.pythonTimeout);
@@ -180,7 +178,9 @@ class xsenseControll extends utils.Adapter {
             });
 
             proc.stdout?.on('end', () => {
-                if (finished) return;
+                if (finished) {
+                    return;
+                }
                 finished = true;
 
                 this.clearTimeout(timeout);
@@ -191,7 +191,9 @@ class xsenseControll extends utils.Adapter {
             });
 
             proc.stderr?.on('data', data => {
-                if (finished) return;
+                if (finished) {
+                    return;
+                }
                 finished = true;
 
                 this.clearTimeout(timeout);
@@ -200,7 +202,6 @@ class xsenseControll extends utils.Adapter {
                 reject(new Error(`[XSense] Python error: ${data.toString()}`));
             });
         });
-
     }
     async callBridge() {
         this.log.debug('[XSense] callBridge ');
@@ -228,7 +229,9 @@ class xsenseControll extends utils.Adapter {
             });
 
             proc.stdout.on('end', () => {
-                if (finished) return;
+                if (finished) {
+                    return;
+                }
                 finished = true;
 
                 this.log.debug(`[XSense] total Pickle Bytes received: ${output.length}`);
@@ -237,35 +240,90 @@ class xsenseControll extends utils.Adapter {
             });
 
             proc.stderr.on('data', err => {
-                if (finished) return;
+                if (finished) {
+                    return;
+                }
                 index = 0;
                 finished = true;
                 reject(new Error(`process_pickle error: ${err.toString()}`));
             });
         });
-
     }
 
-    async onStateChange(id, state) {
-        if (state) {
-            this.log.debug(`New Event for state: ${JSON.stringify(state)}`);
-            this.log.debug(`ID: ${JSON.stringify(id)}`);
+    async onStateChange(stateId, stateObj) {
+        if (!stateObj) {
+            return;
+        }
 
-            const tmpControl = id.split('.')[3];
+        if (stateObj.ack) {
+            return;
+        }
 
-            try {
-                switch (tmpControl) {
-                    case 'forceRefresh':
-                        await this.datenVerarbeiten(false);
-                        break;
-                    default:
-                        this.log.error('No command for Control found');
-                }
-            } catch (err) {
-                this.log.error(`Error onStateChange ${err}`);
+        this.log.debug(`New Event for state: ${JSON.stringify(stateObj)}`);
+        this.log.debug(`ID: ${JSON.stringify(stateId)}`);
+
+        let tmpControl = stateId.split('.')[3];
+
+        try {
+            switch (tmpControl) {
+                case 'forceRefresh':
+                    await this.datenVerarbeiten(false);
+                    break;
+                default:
+                    tmpControl = stateId.split('.')[4];
+                    if (tmpControl === 'test_Alarm') {
+                        await this.testAlarm(stateId);
+                    }
             }
+        } catch (err) {
+            this.log.error(`Error onStateChange ${err}`);
         }
     }
+
+    async testAlarm(idDeviceState) {
+        this.log.debug(`Test Alarm for device: ${idDeviceState}`);
+
+        const id = idDeviceState.split('.')[3];
+        await this.setStateAsync(`${idDeviceState}_Message`, { val: 'in progress', ack: true });
+
+        return new Promise((resolve, reject) => {
+            const scriptPath = path.join(__dirname, 'python', 'checkAlarm.py');
+            const proc = this.python(this.callPython, [scriptPath, id]);
+
+            let output = Buffer.alloc(0);
+            let finished = false; // schützt vor doppeltem resolve/reject
+
+            proc.stdin.write(_outputBuffer);
+            proc.stdin.end();
+
+            proc.stdout.on('data', chunk => {
+                output = Buffer.concat([output, chunk]);
+                this.log.debug(`[XSense] chunck testAlarm ${chunk.toString()}`);
+                this.setStateAsync(`${idDeviceState}_Message`, { val: chunk.toString(), ack: true });
+            });
+
+            proc.stdout.on('end', () => {
+                if (finished) {
+                    return;
+                }
+                finished = true;
+
+                this.log.debug(`[XSense] total Pickle Bytes received: ${output.length}`);
+                index = 0;
+                resolve(true);
+            });
+
+            proc.stderr.on('data', err => {
+                if (finished) {
+                    return;
+                }
+                index = 0;
+                finished = true;
+                reject(new Error(`process_pickle error: ${err.toString()}`));
+            });
+        });
+    }
+
     async onUnload(callback) {
         try {
             if (this._requestInterval) {
