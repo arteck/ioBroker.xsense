@@ -112,7 +112,7 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.1.2 (2025-10-06)
 * (arteck) fix error message
 
 ### 0.1.1 (2025-10-04)
