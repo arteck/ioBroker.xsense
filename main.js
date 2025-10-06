@@ -299,7 +299,9 @@ class xsenseControll extends utils.Adapter {
             proc.stdout.on('data', chunk => {
                 output = Buffer.concat([output, chunk]);
                 this.log.debug(`[XSense] chunck testAlarm ${chunk.toString()}`);
-                this.setStateAsync(`${idDeviceState}_Message`, { val: chunk.toString(), ack: true });
+                if (chunk.toString().trim().length > 1) {
+                    this.setStateAsync(`${idDeviceState}_Message`, { val: chunk.toString(), ack: true });
+                }
             });
 
             proc.stdout.on('end', () => {
