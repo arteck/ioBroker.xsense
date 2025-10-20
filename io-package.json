@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "news": {
+      "0.1.3": {
+        "en": "fix for more devices than 15",
+        "de": "fix für mehr geräte als 15",
+        "ru": "ремонт для более чем 15 устройств",
+        "pt": "fixar para mais dispositivos do que 15",
+        "nl": "fix voor meer apparaten dan 15",
+        "fr": "fixer pour plus de 15 dispositifs",
+        "it": "fissa per più dispositivi di 15",
+        "es": "fijado para más dispositivos que 15",
+        "pl": "dla więcej urządzeń niż 15",
+        "uk": "зафіксувати більше пристроїв, ніж 15",
+        "zh-cn": "超过15个设备的固定装置"
+      },
       "0.1.2": {
         "en": "fix error message",
         "de": "fehlermeldung löschen",
@@ -80,19 +93,6 @@
         "pl": "Zaktualizowano zależności",
         "uk": "Залежність було оновлено",
         "zh-cn": "依赖关系已更新"
-      },
-      "0.0.15": {
-        "en": "add forceRefresh button for manual refresh of device data",
-        "de": "kraft hinzufügenRefresh-Taste für manuelle Aktualisierung der Gerätedaten",
-        "ru": "добавить кнопку forceRefresh для ручного обновления данных устройства",
-        "pt": "adicionar o botão forceRefresh para atualização manual dos dados do dispositivo",
-        "nl": "voeg krachtVernieuwen knop voor handmatige vernieuwing van apparaatgegevens",
-        "fr": "ajouter forceRefresh bouton pour le rafraîchissement manuel des données de l'appareil",
-        "it": "aggiungere pulsante forceRefresh per aggiornamento manuale dei dati del dispositivo",
-        "es": "añadir forceRefresh botón para la actualización manual de datos del dispositivo",
-        "pl": "dodaj przycisk forceRefresh do ręcznego odświeżania danych urządzenia",
-        "uk": "додати силуРефреш кнопка для ручного оновлення даних пристрою",
-        "zh-cn": "添加强制"
       }
     },
     "titleLang": {

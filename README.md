@@ -112,6 +112,9 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.1.3 (2025-10-20)
+* (arteck) fix for more devices than 15
+
 ### 0.1.2 (2025-10-06)
 * (arteck) fix error message
 
