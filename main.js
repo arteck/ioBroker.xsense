@@ -270,7 +270,7 @@ class xsenseControll extends utils.Adapter {
                     await this.datenVerarbeiten(false);
                     break;
                 default:
-                    tmpControl = stateId.split('.')[4];
+                    tmpControl = stateId.split('.')[5];
                     if (tmpControl === 'test_Alarm') {
                         await this.testAlarm(stateId);
                     }
@@ -283,7 +283,7 @@ class xsenseControll extends utils.Adapter {
     async testAlarm(idDeviceState) {
         this.log.debug(`Test Alarm for device: ${idDeviceState}`);
 
-        const id = idDeviceState.split('.')[3];
+        const id = idDeviceState.split('.')[4];
         await this.setStateAsync(`${idDeviceState}_Message`, { val: 'in progress', ack: true });
 
         return new Promise((resolve, reject) => {

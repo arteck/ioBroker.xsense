@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.1.3",
+    "version": "0.2.0",
     "news": {
+      "0.2.0": {
+        "en": "!!!!!!!!!!!!!!!!!!!!!!!   new tree structure, delete all old devices\nfix for more bridges",
+        "de": "!!!!!!!!!!!!!!!!!!!!!!!!!!! neue baumstruktur, alle alten geräte löschen\nfix für mehr brücken",
+        "ru": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! новая структура дерева, удалить все старые устройства\nремонт для большего количества мостов",
+        "pt": "!!!!!!!!!!!!!!!!! nova estrutura de árvore, apagar todos os dispositivos antigos\nfixar para mais pontes",
+        "nl": "!!!!!!!!!!!!!!! nieuwe boomstructuur, verwijder alle oude apparaten\nfix voor meer bruggen",
+        "fr": "!!!!!!!!!!!!!!!!!!!!!!!!!! nouvelle structure arborescente, supprimer tous les anciens appareils\nfix pour plus de ponts",
+        "it": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! nuova struttura albero, eliminare tutti i vecchi dispositivi\nfissare per più ponti",
+        "es": "!!!!!!!!!!!!!!!!!!!!! nueva estructura de árboles, eliminar todos los dispositivos antiguos\nfijado para más puentes",
+        "pl": "!!!! nowa struktura drzewa, usunąć wszystkie stare urządzenia\nnaprawić więcej mostów",
+        "uk": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! нова структура дерева, видалити всі старі пристрої\nфіксація для більш міст",
+        "zh-cn": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 新树结构, 删除所有旧设备\n修复更多桥梁"
+      },
       "0.1.3": {
         "en": "fix for more devices than 15",
         "de": "fix für mehr geräte als 15",
@@ -69,19 +82,6 @@
         "zh-cn": "从设备中固定时间状态"
       },
       "0.0.17": {
-        "en": "Dependencies have been updated",
-        "de": "Abhängigkeiten wurden aktualisiert",
-        "ru": "Зависимости были обновлены",
-        "pt": "As dependências foram atualizadas",
-        "nl": "Afhankelijkheden zijn bijgewerkt",
-        "fr": "Les dépendances ont été actualisées",
-        "it": "Le dipendenze sono state aggiornate",
-        "es": "Se han actualizado las dependencias",
-        "pl": "Zaktualizowano zależności",
-        "uk": "Залежність було оновлено",
-        "zh-cn": "依赖关系已更新"
-      },
-      "0.0.16": {
         "en": "Dependencies have been updated",
         "de": "Abhängigkeiten wurden aktualisiert",
         "ru": "Зависимости были обновлены",
