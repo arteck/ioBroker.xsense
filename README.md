@@ -112,6 +112,10 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.2.1 (2025-10-30)
+* (arteck) fix link to readme
+* (arteck) fix load bridge as first
+
 ### 0.2.0 (2025-10-21)
 * (arteck) !!!!!!!!!!!!!!!!!!!!!!!   new tree structure, delete all old devices
 * (arteck) fix for more bridges

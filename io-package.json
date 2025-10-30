@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "news": {
+      "0.2.1": {
+        "en": "fix link to readme\nfix load bridge as first",
+        "de": "fix link zum readme\nlastbrücke als erstes fixieren",
+        "ru": "обсуждение readme\nнагрузочный мост как первый",
+        "pt": "corrigir o link para o readme\nfixar a ponte de carga como primeiro",
+        "nl": "fix link naar readme\nfix load bridge als eerste",
+        "fr": "corriger le lien pour lire\nfixer le pont de charge comme premier",
+        "it": "correggere il link a readme\nfissare il ponte di carico come primo",
+        "es": "fijar enlace a readme\nfijar puente de carga como primer",
+        "pl": "fix link do readme\nnaprawić most obciążenia jako pierwszy",
+        "uk": "фіксувати посилання для читання\nфіксувати навантаження міст як перший",
+        "zh-cn": "固定链接到 readme\n先修补负载桥"
+      },
       "0.2.0": {
         "en": "!!!!!!!!!!!!!!!!!!!!!!!   new tree structure, delete all old devices\nfix for more bridges",
         "de": "!!!!!!!!!!!!!!!!!!!!!!!!!!! neue baumstruktur, alle alten geräte löschen\nfix für mehr brücken",
@@ -80,19 +93,6 @@
         "pl": "ustaw stan czasowy z urządzenia",
         "uk": "зафіксувати часовий стан від пристрою",
         "zh-cn": "从设备中固定时间状态"
-      },
-      "0.0.17": {
-        "en": "Dependencies have been updated",
-        "de": "Abhängigkeiten wurden aktualisiert",
-        "ru": "Зависимости были обновлены",
-        "pt": "As dependências foram atualizadas",
-        "nl": "Afhankelijkheden zijn bijgewerkt",
-        "fr": "Les dépendances ont été actualisées",
-        "it": "Le dipendenze sono state aggiornate",
-        "es": "Se han actualizado las dependencias",
-        "pl": "Zaktualizowano zależności",
-        "uk": "Залежність було оновлено",
-        "zh-cn": "依赖关系已更新"
       }
     },
     "titleLang": {
