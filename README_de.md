@@ -11,6 +11,9 @@ Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet
 Es ist eine XSense Bridge SBS50 notwendig.
 
 
+## wir nutzen einen Modifizierten Fork aus dem [Orginal Python Code](https://github.com/theosnel/python-xsense) 
+Orginal ist von [theosnel](https://github.com/theosnel) .. DANKE dafür
+
 ## ❗ ACHTUNG 
  ein zu häufiges Abfrageintervall (default : 5 min)  verkürzt die Batterielebensdauer der Geräte, da diese explizit IMMER geweckt werden
  Der Adapter dient nicht der Alarmierung, es soll eher zur überwachung der Gerätebatterie dienen.
