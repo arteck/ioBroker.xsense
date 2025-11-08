@@ -24,6 +24,9 @@ It is designed to receive data from XSense smoke detectors, CO detectors, and ot
 The adapter communicates with the XSense cloud server and provides an easy way to integrate XSense devices into existing ioBroker setups.  
 An XSense Bridge SBS50 is required.
 
+
+## the [Orginal Python Code](https://github.com/theosnel/python-xsense) is from [theosnel](https://github.com/theosnel) .. big THX for
+
 ---
 
 ## ❗ WARNING
