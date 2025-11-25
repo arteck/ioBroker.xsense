@@ -115,7 +115,7 @@ class xsenseControll extends utils.Adapter {
             } else {
                 this.log.error(`[XSense] No data received from bridge: ${response}`);
                 this.setState('info.connection', false, true);
-                if (response.includes('is logged in') {
+                if (response.includes('is logged in')) {
                     const resp = await this.callLogin(this.config.userEmail, this.config.userPassword);
 
                     if (resp) {
