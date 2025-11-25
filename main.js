@@ -114,6 +114,15 @@ class xsenseControll extends utils.Adapter {
                 await this.json2iob.parse(this.namespace, parsed);
             } else {
                 this.log.error(`[XSense] No data received from bridge: ${response}`);
+                this.setState('info.connection', false, true);
+                if (response.includes('is logged in') {
+                    const resp = await this.callLogin(this.config.userEmail, this.config.userPassword);
+
+                    if (resp) {
+                        this.setState('info.connection', true, true);
+                        this.startIntervall();
+                    }
+                }
             }
         } catch (err) {
             this.errorMessage(err, firstTry);
