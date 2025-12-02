@@ -56,9 +56,13 @@ class xsenseControll extends utils.Adapter {
                 this.setAllAvailableToFalse();
                 this.python = await this.setupXSenseEnvironment(true);
 
+                this.log.debug('python ' + JSON.stringify(this.python));
+                
                 if (this.python) {
                     const resp = await this.callLogin(this.config.userEmail, this.config.userPassword);
 
+                    this.log.debug('response ' + JSON.stringify(resp));
+                    
                     if (resp) {
                         this.setState('info.connection', true, true);
                         this.startIntervall();
