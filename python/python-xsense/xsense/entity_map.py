@@ -73,6 +73,12 @@ entities = {
             TestAction(),
         ],
     },
+    'SC07-MR': {
+        'type': EntityType.SMOKE,
+        'actions': [
+            TestAction(shadow='app2ndSelfTest'),
+        ]
+    },
     'SC07-WX': {
         'identifier': lambda entity: f'SC07-WX-{entity.sn}',
         'type': EntityType.COMBI,
