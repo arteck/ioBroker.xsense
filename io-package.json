@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "news": {
+      "0.2.2": {
+        "en": "add XS0D-MR",
+        "de": "xS0D-MR hinzufügen",
+        "ru": "добавить XS0D-MR",
+        "pt": "adicionar XS0D- MR",
+        "nl": "xS0D-MR toevoegen",
+        "fr": "ajouter XS0D-MR",
+        "it": "aggiungere XS0D-MR",
+        "es": "añadir XS0D-MR",
+        "pl": "dodaj XS0D- MR",
+        "uk": "додати XS0D-MR",
+        "zh-cn": "添加 XS0D- MR 数据"
+      },
       "0.2.1": {
         "en": "fix link to readme\nfix load bridge as first",
         "de": "fix link zum readme\nlastbrücke als erstes fixieren",
@@ -80,19 +93,6 @@
         "pl": "ulepszona obsługa zapytań\ndodaj Przycisk testowy z wiadomością o odpowiedzi\nkrótszy czas oczekiwania (min. 10 sekund)",
         "uk": "поліпшення обробки запитів\nдодати Тестувати кнопку з повідомленням\nкороткий інтервал запиту (min 10 сек)",
         "zh-cn": "改进查询处理\n添加 测试带答覆消息的按钮\n缩短请求间隔( 10 秒)"
-      },
-      "0.0.18": {
-        "en": "fix time state from device",
-        "de": "fixzeitzustand vom gerät",
-        "ru": "время фиксации состояния устройства",
-        "pt": "fixar o estado do tempo do dispositivo",
-        "nl": "fix time state from device",
-        "fr": "fixer l'état du temps à partir du dispositif",
-        "it": "fissare lo stato di tempo dal dispositivo",
-        "es": "fijar tiempo estado desde el dispositivo",
-        "pl": "ustaw stan czasowy z urządzenia",
-        "uk": "зафіксувати часовий стан від пристрою",
-        "zh-cn": "从设备中固定时间状态"
       }
     },
     "titleLang": {

@@ -115,6 +115,9 @@ If the file does not exist, you did not wait long enough for the adapter to star
 ------------------------------------------------------------------------------
 
 ## Changelog
+### 0.2.2 (2025-12-03)
+* (arteck) add XS0D-MR
+
 ### 0.2.1 (2025-10-30)
 * (arteck) fix link to readme
 * (arteck) fix load bridge as first
