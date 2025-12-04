@@ -34,7 +34,7 @@ class xsenseControll extends utils.Adapter {
     async onReady() {
         try {
             let loginGo = true;
-            this.log.info('Start X-Sense...');
+            this.log.info('Start X-Sense... waiting ....');
 
             await this.json2iob.createStaticDeviceObject();
 
