@@ -30,7 +30,6 @@ An XSense Bridge SBS50 is required.
 ---
 
 ## ❗ WARNING
-A too frequent polling interval (default: 5 min) will shorten the device battery life, as the devices are **always** explicitly woken up.  
 The adapter is **not** intended for alarm purposes — it is primarily for monitoring the device battery status.
 
 ---
@@ -102,6 +101,13 @@ Then restart the adapter.
 If it still doesn’t work, check the file /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg.
 It lists the Python versions relevant to the environment — adjust if necessary.
 If the file does not exist, you did not wait long enough for the adapter to start.
+
+
+Error Message after install
+
+[XSense] Cannot find package '@mongodb-js/zstd'
+
+check your Node version. zstd has a problem wit Node 24
 
 
 ------------------------------------------------------------------------------
