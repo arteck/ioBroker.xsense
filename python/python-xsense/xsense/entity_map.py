@@ -155,6 +155,7 @@ entities = {
     'XH02-M': {
         'type': EntityType.HEAT,
         'actions': [
+            TestAction(shadow='appXh02mSelfTest'),
         ]
     },
     'XP0A-MR': {
@@ -163,7 +164,7 @@ entities = {
             TestAction(shadow='app2ndSelfTest'),
             FireDrillAction()
         ]
-    },
+    },    
     'XP02S-MR': {
         'type': EntityType.SMOKE,
         'actions': [
@@ -175,7 +176,7 @@ entities = {
         'actions': [
             TestAction(),
         ],
-    },
+    },    
     'XS01-M': {
         'type': EntityType.SMOKE,
         'actions': [
