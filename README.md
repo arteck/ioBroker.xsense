@@ -123,8 +123,14 @@ or if you have a VM on proxmox check your CPU settings
 <img width="2028" height="577" alt="grafik" src="https://github.com/user-attachments/assets/65cc5c71-4cd3-4502-b4bd-a4c7241d7708" />
 
 ------------------------------------------------------------------------------
+<!--
+      ### **WORK IN PROGRESS**
+-->
 
 ## Changelog
+### 0.2.3 (2026-01-15)
+* (arteck) add new smoke detectors
+
 ### 0.2.2 (2025-12-03)
 * (arteck) add XS0D-MR
 

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "news": {
+      "0.2.3": {
+        "en": "add new smoke detectors",
+        "de": "neue rauchmelder hinzufügen",
+        "ru": "новые детекторы дыма",
+        "pt": "adicionar novos detectores de fumo",
+        "nl": "nieuwe rookmelders toevoegen",
+        "fr": "ajouter de nouveaux détecteurs de fumée",
+        "it": "aggiungere nuovi rilevatori di fumo",
+        "es": "añadir nuevos detectores de humo",
+        "pl": "dodać nowe czujniki dymu",
+        "uk": "додати нові детектори диму",
+        "zh-cn": "增加新的烟雾探测器"
+      },
       "0.2.2": {
         "en": "add XS0D-MR",
         "de": "xS0D-MR hinzufügen",
@@ -80,19 +93,6 @@
         "pl": "fix",
         "uk": "фіксація",
         "zh-cn": "固定"
-      },
-      "0.1.0": {
-        "en": "improved query handling\nadd Test button with answer message\nshorter request interval (min 10 sec)",
-        "de": "verbesserte abfragehandling\nhinzufügen Prüftaste mit Antwortnachricht\nkürzeres anforderungsintervall (min 10 sec)",
-        "ru": "улучшенная обработка запросов\nдобавлять Кнопка тестирования с сообщением ответа\nболее короткий интервал запроса (мин 10 сек)",
-        "pt": "melhor manuseio de consultas\nadicionar Botão de teste com mensagem de resposta\nintervalo de solicitação mais curto (min 10 seg)",
-        "nl": "verbeterde query-behandeling\ntoevoegen Testknop met antwoordbericht\nkorter verzoekinterval (min 10 sec)",
-        "fr": "amélioration du traitement des requêtes\najouter Bouton de test avec message de réponse\ndélai de demande plus court (min 10 sec)",
-        "it": "migliore gestione delle query\naggiungere Pulsante di prova con messaggio di risposta\nintervallo di richiesta più breve (min 10 sec)",
-        "es": "mejor gestión de consultas\nañadir Botón de prueba con mensaje de respuesta\nintervalo de solicitud más corto (min 10 sec)",
-        "pl": "ulepszona obsługa zapytań\ndodaj Przycisk testowy z wiadomością o odpowiedzi\nkrótszy czas oczekiwania (min. 10 sekund)",
-        "uk": "поліпшення обробки запитів\nдодати Тестувати кнопку з повідомленням\nкороткий інтервал запиту (min 10 сек)",
-        "zh-cn": "改进查询处理\n添加 测试带答覆消息的按钮\n缩短请求间隔( 10 秒)"
       }
     },
     "titleLang": {
