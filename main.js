@@ -503,10 +503,25 @@ class xsenseControll extends utils.Adapter {
 
     async onUnload(callback) {
         try {
+            if (['exmqtt', 'intmqtt'].includes(this.config.connectionType)) {
+                if (mqttClient && !mqttClient.closed) {
+                    try {
+                        if (mqttClient) {
+                            this.setState('info.MQTT_connection', false, true);
+                            mqttClient.end();
+                        }
+                    } catch (e) {
+                        this.log.error(e);
+                    }
+                }
+            }
+
             if (this._requestInterval) {
                 this.clearInterval(this._requestInterval);
             }
             this.setAllAvailableToFalse();
+            this.setState('info.connection', false, true);
+
             callback();
         } catch (e) {
             callback();
@@ -534,6 +549,7 @@ class xsenseControll extends utils.Adapter {
 
         if (firstTry) {
             this.log.error(`[XSense] Restart the adapter manually.`);
+            this.setState('info.MQTT_connection', false, true);
             this.setState('info.connection', false, true, () => {
                 this.terminate('[XSense]  terminated', 1);
             });
