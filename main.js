@@ -103,6 +103,7 @@ class xsenseControll extends utils.Adapter {
                         this.log.info(
                             `Connect to Xsense_MQTT over ${this.config.connectionType == 'exmqtt' ? 'external mqtt' : 'internal mqtt'} connection.`,
                         );
+                        this.setState('info.MQTT_connection', true, true);
                     });
 
                     mqttClient.subscribe(`${this.config.baseTopic}`);
@@ -140,6 +141,7 @@ class xsenseControll extends utils.Adapter {
             }
         } catch (err) {
             this.setState('info.connection', false, true);
+            this.setState('info.MQTT_connection', false, true);
             this.log.error(`Error : ${err.message}`);
             return;
         }
