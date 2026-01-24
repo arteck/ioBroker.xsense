@@ -183,36 +183,24 @@ class xsenseControll extends utils.Adapter {
                         case 'battery': {
                             // hier müssen wir noch anpassen
                             const batLevel =
-                                messageObj.payload.status === 'Normal'
-                                    ? '3'
-                                    : messageObj.payload.status === 'Low'
-                                      ? '2'
-                                      : messageObj.payload.status === 'Critical'
-                                        ? '1'
-                                        : '0';
+                                messageObj.payload.status === 'Normal'    ? '3' :
+                                messageObj.payload.status === 'Low'       ? '2' :
+                                messageObj.payload.status === 'Critical'  ? '1' :
+                                                                            '0';
                             this.setStateAsync(`devices.${bridgeId}.${deviceId}.batInfo`, { val: batLevel, ack: true });
                             break;
                         }
                         case 'lifeend':
-                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.isLifeEnd`, {
-                                val: messageObj.payload.status == 'EOL',
-                                ack: true,
-                            });
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.isLifeEnd`, { val: messageObj.payload.status == 'EOL', ack: true });
                             break;
                         case 'online':
-                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.online`, {
-                                val: messageObj.payload.status == 'Online',
-                                ack: true,
-                            });
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.online`, { val: messageObj.payload.status == 'Online', ack: true });
                             break;
 
                         case 'smokealarm':
                         case 'heatalarm':
                         case 'coalarm':
-                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.alarmStatus`, {
-                                val: messageObj.payload.status == 'Detected',
-                                ack: true,
-                            });
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.alarmStatus`, { val: messageObj.payload.status == 'Detected', ack: true });
                             break;
 
                         case 'smokefault':
