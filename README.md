@@ -128,6 +128,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.2.6 (2026-01-24)
+* (arteck) update settings
+
 ### 0.2.5 (2026-01-24)
 * (arteck) Dependencies have been updated
 
