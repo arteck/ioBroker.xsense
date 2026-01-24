@@ -132,7 +132,7 @@ or if you have a VM on proxmox check your CPU settings
 * (arteck) Dependencies have been updated
 
 ### 0.2.4 (2026-01-24)
-* (arteck) add MQTT communication to Bridge. Xsense app Version > 1.43 is necessary
+* (arteck) add MQTT communication to Bridge. Xsense app Version > 1.34 is necessary
 
 ### 0.2.3 (2026-01-15)
 * (arteck) add new smoke detectors
