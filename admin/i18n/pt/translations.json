@@ -12,5 +12,6 @@
     "Python Version to use for the adapter": "Versão do Python a ser usada para o adaptador",
     "is adapter running under Windows?" : "O adaptador está rodando no Windows?",
     "timeout for Python script" : "tempo limite para o script Python",
-    "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval." : "pode haver conflito com o intervalo de sondagem. Não defina abaixo de 20 segundos ou acima do intervalo de sondagem definido."
+    "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval." : "pode haver conflito com o intervalo de sondagem. Não defina abaixo de 20 segundos ou acima do intervalo de sondagem definido.",
+    "Use MQTT. You need XSense APP Version >= 1.34" : "Use MQTT. Você precisa da versão do aplicativo XSense >= 1.34"
 }

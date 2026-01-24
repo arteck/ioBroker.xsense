@@ -2,12 +2,18 @@ const utils = require('@iobroker/adapter-core');
 const tools = require('./lib/tools');
 const Json2iobXSense = require('./lib/json2iob');
 const path = require('path');
+const MqttServerController = require('./lib/mqttServerController').MqttServerController;
+const mqtt = require('mqtt');
 
 global.fetch = require('node-fetch-commonjs');
 
 let _outputBuffer = Buffer.alloc(0);
 
 let index = 0;
+let mqttServerController;
+let mqttClient;
+let messageParseMutex = Promise.resolve();
+
 /**
  * -------------------------------------------------------------------
  * ioBroker X-Sense Adapter
@@ -21,6 +27,7 @@ class xsenseControll extends utils.Adapter {
         });
 
         this.json2iob = new Json2iobXSense(this);
+        this.pythonConnected = false;
 
         this._requestInterval = 0;
         this._loginInProgress = false;
@@ -37,7 +44,6 @@ class xsenseControll extends utils.Adapter {
             this.log.info('Start X-Sense... waiting ....');
 
             await this.json2iob.createStaticDeviceObject();
-
             if (this.config.userEmail == '') {
                 this.log.error('Check Settings. No Username set');
                 loginGo = false;
@@ -45,6 +51,67 @@ class xsenseControll extends utils.Adapter {
             if (this.config.userPassword == '') {
                 this.log.error('Check Settings. No Password set');
                 loginGo = false;
+            }
+
+            // MQTT
+            if (this.config.useMqttServer && loginGo) {
+                if (['exmqtt', 'intmqtt'].includes(this.config.connectionType)) {
+                    // External MQTT-Server
+                    const clientId = `ioBroker.xsense_${Math.random().toString(16).slice(2, 8)}`;
+                    if (this.config.connectionType == 'exmqtt') {
+                        if (this.config.externalMqttServerIP == '') {
+                            this.log.warn('Please configure the External MQTT-Server connection!');
+                            return;
+                        }
+
+                        // MQTT connection settings
+                        const mqttClientOptions = {
+                            clientId: clientId,
+                            clean: true,
+                            reconnectPeriod: 500,
+                        };
+
+                        // Set external mqtt credentials
+                        if (this.config.externalMqttServerCredentials == true) {
+                            mqttClientOptions.username = this.config.externalMqttServerUsername;
+                            mqttClientOptions.password = this.config.externalMqttServerPassword;
+                        }
+
+                        // Init connection
+                        mqttClient = mqtt.connect(
+                            `mqtt://${this.config.externalMqttServerIP}:${this.config.externalMqttServerPort}`,
+                            mqttClientOptions,
+                        );
+                    } else {
+                        // Internal MQTT-Server
+
+                        mqttServerController = new MqttServerController(this);
+                        await mqttServerController.createMQTTServer();
+                        await this.delay(1500);
+                        mqttClient = mqtt.connect(
+                            `mqtt://${this.config.mqttServerIPBind}:${this.config.mqttServerPort}`,
+                            {
+                                clientId: clientId,
+                                clean: true,
+                                reconnectPeriod: 500,
+                            },
+                        );
+                    }
+
+                    // MQTT Client
+                    mqttClient.on('connect', () => {
+                        this.log.info(
+                            `Connect to Xsense_MQTT over ${this.config.connectionType == 'exmqtt' ? 'external mqtt' : 'internal mqtt'} connection.`,
+                        );
+                    });
+
+                    mqttClient.subscribe(`${this.config.baseTopic}`);
+
+                    mqttClient.on('message', (topic, payload) => {
+                        const newMessage = `{"payload":${payload.toString() == '' ? '"null"' : payload.toString()},"topic":"${topic.slice(topic.search('/') + 1)}"}`;
+                        this.messageParse(newMessage);
+                    });
+                }
             }
 
             if (loginGo) {
@@ -68,12 +135,114 @@ class xsenseControll extends utils.Adapter {
                         this.startIntervall();
                     }
                 }
+            } else {
+                this.log.debug(`login to cloud skipped`);
             }
         } catch (err) {
             this.setState('info.connection', false, true);
             this.log.error(`Error : ${err.message}`);
             return;
         }
+    }
+
+    async messageParse(message) {
+        // Mutex lock: queue up calls to messageParse
+        let release;
+        const lock = new Promise(resolve => (release = resolve));
+        const prev = messageParseMutex;
+        messageParseMutex = lock;
+        await prev;
+        try {
+            if (tools.isJson(message) == false && !this.pythonConnected) {
+                // Nur verarbeiten, wenn gültiges JSON und Python verbunden ist ..da sonst keine strukturen vorhaden
+                return;
+            }
+
+            const messageObj = JSON.parse(message);
+
+            this.log.debug(`Message ${JSON.stringify(messageObj)}`);
+
+            if (!messageObj.topic.includes('SBS50')) {
+                this.log.error(
+                    `Bridge SBS50 not found in topic: ${messageObj.topic}. Aborting message processing. Check your whether you have a correct Bridge`,
+                );
+                return;
+            }
+
+            const suffix = await this.getTopicSuffix(messageObj.topic);
+
+            switch (suffix) {
+                case 'state': {
+                    const mTopic = messageObj.topic.match(/SBS50(\d+)_([0-9]+)\/[^/]*_([A-Za-z0-9]+)\/state$/);
+
+                    const bridgeId = mTopic?.[1] ?? null; // z.B. "15298924"
+                    const deviceId = mTopic?.[2] ?? null; // z.B. "00000003"
+                    const attribute = mTopic?.[3] ?? null; // z.B. "online"
+
+                    switch (attribute) {
+                        case 'battery': {
+                            // hier müssen wir noch anpassen
+                            const batLevel =
+                                messageObj.payload.status === 'Normal'
+                                    ? '3'
+                                    : messageObj.payload.status === 'Low'
+                                      ? '2'
+                                      : messageObj.payload.status === 'Critical'
+                                        ? '1'
+                                        : '0';
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.batInfo`, { val: batLevel, ack: true });
+                            break;
+                        }
+                        case 'lifeend':
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.isLifeEnd`, {
+                                val: messageObj.payload.status == 'EOL',
+                                ack: true,
+                            });
+                            break;
+                        case 'online':
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.online`, {
+                                val: messageObj.payload.status == 'Online',
+                                ack: true,
+                            });
+                            break;
+
+                        case 'smokealarm':
+                        case 'heatalarm':
+                        case 'coalarm':
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.alarmStatus`, {
+                                val: messageObj.payload.status == 'Detected',
+                                ack: true,
+                            });
+                            break;
+
+                        case 'smokefault':
+                        case 'heatfault':
+                        case 'cofault':
+                            break;
+
+                        default:
+                            this.log.warn(`Unknown attribute in topic: ${messageObj.topic}`);
+                            break;
+                    }
+
+                    break;
+                }
+                default: {
+                    this.log.debug(`Unknown topic: ${messageObj.topic}`);
+                    break;
+                }
+            }
+        } finally {
+            release();
+        }
+    }
+
+    async getTopicSuffix(topic) {
+        if (typeof topic !== 'string' || topic.length === 0) {
+            return null;
+        }
+        const parts = topic.split('/').filter(Boolean); // entfernt leere Teile
+        return parts.length ? parts[parts.length - 1] : null;
     }
 
     async startIntervall() {
@@ -116,9 +285,12 @@ class xsenseControll extends utils.Adapter {
                 this.log.debug(`[XSense] parsed ${JSON.stringify(parsed)}`);
 
                 await this.json2iob.parse(this.namespace, parsed);
+
+                this.pythonConnected = true;
             } else {
                 this.log.error(`[XSense] No data received from bridge: ${response}`);
                 this.setState('info.connection', false, true);
+
                 if (response.includes('is logged in')) {
                     const resp = await this.callLogin(this.config.userEmail, this.config.userPassword);
 

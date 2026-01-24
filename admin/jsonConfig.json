@@ -63,6 +63,17 @@
                     "text": " ",
                     "size": 2
                 },
+
+                "spacer01": {
+                  "type": "staticText",
+                  "text": "",
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "newLine": true
+                },
                 "userEmail": {
                     "newLine": true,
                     "type": "text",
@@ -148,6 +159,159 @@
                     "md": 8,
                     "lg": 4,
                     "xl": 4
+                },
+                "spacer02": {
+                  "type": "staticText",
+                  "text": "",
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "newLine": true
+                },
+                "useMqttServer": {
+                  "type": "checkbox",
+                  "label": "Use MQTT. You need XSense APP Version >= 1.34",
+                  "newLine": true,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4
+                },
+                "spacer03": {
+                  "type": "staticText",
+                  "text": "MQTT Server Configuration",
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "newLine": true,
+                  "hidden": "data.useMqttServer == false"
+                },
+                "connectionType": {
+                  "label": "Select connection",
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "type": "select",
+                  "options": [
+                    {
+                      "label": "External MQTT-Server",
+                      "value": "exmqtt"
+                    },
+                    {
+                      "label": "Internal MQTT-Server",
+                      "value": "intmqtt"
+                    }
+                  ],
+                  "newLine": true,
+                  "hidden": "data.useMqttServer == false"
+                },
+                "baseTopic": {
+                  "type": "text",
+                  "label": "Base MQTT topic",
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "default": "homeassistant/binary_sensor/#",
+                  "hidden": "data.connectionType == 'intmqtt' || data.useMqttServer == false"
+                },
+                "spacer04": {
+                  "type": "staticText",
+                  "text": "Configure your connection",
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "newLine": true,
+                  "hidden": "data.useMqttServer == false"
+                },
+                "externalMqttServerIP": {
+                  "type": "text",
+                  "label": "External MQTT-Server IP-Address",
+                  "newLine": true,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "hidden": "data.connectionType == 'intmqtt' || data.useMqttServer == false"
+                },
+                "externalMqttServerPort": {
+                  "type": "number",
+                  "label": "External MQTT-Server Port",
+                  "newLine": false,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "hidden": "data.connectionType == 'intmqtt' || data.useMqttServer == false"
+                },
+                "externalMqttServerCredentials": {
+                  "type": "checkbox",
+                  "label": "Use MQTT Credentials",
+                  "newLine": true,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "hidden": "data.connectionType == 'intmqtt' || data.useMqttServer == false"
+                },
+                "externalMqttServerUsername": {
+                  "type": "text",
+                  "label": "MQTT Username",
+                  "newLine": true,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "hidden": "data.externalMqttServerCredentials == false || data.connectionType == 'intmqtt' || data.useMqttServer == false"
+                },
+                "externalMqttServerPassword": {
+                  "type": "password",
+                  "label": "MQTT Password",
+                  "newLine": false,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "visible": true,
+                  "hidden": "data.externalMqttServerCredentials == false || data.connectionType == 'intmqtt' || data.useMqttServer == false"
+                },
+                "mqttServerIPBind": {
+                  "type": "ip",
+                  "label": "MQTT-Server IP-Address bind",
+                  "listenOnAllPorts": true,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "newLine": true,
+                  "hidden": "data.connectionType == 'exmqtt' || data.useMqttServer == false"
+                },
+                "mqttServerPort": {
+                  "type": "number",
+                  "label": "MQTT-Server Port",
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                  "newLine": false,
+                  "hidden": "data.connectionType == 'exmqtt' || data.useMqttServer == false"
                 }
             }
         }

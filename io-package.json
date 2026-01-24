@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "news": {
+      "0.2.4": {
+        "en": "add MQTT communication to Bridge. Xsense app Version > 1.43 is necessary",
+        "de": "mQTT-Kommunikation zu Bridge hinzufügen. Xsense App Version > 1.43 ist notwendig",
+        "ru": "добавьте MQTT в Bridge. Версия приложения Xsense > 1.43 Необходимо",
+        "pt": "adicionar comunicação MQTT à Ponte. Versão do aplicativo Xsense > 1.43 é necessário",
+        "nl": "mQTT-communicatie toevoegen aan Bridge. Xsense-appversie > 1.43 is noodzakelijk",
+        "fr": "ajouter la communication MQTT à Bridge. Version de l'application Xsense > 1.43 est nécessaire",
+        "it": "aggiungere comunicazione MQTT a Bridge. App Xsense Versione > 1.43 è necessario",
+        "es": "añadir comunicación MQTT a Bridge. Aplicación Xsense Versión > 1.43 es necesario",
+        "pl": "dodaj komunikację MQTT do mostka. Aplikacja Xsense Version > 1.43 jest konieczne",
+        "uk": "додати MQTT спілкування в мост. Версія додатка Xsense > 1.43 необхідний",
+        "zh-cn": "将 MQTT 通讯添加到 Bridge 。 Xsense app 版本 > 1.43 有必要"
+      },
       "0.2.3": {
         "en": "add new smoke detectors",
         "de": "neue rauchmelder hinzufügen",
@@ -80,19 +93,6 @@
         "pl": "naprawić komunikat błędu",
         "uk": "виправити повідомлення про помилку",
         "zh-cn": "修补错误消息"
-      },
-      "0.1.1": {
-        "en": "fix",
-        "de": "fixieren",
-        "ru": "исправлять",
-        "pt": "corrigir",
-        "nl": "fix",
-        "fr": "correction",
-        "it": "correzione",
-        "es": "arregle",
-        "pl": "fix",
-        "uk": "фіксація",
-        "zh-cn": "固定"
       }
     },
     "titleLang": {
@@ -186,7 +186,18 @@
     "pythonVersion": "3.12.9",
     "isWindowsSystem": false,
     "pythonTimeout": 20,
-    "forceUpdate": false
+    "forceUpdate": false,
+    "connectionType": "intmqtt",
+    "dummyMqtt": false,
+    "baseTopic": "homeassistant/binary_sensor/#",
+    "externalMqttServerIP": "",
+    "externalMqttServerPort": 1883,
+    "externalMqttServerCredentials": false,
+    "externalMqttServerUsername": "",
+    "externalMqttServerPassword": "",
+    "mqttServerIPBind": "0.0.0.0",
+    "mqttServerPort": 1885,
+    "useMqttServer": false
   },
   "encryptedNative": [
     "userPassword"
