@@ -99,7 +99,7 @@ class xsenseControll extends utils.Adapter {
         await prev;
         try {
             if (tools.isJson(message) == false && !this.pythonConnected) {
-                // Nur verarbeiten, wenn gültiges JSON und Python verbunden ist ..da sonst keine strukturen vorhaden
+                // Nur verarbeiten, wenn gültiges JSON und Python verbunden ist ..da sonst keine strukturen vorhanden sind
                 return;
             }
 
@@ -128,10 +128,10 @@ class xsenseControll extends utils.Adapter {
                         case 'battery': {
                             // hier müssen wir noch anpassen
                             const batLevel =
-                                messageObj.payload.status === 'Normal'    ? '3' :
-                                messageObj.payload.status === 'Low'       ? '2' :
-                                messageObj.payload.status === 'Critical'  ? '1' :
-                                                                            '0';
+                                messageObj.payload.status === 'Normal'    ? 3 :
+                                messageObj.payload.status === 'Low'       ? 2 :
+                                messageObj.payload.status === 'Critical'  ? 1 :
+                                                                            0;
                             this.setStateAsync(`devices.${bridgeId}.${deviceId}.batInfo`, { val: batLevel, ack: true });
                             break;
                         }
@@ -154,7 +154,7 @@ class xsenseControll extends utils.Adapter {
                             break;
 
                         default:
-                            this.log.warn(`Unknown attribute in topic: ${messageObj.topic}`);
+                            this.log.warn(`Unknown attribute in topic: ${messageObj.topic} suffix ${suffix}`);
                             break;
                     }
 
