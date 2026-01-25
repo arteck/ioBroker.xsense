@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "news": {
+      "0.3.3": {
+        "en": "fix battery state",
+        "de": "batteriezustand",
+        "ru": "исправить состояние батареи",
+        "pt": "corrigir o estado da bateria",
+        "nl": "fix batterijstatus",
+        "fr": "fixer l'état de la batterie",
+        "it": "correzione dello stato della batteria",
+        "es": "estado de la batería",
+        "pl": "stan akumulatora",
+        "uk": "фіксувати стан батареї",
+        "zh-cn": "固定电池状态"
+      },
       "0.3.2": {
         "en": "update settings",
         "de": "aktualisierung der einstellungen",
@@ -80,19 +93,6 @@
         "pl": "dodaj komunikację MQTT do mostka. Aplikacja Xsense Version > 1.43 jest konieczne",
         "uk": "додати MQTT спілкування в мост. Версія додатка Xsense > 1.43 необхідний",
         "zh-cn": "将 MQTT 通讯添加到 Bridge 。 Xsense app 版本 > 1.43 有必要"
-      },
-      "0.2.3": {
-        "en": "add new smoke detectors",
-        "de": "neue rauchmelder hinzufügen",
-        "ru": "новые детекторы дыма",
-        "pt": "adicionar novos detectores de fumo",
-        "nl": "nieuwe rookmelders toevoegen",
-        "fr": "ajouter de nouveaux détecteurs de fumée",
-        "it": "aggiungere nuovi rilevatori di fumo",
-        "es": "añadir nuevos detectores de humo",
-        "pl": "dodać nowe czujniki dymu",
-        "uk": "додати нові детектори диму",
-        "zh-cn": "增加新的烟雾探测器"
       }
     },
     "titleLang": {

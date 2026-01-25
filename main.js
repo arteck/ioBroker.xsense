@@ -124,6 +124,10 @@ class xsenseControll extends utils.Adapter {
                     const deviceId = mTopic?.[2] ?? null; // z.B. "00000003"
                     const attribute = mTopic?.[3] ?? null; // z.B. "online"
 
+                    this.log.debug(`bridgeId ${bridgeId}`);
+                    this.log.debug(`deviceId ${deviceId}`);
+                    this.log.debug(`attribute ${attribute}`);
+
                     switch (attribute) {
                         case 'battery': {
                             // hier müssen wir noch anpassen
