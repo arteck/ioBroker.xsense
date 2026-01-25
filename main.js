@@ -460,6 +460,16 @@ class xsenseControll extends utils.Adapter {
                 }
             }
 
+           if (this.config.connectionType == 'intmqtt') {
+                try {
+                    if (mqttServerController) {
+                        mqttServerController.closeServer();
+                    }
+                } catch (e) {
+                    this.log.error(e);
+                }
+            }
+
             if (this._requestInterval) {
                 this.clearInterval(this._requestInterval);
             }

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "news": {
+      "0.3.2": {
+        "en": "update settings",
+        "de": "aktualisierung der einstellungen",
+        "ru": "обновить настройки",
+        "pt": "configurações de atualização",
+        "nl": "instellingen bijwerken",
+        "fr": "paramètres de mise à jour",
+        "it": "impostazioni di aggiornamento",
+        "es": "configuración de actualización",
+        "pl": "aktualizacja ustawień",
+        "uk": "налаштування оновлення",
+        "zh-cn": "更新设置"
+      },
       "0.3.1": {
         "en": "update settings",
         "de": "aktualisierung der einstellungen",
@@ -80,19 +93,6 @@
         "pl": "dodać nowe czujniki dymu",
         "uk": "додати нові детектори диму",
         "zh-cn": "增加新的烟雾探测器"
-      },
-      "0.2.2": {
-        "en": "add XS0D-MR",
-        "de": "xS0D-MR hinzufügen",
-        "ru": "добавить XS0D-MR",
-        "pt": "adicionar XS0D- MR",
-        "nl": "xS0D-MR toevoegen",
-        "fr": "ajouter XS0D-MR",
-        "it": "aggiungere XS0D-MR",
-        "es": "añadir XS0D-MR",
-        "pl": "dodaj XS0D- MR",
-        "uk": "додати XS0D-MR",
-        "zh-cn": "添加 XS0D- MR 数据"
       }
     },
     "titleLang": {
@@ -182,13 +182,12 @@
   "native": {
     "userEmail": "",
     "userPassword": "",
-    "polltime": 60,
+    "polltime": 300,
     "pythonVersion": "3.12.9",
     "isWindowsSystem": false,
     "pythonTimeout": 20,
     "forceUpdate": false,
     "connectionType": "intmqtt",
-    "dummyMqtt": false,
     "baseTopic": "homeassistant/binary_sensor/#",
     "externalMqttServerIP": "",
     "externalMqttServerPort": 1883,
@@ -221,6 +220,19 @@
       "common": {
         "role": "indicator.connected",
         "name": "If connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.MQTT_connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If MQTT is connected",
         "type": "boolean",
         "read": true,
         "write": false,
