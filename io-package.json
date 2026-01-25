@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "news": {
+      "0.2.6": {
+        "en": "update settings",
+        "de": "aktualisierung der einstellungen",
+        "ru": "обновить настройки",
+        "pt": "configurações de atualização",
+        "nl": "instellingen bijwerken",
+        "fr": "paramètres de mise à jour",
+        "it": "impostazioni di aggiornamento",
+        "es": "configuración de actualización",
+        "pl": "aktualizacja ustawień",
+        "uk": "налаштування оновлення",
+        "zh-cn": "更新设置"
+      },
       "0.2.5": {
         "en": "Dependencies have been updated",
         "de": "Abhängigkeiten wurden aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "!!!! nowa struktura drzewa, usunąć wszystkie stare urządzenia\nnaprawić więcej mostów",
         "uk": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! нова структура дерева, видалити всі старі пристрої\nфіксація для більш міст",
         "zh-cn": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 新树结构, 删除所有旧设备\n修复更多桥梁"
-      },
-      "0.1.3": {
-        "en": "fix for more devices than 15",
-        "de": "fix für mehr geräte als 15",
-        "ru": "ремонт для более чем 15 устройств",
-        "pt": "fixar para mais dispositivos do que 15",
-        "nl": "fix voor meer apparaten dan 15",
-        "fr": "fixer pour plus de 15 dispositifs",
-        "it": "fissa per più dispositivi di 15",
-        "es": "fijado para más dispositivos que 15",
-        "pl": "dla więcej urządzeń niż 15",
-        "uk": "зафіксувати більше пристроїв, ніж 15",
-        "zh-cn": "超过15个设备的固定装置"
       }
     },
     "titleLang": {
@@ -221,19 +221,6 @@
       "common": {
         "role": "indicator.connected",
         "name": "If connected",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.MQTT_connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "If MQTT is connected",
         "type": "boolean",
         "read": true,
         "write": false,

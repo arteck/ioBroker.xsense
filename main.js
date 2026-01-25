@@ -269,7 +269,7 @@ class xsenseControll extends utils.Adapter {
             this.log.warn('[XSense] callLogin already running – skipping');
             return;
         }
-        
+
         this._loginInProgress = true;
 
         return new Promise((resolve, reject) => {
