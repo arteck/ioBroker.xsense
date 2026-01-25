@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "news": {
+      "0.3.1": {
+        "en": "update settings",
+        "de": "aktualisierung der einstellungen",
+        "ru": "обновить настройки",
+        "pt": "configurações de atualização",
+        "nl": "instellingen bijwerken",
+        "fr": "paramètres de mise à jour",
+        "it": "impostazioni di aggiornamento",
+        "es": "configuración de actualización",
+        "pl": "aktualizacja ustawień",
+        "uk": "налаштування оновлення",
+        "zh-cn": "更新设置"
+      },
       "0.3.0": {
         "en": "update settings",
         "de": "aktualisierung der einstellungen",
@@ -80,19 +93,6 @@
         "pl": "dodaj XS0D- MR",
         "uk": "додати XS0D-MR",
         "zh-cn": "添加 XS0D- MR 数据"
-      },
-      "0.2.1": {
-        "en": "fix link to readme\nfix load bridge as first",
-        "de": "fix link zum readme\nlastbrücke als erstes fixieren",
-        "ru": "обсуждение readme\nнагрузочный мост как первый",
-        "pt": "corrigir o link para o readme\nfixar a ponte de carga como primeiro",
-        "nl": "fix link naar readme\nfix load bridge als eerste",
-        "fr": "corriger le lien pour lire\nfixer le pont de charge comme premier",
-        "it": "correggere il link a readme\nfissare il ponte di carico come primo",
-        "es": "fijar enlace a readme\nfijar puente de carga como primer",
-        "pl": "fix link do readme\nnaprawić most obciążenia jako pierwszy",
-        "uk": "фіксувати посилання для читання\nфіксувати навантаження міст як перший",
-        "zh-cn": "固定链接到 readme\n先修补负载桥"
       }
     },
     "titleLang": {

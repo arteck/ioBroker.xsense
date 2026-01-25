@@ -221,7 +221,7 @@
                   "lg": 4,
                   "xl": 4,
                   "default": "homeassistant/binary_sensor/#",
-                  "disabled": 'true',
+                  "disabled": "true",
                   "hidden": "data.connectionType == 'intmqtt' || data.useMqttServer == false"
                 },
                 "spacer04": {
