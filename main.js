@@ -118,67 +118,64 @@ class xsenseControll extends utils.Adapter {
 
             switch (suffix) {
                 case 'state': {
-                    const parts = messageObj.topic.split('/');
+                    const parts = messageObj.topic.split('/').filter(Boolean);
+                    const findDp = parts.at(-2) ?? '';
+                    const mTopic = findDp.match(/^SBS50([^_]+)_([^_]+)_(.+)$/);
 
-                    if (parts.length > 2) {
+                    const bridgeId = mTopic?.[1] ?? null;
+                    const deviceId = mTopic?.[2] ?? null;
+                    const attribute = mTopic?.[3] ?? null;
 
-                        const findDp = parts[2];
-                        const mTopic = findDp.match(/^SBS(\w+)_([0-9A-Fa-f]+)_(.+)$/);
+                    this.log.debug(`bridgeId ${bridgeId}`);
+                    this.log.debug(`deviceId ${deviceId}`);
+                    this.log.debug(`attribute ${attribute}`);
 
-                        const bridgeId = mTopic?.[1] ?? null; // z.B. "15298924"
-                        const deviceId = mTopic?.[2] ?? null; // z.B. "00000003"
-                        const attribute = mTopic?.[3] ?? null; // z.B. "online"
-
-                        this.log.debug(`bridgeId ${bridgeId}`);
-                        this.log.debug(`deviceId ${deviceId}`);
-                        this.log.debug(`attribute ${attribute}`);
-
-                        switch (attribute) {
-                            case 'battery': {
-                                // hier müssen wir noch anpassen
-                                const batLevel =
-                                    messageObj.payload.status === 'Normal' ? 3 :
-                                        messageObj.payload.status === 'Low' ? 2 :
-                                            messageObj.payload.status === 'Critical' ? 1 :
-                                                0;
-                                this.setStateAsync(`devices.${bridgeId}.${deviceId}.batInfo`, {
-                                    val: batLevel,
-                                    ack: true
-                                });
-                                break;
-                            }
-                            case 'lifeend':
-                                this.setStateAsync(`devices.${bridgeId}.${deviceId}.isLifeEnd`, {
-                                    val: messageObj.payload.status == 'EOL',
-                                    ack: true
-                                });
-                                break;
-                            case 'online':
-                                this.setStateAsync(`devices.${bridgeId}.${deviceId}.online`, {
-                                    val: messageObj.payload.status == 'Online',
-                                    ack: true
-                                });
-                                break;
-
-                            case 'smokealarm':
-                            case 'heatalarm':
-                            case 'coalarm':
-                                this.setStateAsync(`devices.${bridgeId}.${deviceId}.alarmStatus`, {
-                                    val: messageObj.payload.status == 'Detected',
-                                    ack: true
-                                });
-                                break;
-
-                            case 'smokefault':
-                            case 'heatfault':
-                            case 'cofault':
-                                break;
-
-                            default:
-                                this.log.warn(`Unknown attribute in topic: ${messageObj.topic} suffix ${attribute}`);
-                                break;
+                    switch (attribute) {
+                        case 'battery': {
+                            // hier müssen wir noch anpassen
+                            const batLevel =
+                                messageObj.payload.status === 'Normal' ? 3 :
+                                    messageObj.payload.status === 'Low' ? 2 :
+                                        messageObj.payload.status === 'Critical' ? 1 :
+                                            0;
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.batInfo`, {
+                                val: batLevel,
+                                ack: true
+                            });
+                            break;
                         }
+                        case 'lifeend':
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.isLifeEnd`, {
+                                val: messageObj.payload.status == 'EOL',
+                                ack: true
+                            });
+                            break;
+                        case 'online':
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.online`, {
+                                val: messageObj.payload.status == 'Online',
+                                ack: true
+                            });
+                            break;
+
+                        case 'smokealarm':
+                        case 'heatalarm':
+                        case 'coalarm':
+                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.alarmStatus`, {
+                                val: messageObj.payload.status == 'Detected',
+                                ack: true
+                            });
+                            break;
+
+                        case 'smokefault':
+                        case 'heatfault':
+                        case 'cofault':
+                            break;
+
+                        default:
+                            this.log.debug(`Unknown attribute in topic: ${messageObj.topic} suffix ${attribute}`);
+                            break;
                     }
+
                     break;
                 }
                 default: {
