@@ -128,6 +128,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.3.4 (2026-01-25)
+* (arteck) fix bridge with hex
+
 ### 0.3.3 (2026-01-25)
 * (arteck) fix battery state
 

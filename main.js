@@ -172,16 +172,15 @@ class xsenseControll extends utils.Adapter {
                             break;
 
                         default:
-                            this.log.debug(`Unknown attribute in topic: ${messageObj.topic} suffix ${attribute}`);
+                            this.log.warn(`Unknown attribute in topic: ${messageObj.topic} suffix ${attribute}`);
                             break;
                     }
-
-                    break;
+                    break;   
                 }
                 default: {
-                    this.log.debug(`Unknown topic: ${messageObj.topic}`);
+                //    this.log.debug(`Unknown topic: ${messageObj.topic}`);
                     break;
-                }
+                }  
             }
         } finally {
             release();

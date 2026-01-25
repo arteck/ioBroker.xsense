@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "news": {
+      "0.3.4": {
+        "en": "fix bridge with hex",
+        "de": "befestigungsbrücke mit hexe",
+        "ru": "починить мост с помощью hex",
+        "pt": "fixar ponte com hex",
+        "nl": "fix brug met hex",
+        "fr": "réparer le pont avec l'hex",
+        "it": "ponte fisso con esagonale",
+        "es": "fijar puente con hex",
+        "pl": "naprawić most z heksem",
+        "uk": "закріпити міст з шестигранкою",
+        "zh-cn": "用六进制固定桥"
+      },
       "0.3.3": {
         "en": "fix battery state",
         "de": "batteriezustand",
@@ -80,19 +93,6 @@
         "pl": "Zaktualizowano zależności",
         "uk": "Залежність було оновлено",
         "zh-cn": "依赖关系已更新"
-      },
-      "0.2.4": {
-        "en": "add MQTT communication to Bridge. Xsense app Version > 1.43 is necessary",
-        "de": "mQTT-Kommunikation zu Bridge hinzufügen. Xsense App Version > 1.43 ist notwendig",
-        "ru": "добавьте MQTT в Bridge. Версия приложения Xsense > 1.43 Необходимо",
-        "pt": "adicionar comunicação MQTT à Ponte. Versão do aplicativo Xsense > 1.43 é necessário",
-        "nl": "mQTT-communicatie toevoegen aan Bridge. Xsense-appversie > 1.43 is noodzakelijk",
-        "fr": "ajouter la communication MQTT à Bridge. Version de l'application Xsense > 1.43 est nécessaire",
-        "it": "aggiungere comunicazione MQTT a Bridge. App Xsense Versione > 1.43 è necessario",
-        "es": "añadir comunicación MQTT a Bridge. Aplicación Xsense Versión > 1.43 es necesario",
-        "pl": "dodaj komunikację MQTT do mostka. Aplikacja Xsense Version > 1.43 jest konieczne",
-        "uk": "додати MQTT спілкування в мост. Версія додатка Xsense > 1.43 необхідний",
-        "zh-cn": "将 MQTT 通讯添加到 Bridge 。 Xsense app 版本 > 1.43 有必要"
       }
     },
     "titleLang": {
