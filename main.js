@@ -55,64 +55,7 @@ class xsenseControll extends utils.Adapter {
 
             // MQTT
             if (this.config.useMqttServer && loginGo) {
-                if (['exmqtt', 'intmqtt'].includes(this.config.connectionType)) {
-                    // External MQTT-Server
-                    const clientId = `ioBroker.xsense_${Math.random().toString(16).slice(2, 8)}`;
-                    if (this.config.connectionType == 'exmqtt') {
-                        if (this.config.externalMqttServerIP == '') {
-                            this.log.warn('Please configure the External MQTT-Server connection!');
-                            return;
-                        }
-
-                        // MQTT connection settings
-                        const mqttClientOptions = {
-                            clientId: clientId,
-                            clean: true,
-                            reconnectPeriod: 500,
-                        };
-
-                        // Set external mqtt credentials
-                        if (this.config.externalMqttServerCredentials == true) {
-                            mqttClientOptions.username = this.config.externalMqttServerUsername;
-                            mqttClientOptions.password = this.config.externalMqttServerPassword;
-                        }
-
-                        // Init connection
-                        mqttClient = mqtt.connect(
-                            `mqtt://${this.config.externalMqttServerIP}:${this.config.externalMqttServerPort}`,
-                            mqttClientOptions,
-                        );
-                    } else {
-                        // Internal MQTT-Server
-
-                        mqttServerController = new MqttServerController(this);
-                        await mqttServerController.createMQTTServer();
-                        await this.delay(1500);
-                        mqttClient = mqtt.connect(
-                            `mqtt://${this.config.mqttServerIPBind}:${this.config.mqttServerPort}`,
-                            {
-                                clientId: clientId,
-                                clean: true,
-                                reconnectPeriod: 500,
-                            },
-                        );
-                    }
-
-                    // MQTT Client
-                    mqttClient.on('connect', () => {
-                        this.log.info(
-                            `Connect to Xsense_MQTT over ${this.config.connectionType == 'exmqtt' ? 'external mqtt' : 'internal mqtt'} connection.`,
-                        );
-                        this.setState('info.MQTT_connection', true, true);
-                    });
-
-                    mqttClient.subscribe(`${this.config.baseTopic}`);
-
-                    mqttClient.on('message', (topic, payload) => {
-                        const newMessage = `{"payload":${payload.toString() == '' ? '"null"' : payload.toString()},"topic":"${topic.slice(topic.search('/') + 1)}"}`;
-                        this.messageParse(newMessage);
-                    });
-                }
+                await this.connectToMQTT();
             }
 
             if (loginGo) {
@@ -326,6 +269,7 @@ class xsenseControll extends utils.Adapter {
             this.log.warn('[XSense] callLogin already running – skipping');
             return;
         }
+        
         this._loginInProgress = true;
 
         return new Promise((resolve, reject) => {
@@ -532,6 +476,69 @@ class xsenseControll extends utils.Adapter {
         const availableStates = await this.getStatesAsync('*.online');
         for (const availableState in availableStates) {
             await this.setStateChangedAsync(availableState, false, true);
+        }
+    }
+
+    async connectToMQTT() {
+        try {
+            if (['exmqtt', 'intmqtt'].includes(this.config.connectionType)) {
+                // External MQTT-Server
+                const clientId = `ioBroker.xsense_${Math.random().toString(16).slice(2, 8)}`;
+                if (this.config.connectionType == 'exmqtt') {
+                    if (this.config.externalMqttServerIP == '') {
+                        this.log.warn('Please configure the External MQTT-Server connection!');
+                        return;
+                    }
+
+                    // MQTT connection settings
+                    const mqttClientOptions = {
+                        clientId: clientId,
+                        clean: true,
+                        reconnectPeriod: 500,
+                    };
+
+                    // Set external mqtt credentials
+                    if (this.config.externalMqttServerCredentials == true) {
+                        mqttClientOptions.username = this.config.externalMqttServerUsername;
+                        mqttClientOptions.password = this.config.externalMqttServerPassword;
+                    }
+
+                    // Init connection
+                    mqttClient = mqtt.connect(
+                        `mqtt://${this.config.externalMqttServerIP}:${this.config.externalMqttServerPort}`,
+                        mqttClientOptions,
+                    );
+                } else {
+                    // Internal MQTT-Server
+
+                    mqttServerController = new MqttServerController(this);
+                    await mqttServerController.createMQTTServer();
+                    await this.delay(1500);
+                    mqttClient = mqtt.connect(
+                        `mqtt://${this.config.mqttServerIPBind}:${this.config.mqttServerPort}`,
+                        {
+                            clientId: clientId,
+                            clean: true,
+                            reconnectPeriod: 500,
+                        },
+                    );
+                }
+
+                // MQTT Client
+                mqttClient.on('connect', () => {
+                    this.log.info(`Connect to Xsense_MQTT over ${this.config.connectionType == 'exmqtt' ? 'external mqtt' : 'internal mqtt'} connection.`);
+                    this.setState('info.MQTT_connection', true, true);
+                });
+
+                mqttClient.subscribe(`${this.config.baseTopic}`);
+
+                mqttClient.on('message', (topic, payload) => {
+                    const newMessage = `{"payload":${payload.toString() == '' ? '"null"' : payload.toString()},"topic":"${topic.slice(topic.search('/') + 1)}"}`;
+                    this.messageParse(newMessage);
+                });
+            }
+        } catch (err) {
+            this.log.error(`Error connectToMQTT: ${err.message}`);
         }
     }
 
