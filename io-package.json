@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.3.4",
+    "version": "0.3.5",
     "news": {
+      "0.3.5": {
+        "en": "check object isLifeEnd",
+        "de": "prüfobjekt istLifeEnd",
+        "ru": "проверить объект LifeEnd",
+        "pt": "check object isLifeEnd",
+        "nl": "check object isLifeEnd",
+        "fr": "vérifier l'objet isLifeEnd",
+        "it": "check object isLifeEnd",
+        "es": "objeto de verificación esLifeEnd",
+        "pl": "sprawdzić obiekt jest LifeEnd",
+        "uk": "перевірка об'єкта -LifeEnd",
+        "zh-cn": "检查对象为 LifeEnd"
+      },
       "0.3.4": {
         "en": "fix bridge with hex",
         "de": "befestigungsbrücke mit hexe",
@@ -80,19 +93,6 @@
         "pl": "aktualizacja ustawień",
         "uk": "налаштування оновлення",
         "zh-cn": "更新设置"
-      },
-      "0.2.5": {
-        "en": "Dependencies have been updated",
-        "de": "Abhängigkeiten wurden aktualisiert",
-        "ru": "Зависимости были обновлены",
-        "pt": "As dependências foram atualizadas",
-        "nl": "Afhankelijkheden zijn bijgewerkt",
-        "fr": "Les dépendances ont été actualisées",
-        "it": "Le dipendenze sono state aggiornate",
-        "es": "Se han actualizado las dependencias",
-        "pl": "Zaktualizowano zależności",
-        "uk": "Залежність було оновлено",
-        "zh-cn": "依赖关系已更新"
       }
     },
     "titleLang": {

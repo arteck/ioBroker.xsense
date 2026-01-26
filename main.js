@@ -134,22 +134,34 @@ class xsenseControll extends utils.Adapter {
                         case 'battery': {
                             // hier müssen wir noch anpassen
                             const batLevel =
-                                messageObj.payload.status === 'Normal' ? 3 :
-                                    messageObj.payload.status === 'Low' ? 2 :
-                                        messageObj.payload.status === 'Critical' ? 1 :
-                                            0;
+                                messageObj.payload.status === 'Normal' ?    3 :
+                                messageObj.payload.status === 'Low' ?       2 :
+                                messageObj.payload.status === 'Critical' ?  1 : 0;
                             this.setStateAsync(`devices.${bridgeId}.${deviceId}.batInfo`, {
                                 val: batLevel,
                                 ack: true
                             });
                             break;
                         }
-                        case 'lifeend':
-                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.isLifeEnd`, {
-                                val: messageObj.payload.status == 'EOL',
-                                ack: true
+                        case 'lifeend': {
+                            const id = `devices.${bridgeId}.${deviceId}.isLifeEnd`;
+                            const common = {
+                                name: "isLifeEnd",
+                                type: "boolean",
+                                role: "value",
+                                read: true,
+                                write: false,
+                            };
+
+                            await this.adapter.setObjectNotExistsAsync(id, {
+                                type: 'state',
+                                common,
+                                native: {},
                             });
+
+                            this.setStateAsync(id, { val: messageObj.payload.status == 'EOL', ack: true });
                             break;
+                        }
                         case 'online':
                             this.setStateAsync(`devices.${bridgeId}.${deviceId}.online`, {
                                 val: messageObj.payload.status == 'Online',

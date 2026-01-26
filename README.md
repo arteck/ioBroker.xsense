@@ -128,6 +128,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.3.5 (2026-01-26)
+* (arteck) check object isLifeEnd
+
 ### 0.3.4 (2026-01-25)
 * (arteck) fix bridge with hex
 
