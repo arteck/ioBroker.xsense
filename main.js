@@ -153,7 +153,7 @@ class xsenseControll extends utils.Adapter {
                                 write: false,
                             };
 
-                            await this.adapter.setObjectNotExistsAsync(id, {
+                            await this.setObjectNotExistsAsync(id, {
                                 type: 'state',
                                 common,
                                 native: {},
