@@ -31,6 +31,7 @@ An XSense Bridge SBS50 is required.
 
 ## ❗ WARNING
 The adapter is **not** intended for alarm purposes — it is primarily for monitoring the device battery status.
+I accept no liability if the place burns down.
 
 ---
 
