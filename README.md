@@ -129,9 +129,11 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (arteck) add XS0B-MR
+
 ### 0.3.6 (2026-01-26)
 * (arteck) typo
-*
 
 ### 0.3.5 (2026-01-26)
 * (arteck) check object isLifeEnd
