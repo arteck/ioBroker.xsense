@@ -1,7 +1,7 @@
 const utils = require('@iobroker/adapter-core');
 const tools = require('./lib/tools');
 const Json2iobXSense = require('./lib/json2iob');
-const path = require('path');
+const path = require('node:path');
 const MqttServerController = require('./lib/mqttServerController').MqttServerController;
 const mqtt = require('mqtt');
 
