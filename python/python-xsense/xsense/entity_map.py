@@ -174,8 +174,9 @@ entities = {
     'XS0B-MR': {
         'type': EntityType.SMOKE,
         'actions': [
-            TestAction(shadow='app2ndSelfTest'),
+            TestAction(),
             MuteAction(),
+            FireDrillAction(),
         ],
     },
     'XS0D-MR': {
@@ -200,6 +201,8 @@ entities = {
     'XS03-iWX': {
         # Smoke RF
         'type': EntityType.SMOKE,
+        'actions': [
+            TestAction(),
     },
     'XS03-WX': {}
 }
