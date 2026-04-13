@@ -27,74 +27,73 @@ jobs:
 
       - name: Generate Devices Markdown Table
         run: |
-          node <<EOF
-          const fs = require("fs");
-      
-          const file = "python/python-xsense/xsense/entity_map.py";
-          const out = "Devices.md";
-      
-          const data = fs.readFileSync(file, "utf8");
-      
+          node << 'EOF'
+          const fs = require('fs');
+
+          const file = 'python/python-xsense/xsense/entity_map.py';
+          const out = 'Devices.md';
+
+          const data = fs.readFileSync(file, 'utf8');
+
+          // extract models
           const regex = /'([A-Z0-9\-]+)'\s*:\s*\{/g;
-      
+
+          const descMap = {
+            BASE: 'Smart base station or legacy controller',
+            LISTENER: 'Alarm listener that forwards external alarms',
+            SMOKE: 'Smoke detection device',
+            CO: 'Carbon monoxide detector',
+            HEAT: 'Heat detection device',
+            COMBI: 'Combined smoke and CO detector',
+            WATER: 'Water leak sensor',
+            TEMPERATURE: 'Temperature and humidity sensor',
+            MOTION: 'Motion detection sensor',
+            DOOR: 'Door or window sensor',
+            KEYPAD: 'Alarm system keypad',
+            MAILBOX: 'Mailbox sensor'
+          };
+
           const items = [];
-      
           let match;
+
           while ((match = regex.exec(data)) !== null) {
             const model = match[1];
-      
-            const blockRegex = new RegExp(`'${model}'\\s*:\\s*\\{([\\s\\S]*?)\\}`);
-            const blockMatch = data.match(blockRegex);
-      
-            let type = "Unknown";
-            let desc = "No description available.";
-      
-            if (blockMatch) {
-              const block = blockMatch[1];
-      
-              const typeMatch = block.match(/EntityType\.([A-Z_]+)/);
-              if (typeMatch) type = typeMatch[1];
-      
-              const descMap = {
-                BASE: "Smart base station or legacy controller",
-                LISTENER: "Alarm listener",
-                SMOKE: "Smoke detector",
-                CO: "CO detector",
-                HEAT: "Heat detector",
-                COMBI: "Combined smoke/CO detector",
-                WATER: "Water leak sensor",
-                TEMPERATURE: "Temp & humidity sensor",
-                MOTION: "Motion sensor",
-                DOOR: "Door sensor",
-                KEYPAD: "Keypad",
-                MAILBOX: "Mailbox sensor"
-              };
-      
-              desc = descMap[type] || "No description available.";
 
-            }
-      
+            const slice = data.slice(match.index, match.index + 300);
+
+            const typeMatch = slice.match(/EntityType\.([A-Z_]+)/);
+            const type = typeMatch ? typeMatch[1] : 'Unknown';
+
+            const desc = descMap[type] || 'No description available.';
+
             items.push({ model, type, desc });
           }
-      
+
+          // dedupe
           const seen = new Set();
           const unique = items
-            .filter(i => !seen.has(i.model) && seen.add(i.model))
-            .sort((a,b) => a.model.localeCompare(b.model));
-      
-          const mdLines = [
-            "| Model | Type | Description |",
-            "| ------------ | ----------- | ------------------------------------------------------------------------------------------ |"
-          ];
-      
-          for (const i of unique) {
-            mdLines.push(`| **${i.model}** | ${i.type} | ${i.desc} |`);
-          }
-      
-          fs.writeFileSync(out, mdLines.join("\n") + "\n");
-          console.log("Generated", out);
-          EOF
+            .filter(i => {
+              if (seen.has(i.model)) return false;
+              seen.add(i.model);
+              return true;
+            })
+            .sort((a, b) => a.model.localeCompare(b.model));
 
+          // markdown output
+          const header =
+            '| Model | Type | Description |\n' +
+            '| ------------ | ----------- | ------------------------------------------------------------------------------------------ |';
+
+          const rows = unique.map(i =>
+            `| **${i.model}** | ${i.type} | ${i.desc} |`
+          );
+
+          const md = [header, ...rows].join('\n') + '\n';
+
+          fs.writeFileSync(out, md);
+
+          console.log(`Generated ${out} with ${unique.length} entries`);
+          EOF
 
       - name: Commit Wiki File
         run: |
