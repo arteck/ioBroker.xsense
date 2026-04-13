@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "news": {
+      "0.3.7": {
+        "en": "add XS0B-MR",
+        "de": "xS0B-MR hinzufügen",
+        "ru": "добавить XS0B-MR",
+        "pt": "adicionar XS0B-MR",
+        "nl": "xS0B-MR toevoegen",
+        "fr": "ajouter XS0B-MR",
+        "it": "aggiungere XS0B-MR",
+        "es": "añadir XS0B-MR",
+        "pl": "dodaj XS0B- MR",
+        "uk": "додати XS0B-MR",
+        "zh-cn": "添加 XS0B-MR"
+      },
       "0.3.6": {
         "en": "typo\n",
         "de": "typo\n",
@@ -69,19 +82,6 @@
         "zh-cn": "更新设置"
       },
       "0.3.1": {
-        "en": "update settings",
-        "de": "aktualisierung der einstellungen",
-        "ru": "обновить настройки",
-        "pt": "configurações de atualização",
-        "nl": "instellingen bijwerken",
-        "fr": "paramètres de mise à jour",
-        "it": "impostazioni di aggiornamento",
-        "es": "configuración de actualización",
-        "pl": "aktualizacja ustawień",
-        "uk": "налаштування оновлення",
-        "zh-cn": "更新设置"
-      },
-      "0.3.0": {
         "en": "update settings",
         "de": "aktualisierung der einstellungen",
         "ru": "обновить настройки",
