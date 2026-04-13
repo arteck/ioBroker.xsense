@@ -142,7 +142,7 @@ entities = {
         'type': EntityType.CO,
         'actions': [
             TestAction(shadow='appCoSelfTest'),
-            MuteAction('1', '"appCoMute')
+            MuteAction('1', 'appCoMute')
         ]
     },
     'XC04-WX': {
@@ -203,6 +203,7 @@ entities = {
         'type': EntityType.SMOKE,
         'actions': [
             TestAction(),
+        ],
     },
     'XS03-WX': {}
 }
