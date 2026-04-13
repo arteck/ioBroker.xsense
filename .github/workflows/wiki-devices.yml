@@ -106,3 +106,4 @@ jobs:
           git add Devices.md
           git commit -m "auto: update devices table" || exit 0
           git push
+
