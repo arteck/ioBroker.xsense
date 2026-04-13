@@ -71,7 +71,8 @@ jobs:
                 MAILBOX: "Mailbox sensor"
               };
 
-              desc = descMap[type] || desc;
+              desc = descMap[type] || "No description available.";
+
             }
 
             items.push({ model, type, desc });
