@@ -1,4 +1,4 @@
-name: Generate XSense Devices Table
+name: Generate XSense Devices Wiki
 
 on:
   push:
@@ -20,6 +20,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Checkout Wiki repo
+        uses: actions/checkout@v4
+        with:
+          repository: arteck/ioBroker.xsense.wiki
+          path: wiki
+
       - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
@@ -31,11 +37,10 @@ jobs:
           const fs = require('fs');
 
           const file = 'python/python-xsense/xsense/entity_map.py';
-          const out = 'Devices.md';
+          const out = 'wiki/Devices.md';
 
           const data = fs.readFileSync(file, 'utf8');
 
-          // extract models
           const regex = /'([A-Z0-9\-]+)'\s*:\s*\{/g;
 
           const descMap = {
@@ -69,7 +74,6 @@ jobs:
             items.push({ model, type, desc });
           }
 
-          // dedupe
           const seen = new Set();
           const unique = items
             .filter(i => {
@@ -79,7 +83,6 @@ jobs:
             })
             .sort((a, b) => a.model.localeCompare(b.model));
 
-          // markdown output
           const header =
             '| Model | Type | Description |\n' +
             '| ------------ | ----------- | ------------------------------------------------------------------------------------------ |';
@@ -92,11 +95,12 @@ jobs:
 
           fs.writeFileSync(out, md);
 
-          console.log(`Generated ${out} with ${unique.length} entries`);
+          console.log(`Generated Wiki Devices.md with ${unique.length} entries`);
           EOF
 
       - name: Commit Wiki File
         run: |
+          cd wiki
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
