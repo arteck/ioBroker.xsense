@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - python/python-xsense/xsense/entity_map.py
+
   workflow_dispatch:
 
 permissions:
@@ -19,7 +20,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -43,7 +44,6 @@ jobs:
           while ((match = regex.exec(data)) !== null) {
             const model = match[1];
 
-            // find block for type
             const blockRegex = new RegExp(`'${model}'\\s*:\\s*\\{([\\s\\S]*?)\\}`);
             const blockMatch = data.match(blockRegex);
 
@@ -56,7 +56,6 @@ jobs:
               const typeMatch = block.match(/EntityType\.([A-Z_]+)/);
               if (typeMatch) type = typeMatch[1];
 
-              // default description map
               const descMap = {
                 BASE: "Smart base station or legacy controller",
                 LISTENER: "Alarm listener that forwards external alarms",
@@ -81,21 +80,25 @@ jobs:
           // remove duplicates
           const seen = new Set();
           const unique = items.filter(i => {
-            const key = i.model;
-            if (seen.has(key)) return false;
-            seen.add(key);
+            if (seen.has(i.model)) return false;
+            seen.add(i.model);
             return true;
-          }).sort((a,b) => a.model.localeCompare(b.model));
+          }).sort((a, b) => a.model.localeCompare(b.model));
 
-          // build markdown
-          let md = `| Model | Type | Description || ------------ | ----------- | ------------------------------------------------------------------------------------------ |`;
+          // markdown output
+          const mdLines = [
+            "| Model | Type | Description |",
+            "| ------------ | ----------- | ------------------------------------------------------------------------------------------ |
+          "];
+
+          let md = mdLines.join("\n") + "\n";
 
           for (const i of unique) {
             md += `| **${i.model}** | ${i.type} | ${i.desc} |\n`;
           }
 
           fs.writeFileSync(out, md);
-          console.log("Generated Devices.md with", unique.length, "entries");
+          console.log(`Generated ${out} with ${unique.length} entries`);
           EOF
 
       - name: Commit Wiki File
@@ -106,4 +109,3 @@ jobs:
           git add Devices.md
           git commit -m "auto: update devices table" || exit 0
           git push
-
