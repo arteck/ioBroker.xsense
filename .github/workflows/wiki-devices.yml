@@ -1,4 +1,4 @@
-name: Auto Wiki Devices (No Script)
+name: Auto Wiki Devices (No Images)
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Generate Wiki Markdown (no external script)
+      - name: Generate Wiki Markdown
         run: |
           node - <<'EOF'
           const fs = require("fs");
@@ -34,38 +34,89 @@ jobs:
 
           const data = fs.readFileSync(file, "utf8");
 
-          // Extract entity keys like 'XS01-M'
-          const regex = /'([A-Z0-9\-]+)'\s*:\s*\{/g;
+          // Extract full entity blocks
+          const regex = /'([A-Z0-9\-]+)'\s*:\s*\{([\s\S]*?)\}/g;
+
+          const typeMap = {
+            BASE: "Base Station",
+            LISTENER: "Listener",
+            SMOKE: "Smoke Detector",
+            CO: "CO Detector",
+            HEAT: "Heat Detector",
+            COMBI: "Combination Detector",
+            WATER: "Water Leak Sensor",
+            TEMPERATURE: "Temperature Sensor",
+            MOTION: "Motion Sensor",
+            DOOR: "Door Sensor",
+            KEYPAD: "Keypad",
+            MAILBOX: "Mailbox Sensor"
+          };
+
+          const descMap = {
+            BASE: "Controls and connects all X-Sense devices.",
+            LISTENER: "Listens to existing alarms and forwards them to the system.",
+            SMOKE: "Detects smoke and triggers fire alarms.",
+            CO: "Detects carbon monoxide gas.",
+            HEAT: "Detects high temperature instead of smoke.",
+            COMBI: "Combined smoke and CO detection in one device.",
+            WATER: "Detects water leaks and flooding.",
+            TEMPERATURE: "Measures temperature and humidity.",
+            MOTION: "Detects movement in a monitored area.",
+            DOOR: "Detects open/close state of doors or windows.",
+            KEYPAD: "Control panel for arming/disarming alarms.",
+            MAILBOX: "Detects mail delivery in mailbox."
+          };
 
           let match;
-          const models = [];
+          const items = [];
 
           while ((match = regex.exec(data)) !== null) {
-            models.push(match[1]);
+            const model = match[1];
+            const body = match[2];
+
+            const typeMatch = body.match(/EntityType\.([A-Z_]+)/);
+            const type = typeMatch ? typeMatch[1] : "UNKNOWN";
+
+            items.push({ model, type });
           }
 
-          const unique = [...new Set(models)].sort();
+          const grouped = {};
 
-          const img = (m) =>
-            `https://de.x-sense.com/cdn/shop/files/${m}_1024x1024.jpg`;
+          for (const item of items) {
+            if (!grouped[item.type]) grouped[item.type] = [];
+            grouped[item.type].push(item.model);
+          }
 
           let md = "# 📦 X-Sense Devices\n\n";
-          md += "| Image | Model | Description |\n";
-          md += "|------|------|------|\n";
 
-          for (const m of unique) {
-            md += `| ![](${img(m)}) | **${m}** | auto-generated device |\n`;
+          for (const type of Object.keys(grouped).sort()) {
+            const title = typeMap[type] || type;
+            const desc = descMap[type] || "No description available.";
+
+            md += `## ${title}\n\n`;
+            md += `> ${desc}\n\n`;
+
+            md += "| Model | Type |\n";
+            md += "|------|------|\n";
+
+            const models = [...new Set(grouped[type])].sort();
+
+            for (const m of models) {
+              md += `| **${m}** | ${type} |\n`;
+            }
+
+            md += "\n";
           }
 
           fs.writeFileSync(out, md);
-          console.log("Generated Devices.md with", unique.length, "devices");
+          console.log("Generated Devices.md");
           EOF
 
       - name: Clone Wiki repo
         run: |
           git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/arteck/ioBroker.xsense.wiki.git wiki
 
-      - name: Copy file
+      - name: Copy to Wiki
         run: |
           cp Devices.md wiki/Devices.md
 
@@ -76,5 +127,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add Devices.md
-          git commit -m "auto: update devices wiki" || exit 0
+          git commit -m "auto: update devices wiki (no images)" || exit 0
           git push
