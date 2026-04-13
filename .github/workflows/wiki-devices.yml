@@ -27,80 +27,74 @@ jobs:
 
       - name: Generate Devices Markdown Table
         run: |
-          node - <<'EOF'
+          node <<EOF
           const fs = require("fs");
-
+      
           const file = "python/python-xsense/xsense/entity_map.py";
           const out = "Devices.md";
-
+      
           const data = fs.readFileSync(file, "utf8");
-
-          // Match: 'MODEL': { ... }
+      
           const regex = /'([A-Z0-9\-]+)'\s*:\s*\{/g;
-
+      
           const items = [];
-
+      
           let match;
           while ((match = regex.exec(data)) !== null) {
             const model = match[1];
-
+      
             const blockRegex = new RegExp(`'${model}'\\s*:\\s*\\{([\\s\\S]*?)\\}`);
             const blockMatch = data.match(blockRegex);
-
+      
             let type = "Unknown";
             let desc = "No description available.";
-
+      
             if (blockMatch) {
               const block = blockMatch[1];
-
+      
               const typeMatch = block.match(/EntityType\.([A-Z_]+)/);
               if (typeMatch) type = typeMatch[1];
-
+      
               const descMap = {
                 BASE: "Smart base station or legacy controller",
-                LISTENER: "Alarm listener that forwards external alarms",
-                SMOKE: "Smoke detection device",
-                CO: "Carbon monoxide detector",
-                HEAT: "Heat detection device",
-                COMBI: "Combined smoke and CO detector",
+                LISTENER: "Alarm listener",
+                SMOKE: "Smoke detector",
+                CO: "CO detector",
+                HEAT: "Heat detector",
+                COMBI: "Combined smoke/CO detector",
                 WATER: "Water leak sensor",
-                TEMPERATURE: "Temperature and humidity sensor",
-                MOTION: "Motion detection sensor",
-                DOOR: "Door or window sensor",
-                KEYPAD: "Alarm system keypad",
+                TEMPERATURE: "Temp & humidity sensor",
+                MOTION: "Motion sensor",
+                DOOR: "Door sensor",
+                KEYPAD: "Keypad",
                 MAILBOX: "Mailbox sensor"
               };
-
+      
               desc = descMap[type] || "No description available.";
 
             }
-
+      
             items.push({ model, type, desc });
           }
-
-          // remove duplicates
+      
           const seen = new Set();
-          const unique = items.filter(i => {
-            if (seen.has(i.model)) return false;
-            seen.add(i.model);
-            return true;
-          }).sort((a, b) => a.model.localeCompare(b.model));
-
-          // markdown output
+          const unique = items
+            .filter(i => !seen.has(i.model) && seen.add(i.model))
+            .sort((a,b) => a.model.localeCompare(b.model));
+      
           const mdLines = [
             "| Model | Type | Description |",
-            "| ------------ | ----------- | ------------------------------------------------------------------------------------------ |
-          "];
-
-          let md = mdLines.join("\n") + "\n";
-
+            "| ------------ | ----------- | ------------------------------------------------------------------------------------------ |"
+          ];
+      
           for (const i of unique) {
-            md += `| **${i.model}** | ${i.type} | ${i.desc} |\n`;
+            mdLines.push(`| **${i.model}** | ${i.type} | ${i.desc} |`);
           }
-
-          fs.writeFileSync(out, md);
-          console.log(`Generated ${out} with ${unique.length} entries`);
+      
+          fs.writeFileSync(out, mdLines.join("\n") + "\n");
+          console.log("Generated", out);
           EOF
+
 
       - name: Commit Wiki File
         run: |
