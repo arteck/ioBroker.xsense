@@ -1,0 +1,80 @@
+name: Auto Wiki Devices (No Script)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - python/python-xsense/xsense/entity_map.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate Wiki Markdown (no external script)
+        run: |
+          node - <<'EOF'
+          const fs = require("fs");
+
+          const file = "python/python-xsense/xsense/entity_map.py";
+          const out = "Devices.md";
+
+          const data = fs.readFileSync(file, "utf8");
+
+          // Extract entity keys like 'XS01-M'
+          const regex = /'([A-Z0-9\-]+)'\s*:\s*\{/g;
+
+          let match;
+          const models = [];
+
+          while ((match = regex.exec(data)) !== null) {
+            models.push(match[1]);
+          }
+
+          const unique = [...new Set(models)].sort();
+
+          const img = (m) =>
+            `https://de.x-sense.com/cdn/shop/files/${m}_1024x1024.jpg`;
+
+          let md = "# 📦 X-Sense Devices\n\n";
+          md += "| Image | Model | Description |\n";
+          md += "|------|------|------|\n";
+
+          for (const m of unique) {
+            md += `| ![](${img(m)}) | **${m}** | auto-generated device |\n`;
+          }
+
+          fs.writeFileSync(out, md);
+          console.log("Generated Devices.md with", unique.length, "devices");
+          EOF
+
+      - name: Clone Wiki repo
+        run: |
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/arteck/ioBroker.xsense.wiki.git wiki
+
+      - name: Copy file
+        run: |
+          cp Devices.md wiki/Devices.md
+
+      - name: Commit Wiki
+        run: |
+          cd wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add Devices.md
+          git commit -m "auto: update devices wiki" || exit 0
+          git push
