@@ -1,0 +1,109 @@
+name: Generate XSense Devices Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - python/python-xsense/xsense/entity_map.py
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Checkout Wiki repo
+        uses: actions/checkout@v4
+        with:
+          repository: arteck/ioBroker.xsense.wiki
+          path: wiki
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Generate Devices Markdown Table
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+
+          const file = 'python/python-xsense/xsense/entity_map.py';
+          const out = 'wiki/Devices.md';
+
+          const data = fs.readFileSync(file, 'utf8');
+
+          const regex = /'([A-Z0-9\-]+)'\s*:\s*\{/g;
+
+          const descMap = {
+            BASE: 'Smart base station or legacy controller',
+            LISTENER: 'Alarm listener that forwards external alarms',
+            SMOKE: 'Smoke detection device',
+            CO: 'Carbon monoxide detector',
+            HEAT: 'Heat detection device',
+            COMBI: 'Combined smoke and CO detector',
+            WATER: 'Water leak sensor',
+            TEMPERATURE: 'Temperature and humidity sensor',
+            MOTION: 'Motion detection sensor',
+            DOOR: 'Door or window sensor',
+            KEYPAD: 'Alarm system keypad',
+            MAILBOX: 'Mailbox sensor'
+          };
+
+          const items = [];
+          let match;
+
+          while ((match = regex.exec(data)) !== null) {
+            const model = match[1];
+
+            const slice = data.slice(match.index, match.index + 300);
+
+            const typeMatch = slice.match(/EntityType\.([A-Z_]+)/);
+            const type = typeMatch ? typeMatch[1] : 'Unknown';
+
+            const desc = descMap[type] || 'No description available.';
+
+            items.push({ model, type, desc });
+          }
+
+          const seen = new Set();
+          const unique = items
+            .filter(i => {
+              if (seen.has(i.model)) return false;
+              seen.add(i.model);
+              return true;
+            })
+            .sort((a, b) => a.model.localeCompare(b.model));
+
+          const header =
+            '| Model | Type | Description |\n' +
+            '| ------------ | ----------- | ------------------------------------------------------------------------------------------ |';
+
+          const rows = unique.map(i =>
+            `| **${i.model}** | ${i.type} | ${i.desc} |`
+          );
+
+          const md = [header, ...rows].join('\n') + '\n';
+
+          fs.writeFileSync(out, md);
+
+          console.log(`Generated Wiki Devices.md with ${unique.length} entries`);
+          EOF
+
+      - name: Commit Wiki File
+        run: |
+          cd wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add Devices.md
+          git commit -m "auto: update devices table" || exit 0
+          git push

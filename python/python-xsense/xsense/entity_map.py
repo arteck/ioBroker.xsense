@@ -204,6 +204,6 @@ entities = {
         'actions': [
             TestAction(),
         ],
-    },
-    'XS03-WX': {}
+    }
+  #  'XS03-WX': {}
 }
