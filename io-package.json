@@ -157,17 +157,17 @@
           "zh-cn": "重要的提醒！ xsense"
         },
         "text": {
-          "en": "the adapter is now js only. no python is necessary. \\nhere are some object renamed and you have to adjust your scripts",
-          "de": "Der Adapter ist jetzt rein JavaScript-basiert. Python ist nicht mehr erforderlich. Einige Objekte wurden umbenannt, und Sie müssen Ihre Skripte entsprechend anpassen.",
-          "ru": "Адаптер теперь работает только на JavaScript. Python не требуется. Некоторые объекты переименованы, и вам нужно будет скорректировать свои скрипты.",
-          "pt": "O adaptador agora funciona apenas com JavaScript. Não é necessário usar Python. Alguns objetos foram renomeados e você precisa ajustar seus scripts.",
-          "nl": "De adapter is nu alleen nog maar JavaScript. Python is niet nodig. Er zijn enkele objecten hernoemd en je moet je scripts daarop aanpassen.",
-          "fr": "L'adaptateur fonctionne désormais uniquement en JavaScript. Python n'est plus nécessaire. Certains objets ont été renommés ; vous devez donc adapter vos scripts.",
-          "it": "L'adattatore ora è solo in JavaScript. Non è necessario Python. Alcuni oggetti sono stati rinominati e dovrai adattare i tuoi script.",
-          "es": "El adaptador ahora solo usa JavaScript. No se necesita Python. Algunos objetos han sido renombrados y debes ajustar tus scripts.",
-          "pl": "Adapter obsługuje teraz tylko JS. Python nie jest potrzebny. \\nOto niektóre obiekty, którym zmieniono nazwy i musisz dostosować swoje skrypty.",
-          "uk": "Адаптер тепер працює лише на JS. Python не потрібен. \\nДеякі об'єкти перейменовано, і вам потрібно налаштувати свої скрипти.",
-          "zh-cn": "适配器现在仅支持 JavaScript，无需 Python。部分对象已重命名，您需要相应地调整脚本。"
+          "en": "the adapter is now js only. no python is necessary. \\\\nhere are some object renamed and you have to adjust your scripts. del the states tree and recreate the states again",
+          "de": "Der Adapter ist jetzt rein JavaScript-basiert. Python wird nicht mehr benötigt. Einige Objekte wurden umbenannt, und Sie müssen Ihre Skripte entsprechend anpassen. Löschen Sie den Zustandsbaum und erstellen Sie die Zustände neu.",
+          "ru": "Адаптер теперь работает только на JavaScript. Python не требуется. Некоторые объекты переименованы, и вам нужно будет скорректировать свои скрипты. Удалите дерево состояний и создайте состояния заново.",
+          "pt": "O adaptador agora é somente em JavaScript. Não é necessário Python. Alguns objetos foram renomeados e você precisa ajustar seus scripts. Exclua a árvore de estados e recrie os estados novamente.",
+          "nl": "De adapter is nu alleen nog maar JavaScript. Python is niet nodig. \\\\nEr zijn enkele objecten hernoemd en je moet je scripts daarop aanpassen. Verwijder de statusstructuur en maak de statussen opnieuw aan.",
+          "fr": "L'adaptateur fonctionne désormais uniquement en JavaScript. Python n'est plus nécessaire. Certains objets ont été renommés ; vous devez donc adapter vos scripts. Supprimez l'arborescence des états et recréez-la.",
+          "it": "L'adattatore ora è solo in JavaScript. Non è necessario Python. Alcuni oggetti sono stati rinominati e devi adattare i tuoi script. Elimina l'albero degli stati e ricrea gli stati di nuovo.",
+          "es": "El adaptador ahora solo usa JavaScript. No se necesita Python. Algunos objetos han sido renombrados y debes ajustar tus scripts. Elimina el árbol de estados y vuelve a crear los estados.",
+          "pl": "Adapter obsługuje teraz tylko JS. Python nie jest potrzebny. \\\\Oto niektóre obiekty, którym zmieniono nazwy i musisz dostosować swoje skrypty. Usuń drzewo stanów i utwórz je ponownie.",
+          "uk": "Адаптер тепер працює лише на JS. Python не потрібен. \\\\nЄ деякі об'єкти перейменовані, і вам потрібно налаштувати свої скрипти. Видаліть дерево станів та знову створіть стани.",
+          "zh-cn": "适配器现在仅支持 JavaScript，无需 Python。部分对象已重命名，您需要相应地调整脚本。请删除状态树并重新创建状态。"
         },
         "level": "warn",
         "buttons": [
