@@ -1,115 +1,284 @@
-const utils = require('@iobroker/adapter-core');
-const tools = require('./lib/tools');
-const Json2iobXSense = require('./lib/json2iob');
-const path = require('node:path');
-const MqttServerController = require('./lib/mqttServerController').MqttServerController;
-const mqtt = require('mqtt');
+'use strict';
 
+const utils        = require('@iobroker/adapter-core');
+const { XSenseClient } = require('./lib/xsenseClient');
+const Json2iobXSense   = require('./lib/json2iob');
+const MqttServerController = require('./lib/mqttServerController').MqttServerController;
+const mqtt  = require('mqtt');
+const tools = require('./lib/tools');
+
+// node-fetch als globales fetch bereitstellen (wird in XSenseClient genutzt)
 global.fetch = require('node-fetch-commonjs');
 
-let _outputBuffer = Buffer.alloc(0);
-
-let index = 0;
+// ─── Modul-globale MQTT-Objekte ───────────────────────────────────────────────
 let mqttServerController;
 let mqttClient;
 let messageParseMutex = Promise.resolve();
 
-/**
- * -------------------------------------------------------------------
- * ioBroker X-Sense Adapter
- * -------------------------------------------------------------------
- */
-class xsenseControll extends utils.Adapter {
+// ─────────────────────────────────────────────────────────────────────────────
+class XSenseAdapter extends utils.Adapter {
     constructor(options = {}) {
-        super({
-            ...options,
-            name: 'xsense',
-        });
+        super({ ...options, name: 'xsense' });
 
-        this.json2iob = new Json2iobXSense(this);
-        this.pythonConnected = false;
+        this.json2iob     = new Json2iobXSense(this);
+        this.xsenseClient = null;
 
-        this._requestInterval = 0;
-        this._loginInProgress = false;
-        this._bridgeInterval = null;
+        this.pythonConnected  = false;
+        this._requestInterval = null;
+        /** Bereits beim MQTT-Broker subscribed Topics – verhindert Duplikate */
+        this._mqttSubscribedTopics = new Set();
 
-        this.on('ready', this.onReady.bind(this));
+        this.on('ready',       this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
-        this.on('unload', this.onUnload.bind(this));
+        this.on('unload',      this.onUnload.bind(this));
     }
+
+    // ─── onReady ─────────────────────────────────────────────────────────────
 
     async onReady() {
         try {
-            let loginGo = true;
-            this.log.info('Start X-Sense... waiting ....');
+            this.log.info('[XSense] Adapter startet...');
 
+            await this._ensureInfoStates();
             await this.json2iob.createStaticDeviceObject();
-            if (this.config.userEmail == '') {
-                this.log.error('Check Settings. No Username set');
+
+            let loginGo = true;
+
+            if (!this.config.userEmail) {
+                this.log.error('[XSense] Kein Benutzername konfiguriert');
                 loginGo = false;
             }
-            if (this.config.userPassword == '') {
-                this.log.error('Check Settings. No Password set');
+            if (!this.config.userPassword) {
+                this.log.error('[XSense] Kein Passwort konfiguriert');
                 loginGo = false;
             }
 
-            // MQTT
+            // MQTT-Verbindung (unabhängig vom Cloud-Login)
             if (this.config.useMqttServer && loginGo) {
                 await this.connectToMQTT();
             }
 
-            if (loginGo) {
-                this.callPython = (await this.getState('info.callPython'))?.val;
-                if (this.config.isWindowsSystem) {
-                    this.callPython = 'python';
-                }
+            if (!loginGo) {
+                this.log.warn('[XSense] Login übersprungen – Konfiguration unvollständig');
+                return;
+            }
 
-                this.setAllAvailableToFalse();
-                this.python = await this.setupXSenseEnvironment(true);
+            await this.setAllAvailableToFalse();
 
-                this.log.debug(`python ${JSON.stringify(this.python)}`);
+            // Session wiederherstellen oder neu einloggen
+            this.xsenseClient = await this._initSession();
 
-                if (this.python) {
-                    const resp = await this.callLogin(this.config.userEmail, this.config.userPassword);
-
-                    this.log.debug(`response ${JSON.stringify(resp)}`);
-
-                    if (resp) {
-                        this.setState('info.connection', true, true);
-                        this.startIntervall();
-                    }
-                }
-            } else {
-                this.log.debug(`login to cloud skipped`);
+            if (this.xsenseClient) {
+                this.setState('info.connection', true, true);
+                await this.startIntervall();
             }
         } catch (err) {
             this.setState('info.connection', false, true);
             this.setState('info.MQTT_connection', false, true);
-            this.log.error(`Error : ${err.message}`);
-            return;
+            this.log.error(`[XSense] onReady Fehler: ${err.message}`);
+            this.log.debug(err.stack);
         }
     }
 
+    // ─── Session-Management ───────────────────────────────────────────────────
+
+    /**
+     * Versucht die gespeicherte Session wiederherzustellen, loggt sich sonst frisch ein.
+     *
+     * @returns {Promise<XSenseClient>}
+     */
+    async _initSession() {
+        let client = null;
+
+        // Gespeicherte Session laden
+        const savedState = await this.getStateAsync('info.session');
+        if (savedState?.val) {
+            try {
+                client = XSenseClient.deserialize(String(savedState.val), this.log);
+                this.log.info('[XSense] Session aus Speicher wiederhergestellt');
+            } catch (e) {
+                this.log.warn(`[XSense] Session-Wiederherstellung fehlgeschlagen: ${e.message}`);
+                client = null;
+            }
+        }
+
+        // Client-Infos müssen immer neu geladen werden (init ist unauthenticated)
+        client = client || new XSenseClient(this.log);
+        await client.init();
+
+        // Login wenn nötig
+        if (client._isAccessTokenExpiring()) {
+            this.log.info('[XSense] Führe Login durch...');
+            await client.login(this.config.userEmail, this.config.userPassword);
+            await this._saveSession(client);
+            this.log.info('[XSense] Login erfolgreich');
+        } else {
+            this.log.info('[XSense] Nutze bestehende Session');
+        }
+
+        return client;
+    }
+
+    /**
+     * Persistiert die Session in einem ioBroker-State.
+     *
+     * @param {XSenseClient} client
+     */
+    async _saveSession(client) {
+        try {
+            await this.setStateAsync('info.session', { val: client.serialize(), ack: true });
+        } catch (e) {
+            this.log.warn(`[XSense] Session konnte nicht gespeichert werden: ${e.message}`);
+        }
+    }
+
+    // ─── Polling / Daten laden ────────────────────────────────────────────────
+
+    async startIntervall() {
+        this.log.debug('[XSense] startIntervall');
+
+        // Erster Datenabruf: IMMER getState() aufrufen (forceFullRefresh=true)
+        // → stellt sicher dass alle States (auch isLifeEnd, batInfo etc.) initial befüllt sind
+        // → danach übernimmt MQTT die Live-Updates
+        await this.datenVerarbeiten(false, true);
+
+        // Interval: normaler Poll (MQTT überspringt getState wenn aktiv)
+        if (!this._requestInterval) {
+            this.log.info(`[XSense] Polling-Intervall gestartet: ${this.config.polltime}s`);
+            this._requestInterval = this.setInterval(async () => {
+                await this.datenVerarbeiten(false);
+            }, this.config.polltime * 1000);
+        }
+    }
+
+    async datenVerarbeiten(firstTry, forceFullRefresh = false) {
+        this.log.debug('[XSense] datenVerarbeiten');
+
+        try {
+            // Tokens erneuern wenn nötig
+            if (this.xsenseClient._isAccessTokenExpiring()) {
+                this.log.debug('[XSense] Access-Token läuft ab, erneuere...');
+                await this.xsenseClient.refresh();
+                await this._saveSession(this.xsenseClient);
+            }
+
+            if (this.xsenseClient._isAwsTokenExpiring()) {
+                this.log.debug('[XSense] AWS-Credentials laufen ab, erneuere...');
+                await this.xsenseClient.loadAws();
+            }
+
+            // Alle Geräte laden (Struktur, Serials, Namen)
+            await this.xsenseClient.loadAll();
+
+            // MQTT-Topics nachziehen falls neue Stationen hinzukamen
+            if (mqttClient && !mqttClient.closed) {
+                this._subscribeMqttTopics();
+                this._requestTemperatureUpdates();
+            }
+
+            // Gerätezustände:
+            // - forceFullRefresh (manueller forceRefresh-Button): immer getState aufrufen
+            // - MQTT aktiv: getState überspringen (Push liefert States in Echtzeit)
+            // - kein MQTT:  getState per REST-API aufrufen
+            const mqttActive    = mqttClient && !mqttClient.closed;
+            const needsGetState = forceFullRefresh || !mqttActive;
+
+            for (const house of Object.values(this.xsenseClient.houses)) {
+                for (const station of Object.values(house.stations)) {
+                    try {
+                        // Station-eigene Daten (Bridge: wifiRSSI, sw-Version etc.) immer laden
+                        await this.xsenseClient.getStationState(station);
+
+                        if (needsGetState) {
+                            await this.xsenseClient.getState(station);
+                        }
+                    } catch (e) {
+                        this.log.warn(`[XSense] Zustand für Station ${station.serial} Fehler: ${e.message}`);
+                    }
+                }
+            }
+
+            // In ioBroker-States schreiben
+            await this.json2iob.parseHouses(this.namespace, this.xsenseClient.houses);
+
+            this.pythonConnected = true;
+            this.setState('info.connection', true, true);
+
+            this.log.debug(`[XSense] datenVerarbeiten abgeschlossen (MQTT-aktiv: ${mqttActive}, force: ${forceFullRefresh})`);
+
+        } catch (err) {
+            this.log.error(`[XSense] datenVerarbeiten Fehler: ${err.message}`);
+            this.setState('info.connection', false, true);
+
+            // Bei abgelaufener Session neu einloggen
+            if (err.message?.includes('SessionExpired') || err.message?.includes('401')) {
+                this.log.info('[XSense] Session abgelaufen, versuche Re-Login...');
+                try {
+                    await this.xsenseClient.init();
+                    await this.xsenseClient.login(this.config.userEmail, this.config.userPassword);
+                    await this._saveSession(this.xsenseClient);
+                    this.setState('info.connection', true, true);
+                    this.log.info('[XSense] Re-Login erfolgreich');
+                } catch (loginErr) {
+                    this.log.error(`[XSense] Re-Login fehlgeschlagen: ${loginErr.message}`);
+                }
+            } else {
+                this.errorMessage(err, firstTry);
+            }
+        }
+    }
+
+    // ─── MQTT Nachrichten-Parsing ─────────────────────────────────────────────
+
+    /**
+     * Löst den ioBroker-Pfad für Bridge+Device auf.
+     * Berücksichtigt die neue Haus-Ordner-Ebene (devices.<Hausname>.<bridge>.<device>).
+     *
+     * @param {string} bridgeSerial
+     * @param {string} deviceSerial
+     * @returns {string}  z.B. "devices.Mein_Zuhause.15298924.00000001"
+     */
+    _resolveDevicePath(bridgeSerial, deviceSerial) {
+        if (this.xsenseClient?.houses) {
+            for (const house of Object.values(this.xsenseClient.houses)) {
+                for (const station of Object.values(house.stations)) {
+                    if (station.serial === bridgeSerial) {
+                        // Gleiche Bereinigung wie json2iob.name2id(): Leerzeichen + Punkte + FORBIDDEN_CHARS
+                        const houseName = (house.name || house.houseId)
+                            .replace(/\s+/g, '_')
+                            .replace(/\./g, '_')
+                            .replace(this.FORBIDDEN_CHARS, '_');
+                        return `devices.${houseName}.${bridgeSerial}.${deviceSerial}`;
+                    }
+                }
+            }
+        }
+        return `devices.${bridgeSerial}.${deviceSerial}`;
+    }
+
     async messageParse(message) {
-        // Mutex lock: queue up calls to messageParse
+        // Mutex: parallele Aufrufe serialisieren
         let release;
         const lock = new Promise(resolve => (release = resolve));
         const prev = messageParseMutex;
         messageParseMutex = lock;
         await prev;
+
         try {
-            if (tools.isJson(message) == false && !this.pythonConnected) {
-                // Nur verarbeiten, wenn gültiges JSON und Python verbunden ist ..da sonst keine strukturen vorhanden sind
+            if (!tools.isJson(message)) {
+                return;
+            }
+
+            if (!this.pythonConnected) {
                 return;
             }
 
             const messageObj = JSON.parse(message);
-
-            this.log.debug(`Message ${JSON.stringify(messageObj)}`);
+            this.log.debug(`[XSense] MQTT Message: ${JSON.stringify(messageObj)}`);
 
             if (!messageObj.topic.includes('SBS50')) {
                 this.log.error(
-                    `Bridge SBS50 not found in topic: ${messageObj.topic}. Aborting message processing. Check your whether you have a correct Bridge`,
+                    `[XSense] SBS50 nicht im Topic: ${messageObj.topic}. Prüfe ob eine SBS50-Bridge konfiguriert ist.`,
                 );
                 return;
             }
@@ -118,382 +287,164 @@ class xsenseControll extends utils.Adapter {
 
             switch (suffix) {
                 case 'state': {
-                    const parts = messageObj.topic.split('/').filter(Boolean);
-                    const findDp = parts.at(-2) ?? '';
-                    const mTopic = findDp.match(/^SBS50([^_]+)_([^_]+)_(.+)$/);
+                    const parts   = messageObj.topic.split('/').filter(Boolean);
+                    const findDp  = parts.at(-2) ?? '';
+                    const mTopic  = findDp.match(/^SBS50([^_]+)_([^_]+)_(.+)$/);
 
-                    const bridgeId = mTopic?.[1] ?? null;
-                    const deviceId = mTopic?.[2] ?? null;
+                    const bridgeId  = mTopic?.[1] ?? null;
+                    const deviceId  = mTopic?.[2] ?? null;
                     const attribute = mTopic?.[3] ?? null;
 
-                    this.log.debug(`bridgeId ${bridgeId}`);
-                    this.log.debug(`deviceId ${deviceId}`);
-                    this.log.debug(`attribute ${attribute}`);
+                    if (!bridgeId || !deviceId || !attribute) {
+                        this.log.warn(`[XSense] Topic konnte nicht geparst werden: ${messageObj.topic}`);
+                        return;
+                    }
+
+                    // Korrekten Pfad mit Haus-Ordner auflösen
+                    const devicePath = this._resolveDevicePath(bridgeId, deviceId);
+
+                    this.log.debug(`[XSense] Bridge=${bridgeId} Device=${deviceId} Attr=${attribute} → ${devicePath}`);
 
                     switch (attribute) {
                         case 'battery': {
-                            // hier müssen wir noch anpassen
                             const batLevel =
-                                messageObj.payload.status === 'Normal' ?    3 :
-                                messageObj.payload.status === 'Low' ?       2 :
-                                messageObj.payload.status === 'Critical' ?  1 : 0;
-                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.batInfo`, {
-                                val: batLevel,
-                                ack: true
-                            });
+                                messageObj.payload.status === 'Normal'   ? 3 :
+                                messageObj.payload.status === 'Low'      ? 2 :
+                                messageObj.payload.status === 'Critical' ? 1 : 0;
+                            this.setStateAsync(`${devicePath}.batInfo`, { val: batLevel, ack: true });
                             break;
                         }
                         case 'lifeend': {
-                            const id = `devices.${bridgeId}.${deviceId}.isLifeEnd`;
-                            const common = {
-                                name: "isLifeEnd",
-                                type: "boolean",
-                                role: "value",
-                                read: true,
-                                write: false,
-                            };
-
+                            const id = `${devicePath}.isLifeEnd`;
                             await this.setObjectNotExistsAsync(id, {
                                 type: 'state',
-                                common,
+                                common: { name: 'isLifeEnd', type: 'boolean', role: 'indicator', read: true, write: false },
                                 native: {},
                             });
-
-                            this.setStateAsync(id, { val: messageObj.payload.status == 'EOL', ack: true });
+                            this.setStateAsync(id, { val: messageObj.payload.status === 'EOL', ack: true });
                             break;
                         }
                         case 'online':
-                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.online`, {
-                                val: messageObj.payload.status == 'Online',
-                                ack: true
+                            this.setStateAsync(`${devicePath}.online`, {
+                                val: messageObj.payload.status === 'Online', ack: true,
                             });
                             break;
 
                         case 'smokealarm':
                         case 'heatalarm':
                         case 'coalarm':
-                            this.setStateAsync(`devices.${bridgeId}.${deviceId}.alarmStatus`, {
-                                val: messageObj.payload.status == 'Detected',
-                                ack: true
+                            this.setStateAsync(`${devicePath}.alarmStatus`, {
+                                val: messageObj.payload.status === 'Detected', ack: true,
                             });
                             break;
 
                         case 'smokefault':
                         case 'heatfault':
                         case 'cofault':
+                            // Fault-States – aktuell keine Aktion
                             break;
 
                         default:
-                            this.log.warn(`Unknown attribute in topic: ${messageObj.topic} suffix ${attribute}`);
-                            break;
+                            this.log.warn(`[XSense] Unbekanntes Attribut in Topic: ${messageObj.topic} (${attribute})`);
                     }
-                    break;   
-                }
-                default: {
-                //    this.log.debug(`Unknown topic: ${messageObj.topic}`);
                     break;
-                }  
+                }
+                default:
+                    break;
             }
         } finally {
-            release();
+            if (release) {
+release();
+}
         }
     }
 
     async getTopicSuffix(topic) {
         if (typeof topic !== 'string' || topic.length === 0) {
-            return null;
-        }
-        const parts = topic.split('/').filter(Boolean); // entfernt leere Teile
+return null;
+}
+        const parts = topic.split('/').filter(Boolean);
         return parts.length ? parts[parts.length - 1] : null;
     }
 
-    async startIntervall() {
-        this.log.debug('[XSense] Start intervall');
-
-        if (!this.python) {
-            this.log.warn('Python environment not initialized. Trying again...');
-            this.python = await this.setupXSenseEnvironment();
-
-            if (!this.python) {
-                this.setState('info.connection', false, true);
-                return;
-            }
-        }
-
-        await this.datenVerarbeiten(false);
-
-        if (!this._requestInterval) {
-            this.log.debug(` Start XSense request intervall`);
-            this._requestInterval = setInterval(async () => {
-                await this.startIntervall();
-            }, this.config.polltime * 1000);
-        }
-    }
-
-    async datenVerarbeiten(firstTry) {
-        this.log.debug('[XSense] datenVerarbeiten called');
-        this.log.debug('[XSense] This may take up to 1 minute. Please wait');
-
-        try {
-            const response = await this.callBridge();
-
-            if (response.length > 30) {
-                // hole alle devices und vergleiche ob was offline ist
-                const devices = await this.getDevicesAsync();
-                const knownDevices = tools.extractDeviceIds(devices);
-
-                const parsed = tools.parseXSenseOutput(response, knownDevices);
-
-                this.log.debug(`[XSense] parsed ${JSON.stringify(parsed)}`);
-
-                await this.json2iob.parse(this.namespace, parsed);
-
-                this.pythonConnected = true;
-            } else {
-                this.log.error(`[XSense] No data received from bridge: ${response}`);
-                this.setState('info.connection', false, true);
-
-                if (response.includes('is logged in')) {
-                    const resp = await this.callLogin(this.config.userEmail, this.config.userPassword);
-
-                    if (resp) {
-                        this.setState('info.connection', true, true);
-                        this.startIntervall();
-                    }
-                }
-            }
-        } catch (err) {
-            this.errorMessage(err, firstTry);
-        }
-    }
-
-    async setupXSenseEnvironment(firstTry) {
-        try {
-            const { getVenv } = await import('autopy');
-            const pfadPythonScript = tools.getDataFolder(this);
-            this.log.debug('[XSense] getVenv imported from autopy');
-
-            const python = await getVenv({
-                name: 'xsense-env',
-                pythonVersion: this.config.pythonVersion,
-                requirements: [
-                    { name: 'requests', version: '' },
-                    { name: 'aiohttp', version: '' },
-                ],
-                extraPackages: [`${pfadPythonScript}python-xsense`],
-            });
-
-            this.log.debug('[XSense] Python environment ready ');
-
-            return python;
-        } catch (err) {
-            this.errorMessage(err, firstTry);
-        }
-    }
-
-    async callLogin(email, password) {
-        this.log.debug('[XSense] callLogin ');
-
-        if (this._loginInProgress) {
-            this.log.warn('[XSense] callLogin already running – skipping');
-            return;
-        }
-
-        this._loginInProgress = true;
-
-        return new Promise((resolve, reject) => {
-            const scriptPath = path.join(__dirname, 'python', 'login.py');
-            const proc = this.python(this.callPython, [scriptPath, email, password]);
-
-            let finished = false; // Guard-Flag
-            let output = Buffer.alloc(0);
-
-            const timeout = this.setTimeout(() => {
-                if (finished) {
-                    return;
-                }
-                finished = true;
-
-                this.log.error(`[XSense] callLogin timeout nach ${this.config.pythonTimeout}ms – Prozess wird beendet`);
-                proc.kill('SIGKILL');
-                reject(new Error(`[XSense] callLogin Timeout nach ${this.config.pythonTimeout}ms`));
-            }, 1000 * this.config.pythonTimeout);
-
-            proc.stdout?.on('data', chunk => {
-                output = Buffer.concat([output, chunk]);
-                this.log.debug(`[XSense] callLogin received ${chunk.length} bytes`);
-                this.log.debug(`[XSense] callLogin : ${chunk.toString()}`);
-            });
-
-            proc.stdout?.on('end', () => {
-                if (finished) {
-                    return;
-                }
-                finished = true;
-
-                this.clearTimeout(timeout);
-                _outputBuffer = output; // Pickle zwischenspeichern
-                this._loginInProgress = false;
-                this.log.debug(`[XSense] Pickle Bytes length: ${output.length}`);
-                resolve(true);
-            });
-
-            proc.stderr?.on('data', data => {
-                if (finished) {
-                    return;
-                }
-                finished = true;
-
-                this.clearTimeout(timeout);
-                this._loginInProgress = false;
-                this.log.warn(`[XSense] callLogin request error: ${data.toString()}`);
-                reject(new Error(`[XSense] Python error: ${data.toString()}`));
-            });
-        });
-    }
-    async callBridge() {
-        this.log.debug('[XSense] callBridge ');
-
-        if (!_outputBuffer) {
-            throw new Error('No Pickle buffer available – callLogin first!');
-        }
-
-        let result = '';
-
-        return new Promise((resolve, reject) => {
-            const scriptPath = path.join(__dirname, 'python', 'getData.py');
-            const proc = this.python(this.callPython, [scriptPath]);
-
-            let output = Buffer.alloc(0);
-            let finished = false; // schützt vor doppeltem resolve/reject
-
-            proc.stdin.write(_outputBuffer);
-            proc.stdin.end();
-
-            proc.stdout.on('data', chunk => {
-                output = Buffer.concat([output, chunk]);
-                result = chunk.toString();
-                this.log.debug(`[XSense] chunck callBridge ${chunk.toString()}`);
-            });
-
-            proc.stdout.on('end', () => {
-                if (finished) {
-                    return;
-                }
-                finished = true;
-
-                this.log.debug(`[XSense] total Pickle Bytes received: ${output.length}`);
-                index = 0;
-                resolve(result);
-            });
-
-            proc.stderr.on('data', err => {
-                if (finished) {
-                    return;
-                }
-                index = 0;
-                finished = true;
-                reject(new Error(`process_pickle error: ${err.toString()}`));
-            });
-        });
-    }
+    // ─── State-Change Handler ─────────────────────────────────────────────────
 
     async onStateChange(stateId, stateObj) {
-        if (!stateObj) {
-            return;
-        }
+        if (!stateObj || stateObj.ack) {
+return;
+}
 
-        if (stateObj.ack) {
-            return;
-        }
+        this.log.debug(`[XSense] State-Change: ${stateId}`);
 
-        this.log.debug(`New Event for state: ${JSON.stringify(stateObj)}`);
-        this.log.debug(`ID: ${JSON.stringify(stateId)}`);
-
-        let tmpControl = stateId.split('.')[3];
+        const parts      = stateId.split('.');
+        const controlKey = parts[3];   // 'forceRefresh' bei devices.forceRefresh
+        const lastPart   = parts[parts.length - 1]; // letztes Segment – unabhängig von Tiefe
 
         try {
-            switch (tmpControl) {
+            switch (controlKey) {
                 case 'forceRefresh':
-                    await this.datenVerarbeiten(false);
+                    this.log.info('[XSense] Manueller Refresh ausgelöst...');
+                    await this.datenVerarbeiten(false, true);
+                    await this.setStateAsync(stateId, { val: false, ack: true });
                     break;
                 default:
-                    tmpControl = stateId.split('.')[5];
-                    if (tmpControl === 'test_Alarm') {
+                    // test_Alarm ist das letzte Segment – unabhängig von Haus-Ebene
+                    if (lastPart === 'test_Alarm') {
                         await this.testAlarm(stateId);
                     }
             }
         } catch (err) {
-            this.log.error(`Error onStateChange ${err}`);
+            this.log.error(`[XSense] onStateChange Fehler: ${err.message}`);
         }
     }
 
-    async testAlarm(idDeviceState) {
-        this.log.debug(`Test Alarm for device: ${idDeviceState}`);
+    // ─── Testalarm ────────────────────────────────────────────────────────────
 
-        const id = idDeviceState.split('.')[4];
-        await this.setStateAsync(`${idDeviceState}_Message`, { val: 'in progress', ack: true });
+    /**
+     * @param {string} stateId  z.B. "xsense.0.devices.Haus.BRIDGE.DEVICE.test_Alarm"
+     */
+    async testAlarm(stateId) {
+        this.log.debug(`[XSense] testAlarm: ${stateId}`);
 
-        return new Promise((resolve, reject) => {
-            const scriptPath = path.join(__dirname, 'python', 'checkAlarm.py');
-            const proc = this.python(this.callPython, [scriptPath, id]);
+        // Pfad: xsense.0.devices.<Haus>.<bridge>.<deviceSerial>.test_Alarm
+        // deviceSerial = vorletztes Segment
+        const parts        = stateId.split('.');
+        const deviceSerial = parts[parts.length - 2];
+        const msgStateId   = stateId.replace(/\.test_Alarm$/, '.test_Alarm_Message');
 
-            let output = Buffer.alloc(0);
-            let finished = false; // schützt vor doppeltem resolve/reject
+        await this.setStateAsync(msgStateId, { val: 'in progress...', ack: true });
 
-            proc.stdin.write(_outputBuffer);
-            proc.stdin.end();
-
-            proc.stdout.on('data', chunk => {
-                output = Buffer.concat([output, chunk]);
-                this.log.debug(`[XSense] chunck testAlarm ${chunk.toString()}`);
-                if (chunk.toString().trim().length > 1) {
-                    this.setStateAsync(`${idDeviceState}_Message`, { val: chunk.toString(), ack: true });
-                }
-            });
-
-            proc.stdout.on('end', () => {
-                if (finished) {
-                    return;
-                }
-                finished = true;
-
-                this.log.debug(`[XSense] total Pickle Bytes received: ${output.length}`);
-                index = 0;
-                resolve(true);
-            });
-
-            proc.stderr.on('data', err => {
-                if (finished) {
-                    return;
-                }
-                index = 0;
-                finished = true;
-                reject(new Error(`process_pickle error: ${err.toString()}`));
-            });
-        });
+        try {
+            if (!this.xsenseClient) {
+throw new Error('XSenseClient nicht initialisiert');
+}
+            const result = await this.xsenseClient.testAlarm(deviceSerial);
+            await this.setStateAsync(msgStateId, { val: result || 'done', ack: true });
+        } catch (err) {
+            this.log.error(`[XSense] testAlarm Fehler: ${err.message}`);
+            await this.setStateAsync(msgStateId, { val: `Fehler: ${err.message}`, ack: true });
+        }
     }
+
+    // ─── onUnload ─────────────────────────────────────────────────────────────
 
     async onUnload(callback) {
         try {
             if (['exmqtt', 'intmqtt'].includes(this.config.connectionType)) {
                 if (mqttClient && !mqttClient.closed) {
                     try {
-                        if (mqttClient) {
-                            this.setState('info.MQTT_connection', false, true);
-                            mqttClient.end();
-                        }
+                        mqttClient.end();
                     } catch (e) {
                         this.log.error(e);
                     }
                 }
             }
 
-           if (this.config.connectionType == 'intmqtt') {
+            if (this.config.connectionType === 'intmqtt') {
                 try {
                     if (mqttServerController) {
-                        mqttServerController.closeServer();
-                    }
+mqttServerController.closeServer();
+}
                 } catch (e) {
                     this.log.error(e);
                 }
@@ -501,9 +452,13 @@ class xsenseControll extends utils.Adapter {
 
             if (this._requestInterval) {
                 this.clearInterval(this._requestInterval);
+                this._requestInterval = null;
             }
-            this.setAllAvailableToFalse();
+
+            await this.setAllAvailableToFalse();
+            // Immer beide Connection-States zurücksetzen
             this.setState('info.connection', false, true);
+            this.setState('info.MQTT_connection', false, true);
 
             callback();
         } catch (e) {
@@ -511,105 +466,220 @@ class xsenseControll extends utils.Adapter {
         }
     }
 
+    // ─── Hilfsmethoden ───────────────────────────────────────────────────────
+
     async setAllAvailableToFalse() {
-        const availableStates = await this.getStatesAsync('*.online');
-        for (const availableState in availableStates) {
-            await this.setStateChangedAsync(availableState, false, true);
+        const states = await this.getStatesAsync('devices.*.online');
+        for (const id in states) {
+            await this.setStateChangedAsync(id, false, true);
         }
+    }
+
+    /**
+     * Legt benötigte info.*-States an, falls noch nicht vorhanden.
+     */
+    async _ensureInfoStates() {
+        await this.setObjectNotExistsAsync('info.session', {
+            type: 'state',
+            common: { name: 'Gespeicherte Session', type: 'string', role: 'json', read: true, write: false, def: '' },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('info.MQTT_connection', {
+            type: 'state',
+            common: { name: 'If MQTT is connected', type: 'boolean', role: 'indicator.connected', read: true, write: false, def: false },
+            native: {},
+        });
     }
 
     async connectToMQTT() {
         try {
-            if (['exmqtt', 'intmqtt'].includes(this.config.connectionType)) {
-                // External MQTT-Server
-                const clientId = `ioBroker.xsense_${Math.random().toString(16).slice(2, 8)}`;
-                if (this.config.connectionType == 'exmqtt') {
-                    if (this.config.externalMqttServerIP == '') {
-                        this.log.warn('Please configure the External MQTT-Server connection!');
-                        return;
-                    }
+            if (!['exmqtt', 'intmqtt'].includes(this.config.connectionType)) {
+return;
+}
 
-                    // MQTT connection settings
-                    const mqttClientOptions = {
-                        clientId: clientId,
-                        clean: true,
-                        reconnectPeriod: 500,
-                    };
+            const clientId = `ioBroker.xsense_${Math.random().toString(16).slice(2, 8)}`;
 
-                    // Set external mqtt credentials
-                    if (this.config.externalMqttServerCredentials == true) {
-                        mqttClientOptions.username = this.config.externalMqttServerUsername;
-                        mqttClientOptions.password = this.config.externalMqttServerPassword;
-                    }
-
-                    // Init connection
-                    mqttClient = mqtt.connect(
-                        `mqtt://${this.config.externalMqttServerIP}:${this.config.externalMqttServerPort}`,
-                        mqttClientOptions,
-                    );
-                } else {
-                    // Internal MQTT-Server
-
-                    mqttServerController = new MqttServerController(this);
-                    await mqttServerController.createMQTTServer();
-                    await this.delay(1500);
-                    mqttClient = mqtt.connect(
-                        `mqtt://${this.config.mqttServerIPBind}:${this.config.mqttServerPort}`,
-                        {
-                            clientId: clientId,
-                            clean: true,
-                            reconnectPeriod: 500,
-                        },
-                    );
+            if (this.config.connectionType === 'exmqtt') {
+                if (!this.config.externalMqttServerIP) {
+                    this.log.warn('[XSense] Externer MQTT-Server nicht konfiguriert');
+                    return;
                 }
 
-                // MQTT Client
-                mqttClient.on('connect', () => {
-                    this.log.info(`Connect to Xsense_MQTT over ${this.config.connectionType == 'exmqtt' ? 'external mqtt' : 'internal mqtt'} connection.`);
-                    this.setState('info.MQTT_connection', true, true);
-                });
+                const mqttOptions = { clientId, clean: true, reconnectPeriod: 500 };
 
-                mqttClient.subscribe(`${this.config.baseTopic}`);
+                if (this.config.externalMqttServerCredentials === true) {
+                    mqttOptions.username = this.config.externalMqttServerUsername;
+                    mqttOptions.password = this.config.externalMqttServerPassword;
+                }
 
-                mqttClient.on('message', (topic, payload) => {
-                    const newMessage = `{"payload":${payload.toString() == '' ? '"null"' : payload.toString()},"topic":"${topic.slice(topic.search('/') + 1)}"}`;
-                    this.messageParse(newMessage);
-                });
+                mqttClient = mqtt.connect(
+                    `mqtt://${this.config.externalMqttServerIP}:${this.config.externalMqttServerPort}`,
+                    mqttOptions,
+                );
+            } else {
+                // Interner MQTT-Server
+                mqttServerController = new MqttServerController(this);
+                await mqttServerController.createMQTTServer();
+                await this.delay(1500);
+                mqttClient = mqtt.connect(
+                    `mqtt://${this.config.mqttServerIPBind}:${this.config.mqttServerPort}`,
+                    { clientId, clean: true, reconnectPeriod: 500 },
+                );
             }
+
+            mqttClient.on('connect', () => {
+                const mode = this.config.connectionType === 'exmqtt' ? 'externem' : 'internem';
+                this.log.info(`[XSense] Verbunden mit ${mode} MQTT-Server`);
+                this.setState('info.MQTT_connection', true, true);
+
+                // Bei (Re-)Connect Set leeren, damit alle Topics neu subscribed werden
+                this._mqttSubscribedTopics.clear();
+
+                // Legacy baseTopic (SBS50-Bridge direkt)
+                if (this.config.baseTopic) {
+                    this._mqttSubscribeOnce(this.config.baseTopic);
+                }
+
+                // HA-konforme Topics für alle bekannten Stationen subscriben
+                this._subscribeMqttTopics();
+
+                // Temperatur-Sensoren aktiv anfragen
+                this._requestTemperatureUpdates();
+            });
+
+            mqttClient.on('message', (topic, payload) => {
+                // Zuerst versuchen via HA-konformes processMqttMessage
+                if (this.xsenseClient) {
+                    const station = this.xsenseClient.processMqttMessage(topic, payload);
+                    if (station) {
+                        // Station-Daten in ioBroker schreiben
+                        this.json2iob.parseHouses(this.namespace, this.xsenseClient.houses)
+                            .catch(e => this.log.error(`[XSense] MQTT parseHouses Fehler: ${e.message}`));
+                        return;
+                    }
+                }
+
+                // Fallback: Legacy SBS50-Parsing
+                const payloadStr  = payload.toString();
+                const slashIdx    = topic.indexOf('/');
+                const topicSuffix = slashIdx >= 0 ? topic.slice(slashIdx + 1) : topic;
+                const newMessage  = `{"payload":${payloadStr === '' ? '"null"' : payloadStr},"topic":"${topicSuffix}"}`;
+                this.messageParse(newMessage);
+            });
+
+            mqttClient.on('error', err => {
+                this.log.error(`[XSense] MQTT-Fehler: ${err.message}`);
+            });
+
+            mqttClient.on('offline', () => {
+                this.log.warn('[XSense] MQTT-Client offline');
+                this.setState('info.MQTT_connection', false, true);
+            });
+
+            mqttClient.on('reconnect', () => {
+                this.log.debug('[XSense] MQTT-Client verbindet sich neu...');
+            });
+
         } catch (err) {
-            this.log.error(`Error connectToMQTT: ${err.message}`);
+            this.log.error(`[XSense] connectToMQTT Fehler: ${err.message}`);
         }
     }
 
-    async errorMessage(err, firstTry) {
+    /**
+     * Subscribed einen einzelnen MQTT-Topic – einmalig, kein Duplikat.
+     *
+     * @param {string} topic
+     */
+    _mqttSubscribeOnce(topic) {
+        if (!mqttClient || this._mqttSubscribedTopics.has(topic)) {
+return;
+}
+        this._mqttSubscribedTopics.add(topic);
+        mqttClient.subscribe(topic, err => {
+            if (err) {
+                this._mqttSubscribedTopics.delete(topic); // bei Fehler retry erlauben
+                this.log.warn(`[XSense] MQTT Subscribe fehlgeschlagen: ${topic} – ${err.message}`);
+            } else {
+                this.log.debug(`[XSense] MQTT subscribed: ${topic}`);
+            }
+        });
+    }
+
+    /**
+     * Subscribed alle HA-konformen MQTT-Topics für alle Häuser/Stationen.
+     * Quelle: HA coordinator.py → assure_subscriptions()
+     * Wird nur im connect-Event aufgerufen – nie im Poll-Zyklus.
+     */
+    _subscribeMqttTopics() {
+        if (!mqttClient || !this.xsenseClient) {
+return;
+}
+
+        for (const house of Object.values(this.xsenseClient.houses)) {
+            for (const station of Object.values(house.stations)) {
+                const topics = this.xsenseClient.getMqttTopics(house, station);
+                for (const topic of topics) {
+                    this._mqttSubscribeOnce(topic);
+                }
+            }
+        }
+    }
+
+    /**
+     * Fordert Live-Daten für Temperatur/Luftfeuchte-Sensoren an (MQTT Publish).
+     * Quelle: HA coordinator.py → request_device_updates() [STH51/STH0A]
+     */
+    _requestTemperatureUpdates() {
+        if (!mqttClient || !this.xsenseClient) {
+return;
+}
+
+        for (const house of Object.values(this.xsenseClient.houses)) {
+            for (const station of Object.values(house.stations)) {
+                const req = this.xsenseClient.buildTemperatureUpdateRequest(station);
+                if (!req) {
+continue;
+}
+
+                mqttClient.publish(req.topic, req.payload, { qos: 0, retain: false }, err => {
+                    if (err) {
+                        this.log.warn(`[XSense] Temperature-Update-Request fehlgeschlagen: ${err.message}`);
+                    } else {
+                        this.log.debug(`[XSense] Temperature-Update angefordert für ${station.serial}`);
+                    }
+                });
+            }
+        }
+    }
+
+    errorMessage(err, firstTry) {
         if (firstTry) {
-            this.log.error(`[XSense] Fatal error starting Python | ${err} .`);
-            this.log.error(`[XSense] ------------------------------------------------------`);
+            this.log.error(`[XSense] Schwerwiegender Fehler: ${err}`);
         }
 
-        if (err.hasOwnProperty('message')) {
+        if (err?.message) {
             this.log.error(`[XSense] ${err.message}`);
         } else {
-            this.log.error(`[XSense] Python environment could not be initialized.`);
+            this.log.error('[XSense] Unbekannter Fehler');
         }
 
         if (firstTry) {
-            this.log.error(`[XSense] Restart the adapter manually.`);
+            this.log.error('[XSense] Adapter manuell neu starten.');
             this.setState('info.MQTT_connection', false, true);
             this.setState('info.connection', false, true, () => {
-                this.terminate('[XSense]  terminated', 1);
+                this.terminate('[XSense] Adapter beendet', 1);
             });
         }
     }
 }
 
+
+// ─── Export / Start ───────────────────────────────────────────────────────────
 if (module.parent) {
-    // Export the constructor in compact mode
     /**
      * @param {Partial<utils.AdapterOptions>} [options]
      */
-    module.exports = options => new xsenseControll(options);
+    module.exports = options => new XSenseAdapter(options);
 } else {
-    // otherwise start the instance directly
-    new xsenseControll();
+    new XSenseAdapter();
 }

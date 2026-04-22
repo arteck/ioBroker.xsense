@@ -1,8 +1,0 @@
-requests
-boto3
-botocore
-pycognito
-paho-mqtt
-
-[async]
-aiohttp

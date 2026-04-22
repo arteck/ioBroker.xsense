@@ -16,7 +16,7 @@
                 },
                 "_textStart": {
                     "type": "staticText",
-                    "text": "Adapter work in hybrid mode, it work with X-Sense Bridge with MQTT client but the login request is sent to the X-Sense Cloud.",
+                    "text": "Connects directly to the X-Sense Cloud (AWS Cognito + IoT) without Python. Optionally receives real-time updates via MQTT when a SBS50 Bridge is present (requires X-Sense App >= 1.34).",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -102,61 +102,14 @@
                     "newLine": true,
                     "type": "number",
                     "label": "Polling interval",
-                    "help": "Polling interval in seconds",
-                    "min": 10,
+                    "help": "Without MQTT: full device state poll. With MQTT: only structural sync (loadAll). Minimum 60s.",
+                    "min": 60,
                     "max": 3600,
                     "step": 1,
+                    "default": 300,
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "pythonVersion": {
-                    "newLine": true,
-                    "type": "select",
-                    "label": "Python Version",
-                    "help": "Python Version to use for the adapter",
-                    "options": [
-
-                        {
-                            "label": "3.12.9",
-                            "value": "3.12.9"
-                        },
-                        {
-                            "label": "3.11.8",
-                            "value": "3.11.8"
-                        },
-                        {
-                            "label": "3.10.10",
-                            "value": "3.10.10"
-                        }
-                    ],
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "pythonTimeout": {
-                    "type": "number",
-                    "label": "timeout for Python script",
-                    "help": "maybe conflict with polling interval. do not set below 20 seconds or above the set polling interval.",
-                    "min": 20,
-                    "max": 90,
-                    "step": 1,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "isWindowsSystem": {
-                    "type": "checkbox",
-                    "label": "is adapter running under Windows?",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 8,
                     "lg": 4,
                     "xl": 4
                 },

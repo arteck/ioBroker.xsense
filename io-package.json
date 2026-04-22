@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.3.7",
+    "version": "0.4.0",
     "news": {
+      "0.4.0": {
+        "en": "see Readme",
+        "de": "Siehe Readme",
+        "ru": "см. файл Readme",
+        "pt": "Consulte o arquivo Leia-me.",
+        "nl": "zie Readme",
+        "fr": "Voir le fichier Lisez-moi",
+        "it": "vedi il file Readme",
+        "es": "ver Léame",
+        "pl": "zobacz Readme",
+        "uk": "див. файл Readme",
+        "zh-cn": "请参阅自述文件"
+      },
       "0.3.7": {
         "en": "add XS0B-MR",
         "de": "xS0B-MR hinzufügen",
@@ -121,6 +134,48 @@
       "uk": "Керуйте своїм мостом і датчиками X-Sense",
       "zh-cn": "管理您的 X-Sense 桥接器和传感器"
     },
+    "messages": [
+      {
+        "condition": {
+          "operand": "and",
+          "rules": [
+            "oldVersion<=0.3.7",
+            "newVersion>=0.4.0"
+          ]
+        },
+        "title": {
+          "en": "Important notice! xsense",
+          "de": "Wichtiger Hinweis! xsense",
+          "ru": "Важное замечание! xsense",
+          "pt": "Notícia importante! xsense",
+          "nl": "Belangrijke mededeling! xsense",
+          "fr": "Avis important! xsense",
+          "it": "Avviso IMPORTANTE! xsense",
+          "es": "¡Noticia importante! xsense",
+          "pl": "Ważna uwaga! xsense",
+          "uk": "Важливе повідомлення! xsense",
+          "zh-cn": "重要的提醒！ xsense"
+        },
+        "text": {
+          "en": "the adapter is now js only. no python is necessary. \\nhere are some object renamed and you have to adjust your scripts",
+          "de": "Der Adapter ist jetzt rein JavaScript-basiert. Python ist nicht mehr erforderlich. Einige Objekte wurden umbenannt, und Sie müssen Ihre Skripte entsprechend anpassen.",
+          "ru": "Адаптер теперь работает только на JavaScript. Python не требуется. Некоторые объекты переименованы, и вам нужно будет скорректировать свои скрипты.",
+          "pt": "O adaptador agora funciona apenas com JavaScript. Não é necessário usar Python. Alguns objetos foram renomeados e você precisa ajustar seus scripts.",
+          "nl": "De adapter is nu alleen nog maar JavaScript. Python is niet nodig. Er zijn enkele objecten hernoemd en je moet je scripts daarop aanpassen.",
+          "fr": "L'adaptateur fonctionne désormais uniquement en JavaScript. Python n'est plus nécessaire. Certains objets ont été renommés ; vous devez donc adapter vos scripts.",
+          "it": "L'adattatore ora è solo in JavaScript. Non è necessario Python. Alcuni oggetti sono stati rinominati e dovrai adattare i tuoi script.",
+          "es": "El adaptador ahora solo usa JavaScript. No se necesita Python. Algunos objetos han sido renombrados y debes ajustar tus scripts.",
+          "pl": "Adapter obsługuje teraz tylko JS. Python nie jest potrzebny. \\nOto niektóre obiekty, którym zmieniono nazwy i musisz dostosować swoje skrypty.",
+          "uk": "Адаптер тепер працює лише на JS. Python не потрібен. \\nДеякі об'єкти перейменовано, і вам потрібно налаштувати свої скрипти.",
+          "zh-cn": "适配器现在仅支持 JavaScript，无需 Python。部分对象已重命名，您需要相应地调整脚本。"
+        },
+        "level": "warn",
+        "buttons": [
+          "agree",
+          "cancel"
+        ]
+      }
+    ],
     "authors": [
       "arteck <arteck@outlook.com>"
     ],
@@ -175,15 +230,13 @@
       {
         "js-controller": ">=6.0.11"
       }
-    ]
+    ],
+    "installedFrom": "iobroker.xsense@0.3.7"
   },
   "native": {
     "userEmail": "",
     "userPassword": "",
     "polltime": 300,
-    "pythonVersion": "3.12.9",
-    "isWindowsSystem": false,
-    "pythonTimeout": 20,
     "forceUpdate": false,
     "connectionType": "intmqtt",
     "baseTopic": "homeassistant/binary_sensor/#",
@@ -239,15 +292,16 @@
       "native": {}
     },
     {
-      "_id": "info.callPython",
+      "_id": "info.session",
       "type": "state",
       "common": {
-        "role": "state",
-        "name": "call python or python3",
+        "role": "json",
+        "name": "Saved Session (Tokens)",
         "type": "string",
         "read": true,
-        "write": true,
-        "def": "python3"
+        "write": false,
+        "def": "",
+        "expert": true
       },
       "native": {}
     }

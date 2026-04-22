@@ -24,9 +24,6 @@ It is designed to receive data from XSense smoke detectors, CO detectors, and ot
 The adapter communicates with the XSense cloud server and provides an easy way to integrate XSense devices into existing ioBroker setups.  
 An XSense Bridge SBS50 is required.
 
-
-## the [Orginal Python Code](https://github.com/theosnel/python-xsense) is from [theosnel](https://github.com/theosnel) .. big THX for
-
 ---
 
 ## ❗ WARNING
@@ -67,42 +64,7 @@ Since XSense does not allow simultaneous login from the app and third-party soft
 
 ---
 
-## 🚀 Installing Python (if not already installed)
-
-It must be an official and publicly released Python version.
-
-💻 **Windows**
-
-1. **Install Python**  
-   - Download: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)  
-   - During installation, **enable “Add Python to PATH”**  
-   - Then verify:  
-     ```powershell
-     python --version
-     pip --version
-     ```
-   - Afterwards, in the objects under `xsense.0.info.callPython`, enter `python` (default value is `python3`).
-
-🐧 **Linux / Docker**  
-- This happens automatically — just select the preferred version in the adapter settings.
-
----
-
 ## ❗ Troubleshooting
-
-If the correct version is installed but the adapter has already fetched the wrong one,  
-first delete the environment:
-
-```
-  rm -Rf /home/iobroker/.cache/autopy/venv/xsense-env
- ```
-
-
-Then restart the adapter.
-If it still doesn’t work, check the file /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg.
-It lists the Python versions relevant to the environment — adjust if necessary.
-If the file does not exist, you did not wait long enough for the adapter to start.
-
 
 Error Message after install
 
@@ -129,6 +91,12 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.4.0 (2026-04-22)
+*    BREAKING CHANGES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+* (arteck) python code changed to js
+* (arteck) battery state now in percentage
+* (arteck) new structure for home
+
 ### 0.3.7 (2026-04-13)
 * (arteck) add XS0B-MR
 

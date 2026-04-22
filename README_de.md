@@ -10,10 +10,6 @@ Er wurde entwickelt, um Daten von XSense-Rauchmeldern, CO-Meldern und weiteren k
 Der Adapter basiert auf der Kommunikation mit dem XSense-Cloud-Server und bietet eine einfache Möglichkeit, XSense-Geräte in bestehende ioBroker-Setups zu integrieren.
 Es ist eine XSense Bridge SBS50 notwendig.
 
-
-## wir nutzen einen Modifizierten Fork aus dem [Orginal Python Code](https://github.com/theosnel/python-xsense) 
-Orginal ist von [theosnel](https://github.com/theosnel) .. DANKE dafür
-
 ## ❗ ACHTUNG 
  
  Der Adapter dient nicht der Alarmierung, es soll eher zur überwachung der Gerätebatterie dienen.
@@ -49,51 +45,7 @@ Da XSense keine parallele Anmeldung in App und Drittanbieter-Software erlaubt, e
 
   ### oder man nutzt nur ein Konto, mit der prämisse dass man ständig ausgeloggt wird
 
-------------------------------------------------------------------------------
-
-## 🚀 Installation Python falls noch -KEIN- installiert ist
-
-es muss eine offizielle und veröffentliche Python Version sein
-
-💻 Windows
-
-1. **Python installieren**
-   - Download: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
-   - Während der Installation **"Add Python to PATH" aktivieren**
-   - Danach prüfen:
-     ```powershell
-     python --version
-     pip --version
-     ```
-      danach im Objekten unter xsense.0.info.callPython -> python eintragen. Als detault Wert steht dort python3.
-
-
-
-     
-🐧 Linux 🐳 Docker
-
-  - passiert automatisch, nur in Adapter Einstellungen auswählen welche Version bevorzugt wird
-
-------------------------------------------------------------------------------
-
- 
   
-------------------------------------------------------------------------------
-#  ------------------------------------------------------------------------------
-
-## ❗ bei Problemen 
-
-ist dir richtige version installiert aber der Adapter hat schon was falsches gezogen 
-zuerst die Umgebung löschen
-```
-  rm -Rf /home/iobroker/.cache/autopy/venv/xsense-env
- ```
-dann Adapter neu starten
-sollte es immer noch nicht laufen die Datei /home/iobroker/.cache/autopy/venv/xsense-env/pyvenv.cfg sich anschauen
-hier stehen Python Versionen die für die Umgebung relevant sind. Diese gegenenfals anpassen.
-ist die Datei nicht vorhanden habt ihr nicht lang genug gewartet bis der Adapter gestartet wurde.
-
-------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 <img width="1029" height="438" alt="grafik" src="https://github.com/user-attachments/assets/86e4fd1c-1d4e-4234-a2ad-48b8dd9f418e" />
