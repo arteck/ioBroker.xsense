@@ -91,6 +91,10 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+* (arteck) fix network error 
+
 ### 0.4.0 (2026-04-22)
 *    BREAKING CHANGES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 * (arteck) python code changed to js
