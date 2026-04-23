@@ -91,9 +91,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
-
-### **WORK IN PROGRESS**
-* (arteck) fix network error 
+### 0.4.1 (2026-04-23)
+* (arteck) fix type blank 
+* (arteck) fix network error
 
 ### 0.4.0 (2026-04-22)
 *    BREAKING CHANGES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -101,7 +101,6 @@ or if you have a VM on proxmox check your CPU settings
 * (arteck) battery state now in percentage
 * (arteck) new structure for home, del all DP and restart the adapter
 * <img width="1745" height="225" alt="grafik" src="https://github.com/user-attachments/assets/2d784ff7-677a-44f2-8712-f0d81e42ec4b" />
-
 
 ### 0.3.7 (2026-04-13)
 * (arteck) add XS0B-MR

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "news": {
+      "0.4.1": {
+        "en": "fix type blank \nfix network error",
+        "de": "befestigungsart leer\nnetzwerkfehler beheben",
+        "ru": "фиксировать тип заготовки\nисправление сетевой ошибки",
+        "pt": "tipo de correção em branco\ncorrigir erro de rede",
+        "nl": "fix type leeg\nnetwerkfout herstellen",
+        "fr": "corriger le type vide\ncorrection d'une erreur réseau",
+        "it": "tipo di correzione vuoto\ncorrezione dell'errore di rete",
+        "es": "tipo de solución en blanco\nerror de red",
+        "pl": "fix typ puste\nnaprawić błąd sieci",
+        "uk": "фіксувати тип заготовки\nвиправлено помилку мережі",
+        "zh-cn": "固定类型空白\n修复网络错误"
+      },
       "0.4.0": {
         "en": "see Readme",
         "de": "Siehe Readme",
@@ -80,32 +93,6 @@
         "pl": "stan akumulatora",
         "uk": "фіксувати стан батареї",
         "zh-cn": "固定电池状态"
-      },
-      "0.3.2": {
-        "en": "update settings",
-        "de": "aktualisierung der einstellungen",
-        "ru": "обновить настройки",
-        "pt": "configurações de atualização",
-        "nl": "instellingen bijwerken",
-        "fr": "paramètres de mise à jour",
-        "it": "impostazioni di aggiornamento",
-        "es": "configuración de actualización",
-        "pl": "aktualizacja ustawień",
-        "uk": "налаштування оновлення",
-        "zh-cn": "更新设置"
-      },
-      "0.3.1": {
-        "en": "update settings",
-        "de": "aktualisierung der einstellungen",
-        "ru": "обновить настройки",
-        "pt": "configurações de atualização",
-        "nl": "instellingen bijwerken",
-        "fr": "paramètres de mise à jour",
-        "it": "impostazioni di aggiornamento",
-        "es": "configuración de actualización",
-        "pl": "aktualizacja ustawień",
-        "uk": "налаштування оновлення",
-        "zh-cn": "更新设置"
       }
     },
     "titleLang": {
