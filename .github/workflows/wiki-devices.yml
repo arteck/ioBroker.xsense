@@ -18,10 +18,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout Wiki repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: arteck/ioBroker.xsense.wiki
           path: wiki
