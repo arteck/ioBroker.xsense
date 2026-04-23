@@ -95,7 +95,9 @@ or if you have a VM on proxmox check your CPU settings
 *    BREAKING CHANGES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 * (arteck) python code changed to js
 * (arteck) battery state now in percentage
-* (arteck) new structure for home
+* (arteck) new structure for home, del all DP and restart the adapter
+* <img width="1745" height="225" alt="grafik" src="https://github.com/user-attachments/assets/2d784ff7-677a-44f2-8712-f0d81e42ec4b" />
+
 
 ### 0.3.7 (2026-04-13)
 * (arteck) add XS0B-MR
