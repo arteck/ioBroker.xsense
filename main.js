@@ -491,9 +491,12 @@ mqttServerController.closeServer();
     // ─── Hilfsmethoden ───────────────────────────────────────────────────────
 
     async setAllAvailableToFalse() {
-        const states = await this.getStatesAsync('devices.*.online');
+        // Wildcard ans Ende → PouchDB/CouchDB kann Index nutzen (kein Full-Scan-Fallback)
+        const states = await this.getStatesAsync('devices.*');
         for (const id in states) {
-            await this.setStateChangedAsync(id, false, true);
+            if (id.endsWith('.online')) {
+                await this.setStateChangedAsync(id, false, true);
+            }
         }
     }
 
