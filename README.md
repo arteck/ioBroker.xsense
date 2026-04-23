@@ -91,6 +91,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (arteck) fix translations
+
 ### 0.4.2 (2026-04-23)
 * (arteck) add retry logic
 
