@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "news": {
+      "0.4.2": {
+        "en": "add retry logic",
+        "de": "retry logik hinzufügen",
+        "ru": "добавить логику retry",
+        "pt": "adicionar lógica de repetição",
+        "nl": "hertry logica toevoegen",
+        "fr": "ajouter la logique de réessayer",
+        "it": "aggiungere la logica",
+        "es": "añadir lógica de retry",
+        "pl": "dodaj logikę powtórzenia",
+        "uk": "додати логіку птиця",
+        "zh-cn": "添加重试逻辑"
+      },
       "0.4.1": {
         "en": "fix type blank \nfix network error",
         "de": "befestigungsart leer\nnetzwerkfehler beheben",
@@ -80,19 +93,6 @@
         "pl": "naprawić most z heksem",
         "uk": "закріпити міст з шестигранкою",
         "zh-cn": "用六进制固定桥"
-      },
-      "0.3.3": {
-        "en": "fix battery state",
-        "de": "batteriezustand",
-        "ru": "исправить состояние батареи",
-        "pt": "corrigir o estado da bateria",
-        "nl": "fix batterijstatus",
-        "fr": "fixer l'état de la batterie",
-        "it": "correzione dello stato della batteria",
-        "es": "estado de la batería",
-        "pl": "stan akumulatora",
-        "uk": "фіксувати стан батареї",
-        "zh-cn": "固定电池状态"
       }
     },
     "titleLang": {

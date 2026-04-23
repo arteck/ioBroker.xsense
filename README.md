@@ -91,6 +91,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.4.2 (2026-04-23)
+* (arteck) add retry logic
+
 ### 0.4.1 (2026-04-23)
 * (arteck) fix type blank 
 * (arteck) fix network error

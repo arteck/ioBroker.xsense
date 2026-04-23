@@ -151,8 +151,11 @@ class XSenseAdapter extends utils.Adapter {
         }
     }
 
-    async datenVerarbeiten(firstTry, forceFullRefresh = false) {
+    async datenVerarbeiten(firstTry, forceFullRefresh = false, retryCount = 0) {
         this.log.debug('[XSense] datenVerarbeiten');
+
+        const MAX_RETRIES    = 3;
+        const RETRY_DELAY_MS = 10000;
 
         try {
             // Tokens erneuern wenn nötig
@@ -207,6 +210,25 @@ class XSenseAdapter extends utils.Adapter {
             this.log.debug(`[XSense] datenVerarbeiten abgeschlossen (MQTT-aktiv: ${mqttActive}, force: ${forceFullRefresh})`);
 
         } catch (err) {
+            // Netzwerkfehler (DNS/EAI_AGAIN, Verbindungsabbruch) → automatisch wiederholen
+            const isNetworkError =
+                err.message?.includes('EAI_AGAIN')      ||
+                err.message?.includes('ECONNREFUSED')   ||
+                err.message?.includes('ECONNRESET')     ||
+                err.message?.includes('ETIMEDOUT')      ||
+                err.message?.includes('ENOTFOUND')      ||
+                err.message?.includes('Netzwerkfehler') ||
+                err.message?.includes('network');
+
+            if (isNetworkError && retryCount < MAX_RETRIES) {
+                const waitSec = (RETRY_DELAY_MS / 1000) * (retryCount + 1);
+                this.log.warn(
+                    `[XSense] Netzwerkfehler (${err.message}) – Retry ${retryCount + 1}/${MAX_RETRIES} in ${waitSec}s...`,
+                );
+                await this.delay(waitSec * 1000);
+                return this.datenVerarbeiten(firstTry, forceFullRefresh, retryCount + 1);
+            }
+
             this.log.error(`[XSense] datenVerarbeiten Fehler: ${err.message}`);
             this.setState('info.connection', false, true);
 
