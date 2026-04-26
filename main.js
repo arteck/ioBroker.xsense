@@ -126,7 +126,7 @@ class XSenseAdapter extends utils.Adapter {
      */
     async _saveSession(client) {
         try {
-            await this.setStateAsync('info.session', { val: client.serialize(), ack: true });
+            this.setState('info.session', { val: client.serialize(), ack: true });
         } catch (e) {
             this.log.warn(`[XSense] Session konnte nicht gespeichert werden: ${e.message}`);
         }
@@ -333,7 +333,7 @@ class XSenseAdapter extends utils.Adapter {
                                 messageObj.payload.status === 'Normal'   ? 3 :
                                 messageObj.payload.status === 'Low'      ? 2 :
                                 messageObj.payload.status === 'Critical' ? 1 : 0;
-                            this.setStateAsync(`${devicePath}.batInfo`, { val: batLevel, ack: true });
+                            this.setState(`${devicePath}.batInfo`, { val: batLevel, ack: true });
                             break;
                         }
                         case 'lifeend': {
@@ -343,11 +343,11 @@ class XSenseAdapter extends utils.Adapter {
                                 common: { name: 'isLifeEnd', type: 'boolean', role: 'indicator', read: true, write: false },
                                 native: {},
                             });
-                            this.setStateAsync(id, { val: messageObj.payload.status === 'EOL', ack: true });
+                            this.setState(id, { val: messageObj.payload.status === 'EOL', ack: true });
                             break;
                         }
                         case 'online':
-                            this.setStateAsync(`${devicePath}.online`, {
+                            this.setState(`${devicePath}.online`, {
                                 val: messageObj.payload.status === 'Online', ack: true,
                             });
                             break;
@@ -355,7 +355,7 @@ class XSenseAdapter extends utils.Adapter {
                         case 'smokealarm':
                         case 'heatalarm':
                         case 'coalarm':
-                            this.setStateAsync(`${devicePath}.alarmStatus`, {
+                            this.setState(`${devicePath}.alarmStatus`, {
                                 val: messageObj.payload.status === 'Detected', ack: true,
                             });
                             break;
@@ -407,7 +407,7 @@ return;
                 case 'forceRefresh':
                     this.log.info('[XSense] Manueller Refresh ausgelöst...');
                     await this.datenVerarbeiten(false, true);
-                    await this.setStateAsync(stateId, { val: false, ack: true });
+                    this.setState(stateId, { val: false, ack: true });
                     break;
                 default:
                     // test_Alarm ist das letzte Segment – unabhängig von Haus-Ebene
@@ -434,17 +434,17 @@ return;
         const deviceSerial = parts[parts.length - 2];
         const msgStateId   = stateId.replace(/\.test_Alarm$/, '.test_Alarm_Message');
 
-        await this.setStateAsync(msgStateId, { val: 'in progress...', ack: true });
+        this.setState(msgStateId, { val: 'in progress...', ack: true });
 
         try {
             if (!this.xsenseClient) {
 throw new Error('XSenseClient nicht initialisiert');
 }
             const result = await this.xsenseClient.testAlarm(deviceSerial);
-            await this.setStateAsync(msgStateId, { val: result || 'done', ack: true });
+            this.setState(msgStateId, { val: result || 'done', ack: true });
         } catch (err) {
             this.log.error(`[XSense] testAlarm Fehler: ${err.message}`);
-            await this.setStateAsync(msgStateId, { val: `Fehler: ${err.message}`, ack: true });
+            this.setState(msgStateId, { val: `Fehler: ${err.message}`, ack: true });
         }
     }
 

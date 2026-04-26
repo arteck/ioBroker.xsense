@@ -91,8 +91,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.5.0 (2026-04-26)
 * (arteck) fix translations
+* (arteck) del deprectated setStateAsync
 
 ### 0.4.2 (2026-04-23)
 * (arteck) add retry logic

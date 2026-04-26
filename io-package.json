@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.4.2",
+    "version": "0.5.0",
     "news": {
+      "0.5.0": {
+        "en": "fix translations\ndel deprectated setStateAsync",
+        "de": "übersetzungen anpassen\ndel deprected setStateAsync",
+        "ru": "исправление переводов\nобсуждение StateAsync",
+        "pt": "corrigir traduções\ndel deprectated setStateAsync",
+        "nl": "vertalingen herstellen\ndel deprectated setStateAsync",
+        "fr": "corriger les traductions\nset dépréciéStateAsync",
+        "it": "correggere le traduzioni\ndel set deprettatoStateAsync",
+        "es": "arreglar traducciones\ndel deprectated setStateAsync",
+        "pl": "poprawianie tłumaczeń\ndel deprectated setStateAsync",
+        "uk": "фіксувати переклади\ndeprectated setStateAsync",
+        "zh-cn": "固定翻译\n已贬值的设置"
+      },
       "0.4.2": {
         "en": "add retry logic",
         "de": "retry logik hinzufügen",
@@ -80,19 +93,6 @@
         "pl": "sprawdzić obiekt jest LifeEnd",
         "uk": "перевірка об'єкта -LifeEnd",
         "zh-cn": "检查对象为 LifeEnd"
-      },
-      "0.3.4": {
-        "en": "fix bridge with hex",
-        "de": "befestigungsbrücke mit hexe",
-        "ru": "починить мост с помощью hex",
-        "pt": "fixar ponte com hex",
-        "nl": "fix brug met hex",
-        "fr": "réparer le pont avec l'hex",
-        "it": "ponte fisso con esagonale",
-        "es": "fijar puente con hex",
-        "pl": "naprawić most z heksem",
-        "uk": "закріпити міст з шестигранкою",
-        "zh-cn": "用六进制固定桥"
       }
     },
     "titleLang": {
