@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/arteck/ioBroker.xsense#readme",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.1034.0",

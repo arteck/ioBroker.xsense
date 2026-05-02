@@ -91,6 +91,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
+
 ### 0.5.1 (2026-05-02)
 * (arteck) fix battery info
 * (arteck) mqtt message as info in log
