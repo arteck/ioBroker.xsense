@@ -601,7 +601,23 @@ return;
                 const payloadStr  = payload.toString();
                 const slashIdx    = topic.indexOf('/');
                 const topicSuffix = slashIdx >= 0 ? topic.slice(slashIdx + 1) : topic;
-                const newMessage  = `{"payload":${payloadStr === '' ? '"null"' : payloadStr},"topic":"${topicSuffix}"}`;
+
+                // Sicherstellen dass payloadStr gültiges JSON ist.
+                // Payload kann ein nackter String sein (z.B. "Normal") – dann JSON.parse()
+                // würde scheitern → in JSON-String einwickeln.
+                let payloadJson;
+                if (payloadStr === '') {
+                    payloadJson = '"null"';
+                } else {
+                    try {
+                        JSON.parse(payloadStr);    // Test: ist es schon gültiges JSON?
+                        payloadJson = payloadStr;
+                    } catch {
+                        payloadJson = JSON.stringify(payloadStr);  // → "Normal" wird zu \"Normal\"
+                    }
+                }
+
+                const newMessage = `{"payload":${payloadJson},"topic":"${topicSuffix}"}`;
                 this.messageParse(newMessage);
             });
 
