@@ -1,7 +1,7 @@
 'use strict';
 
 const utils        = require('@iobroker/adapter-core');
-const { XSenseClient } = require('./lib/xsenseClient');
+const { XSenseClient, batInfoToPercent } = require('./lib/xsenseClient');
 const Json2iobXSense   = require('./lib/json2iob');
 const MqttServerController = require('./lib/mqttServerController').MqttServerController;
 const mqtt  = require('mqtt');
@@ -343,7 +343,7 @@ class XSenseAdapter extends utils.Adapter {
                             if (batLevel === 0 && batStatus !== '' && batStatus !== 'null') {
                                 this.log.warn(`[XSense] Unbekannter Battery-Status: "${batStatus}" für ${devicePath}`);
                             }
-                            this.setState(`${devicePath}.batInfo`, { val: batLevel, ack: true });
+                            this.setState(`${devicePath}.batInfo`, { val: batInfoToPercent(batLevel), ack: true });
                             break;
                         }
                         case 'lifeend': {
