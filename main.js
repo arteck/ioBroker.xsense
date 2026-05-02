@@ -177,6 +177,10 @@ class XSenseAdapter extends utils.Adapter {
             if (mqttClient && !mqttClient.closed) {
                 this._subscribeMqttTopics();
                 this._requestTemperatureUpdates();
+                // Beim ersten Start: Shadow-GET per MQTT anfragen damit SBS50 aktuellen Zustand liefert
+                if (forceFullRefresh) {
+                    this._requestInitialShadowState();
+                }
             }
 
             // Gerätezustände:
@@ -265,7 +269,6 @@ class XSenseAdapter extends utils.Adapter {
             for (const house of Object.values(this.xsenseClient.houses)) {
                 for (const station of Object.values(house.stations)) {
                     if (station.serial === bridgeSerial) {
-                        // Gleiche Bereinigung wie json2iob.name2id(): Leerzeichen + Punkte + FORBIDDEN_CHARS
                         const houseName = (house.name || house.houseId)
                             .replace(/\s+/g, '_')
                             .replace(/\./g, '_')
@@ -679,7 +682,34 @@ return;
     }
 
     /**
-     * Fordert Live-Daten für Temperatur/Luftfeuchte-Sensoren an (MQTT Publish).
+     * Fordert den aktuellen Shadow-Zustand per MQTT-GET an.
+     * Notwendig für SBS50-Bridge die keinen REST-Shadow hat (mainpage 404).
+     * AWS IoT publiziert die Antwort auf:
+     *   $aws/things/<serial>/shadow/name/<page>/get/accepted
+     * → wird via $aws/things/<serial>/shadow/name/+/get/accepted empfangen.
+     */
+    _requestInitialShadowState() {
+        if (!mqttClient || mqttClient.closed || !this.xsenseClient) return;
+
+        const SHADOW_NAMES = ['mainpage', '2nd_mainpage'];
+
+        for (const house of Object.values(this.xsenseClient.houses)) {
+            for (const station of Object.values(house.stations)) {
+                for (const shadowName of SHADOW_NAMES) {
+                    const getTopic = `$aws/things/${station.serial}/shadow/name/${shadowName}/get`;
+                    mqttClient.publish(getTopic, '', { qos: 0, retain: false }, err => {
+                        if (err) {
+                            this.log.debug(`[XSense] Shadow-GET fehlgeschlagen: ${getTopic} – ${err.message}`);
+                        } else {
+                            this.log.debug(`[XSense] Shadow-GET angefordert: ${getTopic}`);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    /**
      * Quelle: HA coordinator.py → request_device_updates() [STH51/STH0A]
      */
     _requestTemperatureUpdates() {

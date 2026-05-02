@@ -78,7 +78,6 @@ function createAdapterMock(houses = {}) {
     const states = {};
     return {
         states,
-        pythonConnected: true,
         FORBIDDEN_CHARS: /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu,
         xsenseClient: { houses },
         log: { debug: () => {}, info: () => {}, warn: () => {}, error: () => {} },
@@ -89,6 +88,8 @@ function createAdapterMock(houses = {}) {
         _resolveDevicePath(bridgeSerial, deviceSerial) {
             const xc = this.xsenseClient;
             if (xc?.houses) {
+                // bridgeSerial = "15298924" (Regex schneidet SBS50 ab)
+                // station.serial aus API = "15298924" (OHNE SBS50-Prefix) → direkter Vergleich
                 for (const house of Object.values(xc.houses)) {
                     for (const station of Object.values(house.stations)) {
                         if (station.serial === bridgeSerial) {
@@ -169,6 +170,7 @@ const DEFAULT_HOUSES = {
         houseId: 'house1',
         name: 'home',
         stations: {
+            // station.serial kommt von API als "15298924" (OHNE SBS50-Prefix)
             st1: { serial: '15298924', stationId: 'st1', devices: {} },
         },
     },
@@ -340,31 +342,25 @@ describe('Vollständige HA-Topic-Pipeline (echte Log-Daten)', () => {
 
     it('[battery] Normal → batInfo = 100%', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_battery/state',
-            '{ "status": "Normal"}',
-        );
+            '{ "status": "Normal"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.batInfo'], 100);
     });
 
     it('[battery] Low → batInfo = 67%', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_battery/state',
-            '{ "status": "Low"}',
-        );
+            '{ "status": "Low"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.batInfo'], 67);
     });
 
     it('[battery] Critical → batInfo = 33%', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_battery/state',
-            '{ "status": "Critical"}',
-        );
+            '{ "status": "Critical"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.batInfo'], 33);
     });
 
@@ -372,21 +368,17 @@ describe('Vollständige HA-Topic-Pipeline (echte Log-Daten)', () => {
 
     it('[online] Online → online = true', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_online/state',
-            '{ "status": "Online"}',
-        );
+            '{ "status": "Online"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.online'], true);
     });
 
     it('[online] Offline → online = false', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_online/state',
-            '{ "status": "Offline"}',
-        );
+            '{ "status": "Offline"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.online'], false);
     });
 
@@ -394,21 +386,17 @@ describe('Vollständige HA-Topic-Pipeline (echte Log-Daten)', () => {
 
     it('[lifeend] Normal → isLifeEnd = false', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_lifeend/state',
-            '{ "status": "Normal"}',
-        );
+            '{ "status": "Normal"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.isLifeEnd'], false);
     });
 
     it('[lifeend] EOL → isLifeEnd = true', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_lifeend/state',
-            '{ "status": "EOL"}',
-        );
+            '{ "status": "EOL"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.isLifeEnd'], true);
     });
 
@@ -416,21 +404,17 @@ describe('Vollständige HA-Topic-Pipeline (echte Log-Daten)', () => {
 
     it('[heatalarm] Cleared → alarmStatus = false', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_heatalarm/state',
-            '{ "status": "Cleared"}',
-        );
+            '{ "status": "Cleared"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.alarmStatus'], false);
     });
 
     it('[heatalarm] Detected → alarmStatus = true', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_heatalarm/state',
-            '{ "status": "Detected"}',
-        );
+            '{ "status": "Detected"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.alarmStatus'], true);
     });
 
@@ -438,21 +422,17 @@ describe('Vollständige HA-Topic-Pipeline (echte Log-Daten)', () => {
 
     it('[heatfault] Normal → faultStatus = false', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_heatfault/state',
-            '{ "status": "Normal"}',
-        );
+            '{ "status": "Normal"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.faultStatus'], false);
     });
 
     it('[heatfault] Fault → faultStatus = true', async () => {
         const adapter = createAdapterMock(DEFAULT_HOUSES);
-        await pipelineHA(
-            adapter,
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_heatfault/state',
-            '{ "status": "Fault"}',
-        );
+            '{ "status": "Fault"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.faultStatus'], true);
     });
 });
@@ -509,14 +489,12 @@ describe('Edge Cases', () => {
         assert.equal(Object.keys(adapter.states).length, 0);
     });
 
-    it('Kein Haus konfiguriert → Fallback-Pfad ohne Haus-Ordner', async () => {
-        const adapter = createAdapterMock({});   // keine Häuser
-        await pipelineHA(
-            adapter,
+    it('Kein Haus konfiguriert → Fallback-Pfad', async () => {
+        const adapter = createAdapterMock({});
+        await pipelineHA(adapter,
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_online/state',
-            '{ "status": "Online"}',
-        );
-        // Fallback: devices.<bridgeId>.<deviceId>.online
+            '{ "status": "Online"}');
+        // Fallback: devices.<bridgeId>.<deviceId>.online  (bridgeId = "15298924")
         assert.equal(adapter.states['devices.15298924.00000009.online'], true);
     });
 
