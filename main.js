@@ -23,7 +23,7 @@ class XSenseAdapter extends utils.Adapter {
         this.json2iob     = new Json2iobXSense(this);
         this.xsenseClient = null;
 
-        this.pythonConnected  = false;
+        this.apiConnected     = false;
         this._requestInterval = null;
         /** Bereits beim MQTT-Broker subscribed Topics – verhindert Duplikate */
         this._mqttSubscribedTopics = new Set();
@@ -204,7 +204,7 @@ class XSenseAdapter extends utils.Adapter {
             // In ioBroker-States schreiben
             await this.json2iob.parseHouses(this.namespace, this.xsenseClient.houses);
 
-            this.pythonConnected = true;
+            this.apiConnected = true;
             this.setState('info.connection', true, true);
 
             this.log.debug(`[XSense] datenVerarbeiten abgeschlossen (MQTT-aktiv: ${mqttActive}, force: ${forceFullRefresh})`);
@@ -291,9 +291,6 @@ class XSenseAdapter extends utils.Adapter {
                 return;
             }
 
-            if (!this.pythonConnected) {
-                return;
-            }
 
             const messageObj = JSON.parse(message);
             this.log.debug(`[XSense] MQTT Message: ${JSON.stringify(messageObj)}`);
@@ -373,7 +370,9 @@ class XSenseAdapter extends utils.Adapter {
                         case 'smokefault':
                         case 'heatfault':
                         case 'cofault':
-                            // Fault-States – aktuell keine Aktion
+                            this.setState(`${devicePath}.faultStatus`, {
+                                val: getStatus(messageObj.payload) === 'Fault', ack: true,
+                            });
                             break;
 
                         default:
