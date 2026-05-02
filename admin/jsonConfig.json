@@ -266,6 +266,17 @@
                   "xl": 4,
                   "newLine": false,
                   "hidden": "data.connectionType == 'exmqtt' || data.useMqttServer == false"
+                },
+              "mqttmessages": {
+                  "type": "checkbox",
+                  "label": "MQTT Messages log (only for internal MQTT-Server)",
+                  "newLine": true,
+                  "xs": 12,
+                  "sm": 12,
+                  "md": 6,
+                  "lg": 4,
+                  "xl": 4,
+                   "hidden": "data.useMqttServer == false"
                 }
             }
         }

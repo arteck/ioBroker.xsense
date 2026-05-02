@@ -327,12 +327,22 @@ class XSenseAdapter extends utils.Adapter {
 
                     this.log.debug(`[XSense] Bridge=${bridgeId} Device=${deviceId} Attr=${attribute} → ${devicePath}`);
 
+                    // payload kann String ("Normal") ODER Objekt ({ status: "Normal" }) sein
+                    const getStatus = (payload) =>
+                        payload !== null && typeof payload === 'object'
+                            ? payload.status
+                            : String(payload ?? '');
+
                     switch (attribute) {
                         case 'battery': {
+                            const batStatus = getStatus(messageObj.payload);
                             const batLevel =
-                                messageObj.payload.status === 'Normal'   ? 3 :
-                                messageObj.payload.status === 'Low'      ? 2 :
-                                messageObj.payload.status === 'Critical' ? 1 : 0;
+                                batStatus === 'Normal'   ? 3 :
+                                batStatus === 'Low'      ? 2 :
+                                batStatus === 'Critical' ? 1 : 0;
+                            if (batLevel === 0 && batStatus !== '' && batStatus !== 'null') {
+                                this.log.warn(`[XSense] Unbekannter Battery-Status: "${batStatus}" für ${devicePath}`);
+                            }
                             this.setState(`${devicePath}.batInfo`, { val: batLevel, ack: true });
                             break;
                         }
@@ -343,12 +353,12 @@ class XSenseAdapter extends utils.Adapter {
                                 common: { name: 'isLifeEnd', type: 'boolean', role: 'indicator', read: true, write: false },
                                 native: {},
                             });
-                            this.setState(id, { val: messageObj.payload.status === 'EOL', ack: true });
+                            this.setState(id, { val: getStatus(messageObj.payload) === 'EOL', ack: true });
                             break;
                         }
                         case 'online':
                             this.setState(`${devicePath}.online`, {
-                                val: messageObj.payload.status === 'Online', ack: true,
+                                val: getStatus(messageObj.payload) === 'Online', ack: true,
                             });
                             break;
 
@@ -356,7 +366,7 @@ class XSenseAdapter extends utils.Adapter {
                         case 'heatalarm':
                         case 'coalarm':
                             this.setState(`${devicePath}.alarmStatus`, {
-                                val: messageObj.payload.status === 'Detected', ack: true,
+                                val: getStatus(messageObj.payload) === 'Detected', ack: true,
                             });
                             break;
 
@@ -573,6 +583,9 @@ return;
             });
 
             mqttClient.on('message', (topic, payload) => {
+                if (this.config.mqttmessages) {
+                    this.log.info(`[XSense MQTT] Topic: ${topic} | Payload: ${payload.toString()}`);
+                }
                 // Zuerst versuchen via HA-konformes processMqttMessage
                 if (this.xsenseClient) {
                     const station = this.xsenseClient.processMqttMessage(topic, payload);
