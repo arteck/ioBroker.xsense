@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "news": {
+      "0.6.1": {
+        "en": "fix deviceManager",
+        "de": "einrichtungManager",
+        "ru": "исправить DeviceManager",
+        "pt": "dispositivo de correçãoManager",
+        "nl": "apparaatbeheer herstellen",
+        "fr": "réparer deviceManager",
+        "it": "dispositivo di correzioneManager",
+        "es": "dispositivo de fijaciónManager",
+        "pl": "fix deviceManager",
+        "uk": "фіксатор",
+        "zh-cn": "固定设备管理器"
+      },
       "0.6.0": {
         "en": "fix battery info\nadd deviceManager",
         "de": "batterie info\ngerätManager hinzufügen",
@@ -80,19 +93,6 @@
         "pl": "zobacz Readme",
         "uk": "див. файл Readme",
         "zh-cn": "请参阅自述文件"
-      },
-      "0.3.7": {
-        "en": "add XS0B-MR",
-        "de": "xS0B-MR hinzufügen",
-        "ru": "добавить XS0B-MR",
-        "pt": "adicionar XS0B-MR",
-        "nl": "xS0B-MR toevoegen",
-        "fr": "ajouter XS0B-MR",
-        "it": "aggiungere XS0B-MR",
-        "es": "añadir XS0B-MR",
-        "pl": "dodaj XS0B- MR",
-        "uk": "додати XS0B-MR",
-        "zh-cn": "添加 XS0B-MR"
       }
     },
     "titleLang": {
