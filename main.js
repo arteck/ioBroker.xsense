@@ -566,9 +566,18 @@ class XSenseAdapter extends utils.Adapter {
                 if (this.xsenseClient) {
                     const station = this.xsenseClient.processMqttMessage(topic, payload);
                     if (station) {
-                        // Station-Daten in ioBroker schreiben
-                        this.json2iob.parseHouses(this.namespace, this.xsenseClient.houses)
-                            .catch(e => this.log.error(`[XSense] MQTT parseHouses Fehler: ${e.message}`));
+                        // Hausname für den ioBroker-Pfad auflösen
+                        let houseFolderId = station.houseId;
+                        for (const house of Object.values(this.xsenseClient.houses)) {
+                            if (house.houseId === station.houseId) {
+                                houseFolderId = (house.name || house.houseId)
+                                    .replace(/\s+/g, '_').replace(/\./g, '_').replace(/[^a-zA-Z0-9_-]/g, '_');
+                                break;
+                            }
+                        }
+                        // Nur die betroffene Station schreiben – nicht alle Häuser neu aufbauen
+                        this.json2iob.parseStation(this.namespace, station, houseFolderId)
+                            .catch(e => this.log.error(`[XSense] MQTT parseStation Fehler: ${e.message}`));
                         return;
                     }
                 }
@@ -633,7 +642,7 @@ class XSenseAdapter extends utils.Adapter {
 
         for (const house of Object.values(this.xsenseClient.houses)) {
             for (const station of Object.values(house.stations)) {
-                const topics = this.xsenseClient.getMqttTopics(house, station);
+                const topics = this.xsenseClient.getMqttTopics(station);
                 for (const topic of topics) {
                     this.mqttSubscribeOncetates(topic);
                 }
