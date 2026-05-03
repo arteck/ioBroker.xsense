@@ -269,7 +269,7 @@
                 },
               "mqttmessages": {
                   "type": "checkbox",
-                  "label": "MQTT Messages log (only for internal MQTT-Server)",
+                  "label": "MQTT Messages log",
                   "newLine": true,
                   "xs": 12,
                   "sm": 12,
