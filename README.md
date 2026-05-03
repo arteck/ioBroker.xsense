@@ -91,8 +91,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.6.0 (2026-05-03)
 * (arteck) fix battery info
+* (arteck) add deviceManager
 
 ### 0.5.1 (2026-05-02)
 * (arteck) fix battery info
