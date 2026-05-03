@@ -193,6 +193,9 @@
     "icon": "xsense.png",
     "extIcon": "https://raw.githubusercontent.com/arteck/ioBroker.xsense/master/admin/xsense.png",
     "type": "utility",
+    "supportedMessages": {
+      "deviceManager": true
+    },
     "dataSource": "poll",
     "mode": "daemon",
     "connectionType": "cloud",
