@@ -4,6 +4,7 @@ const utils = require('@iobroker/adapter-core');
 const {XSenseClient} = require('./lib/xsenseClient');
 const Json2iobXSense = require('./lib/json2iob');
 const MqttServerController = require('./lib/mqttServerController').MqttServerController;
+const DeviceController = require('./lib/deviceController').DeviceController;
 const mqtt = require('mqtt');
 const tools = require('./lib/tools');
 
@@ -21,8 +22,10 @@ class XSenseAdapter extends utils.Adapter {
 
         this.json2iob = new Json2iobXSense(this);
         this.xsenseClient = null;
-
+        this.deviceController = null;
         this._requestInterval = null;
+        this.houseCache = null; // Cache für Haus-Objekte (für MQTT-Topic-Auflösung)
+
         /** Bereits beim MQTT-Broker subscribed Topics – verhindert Duplikate */
         this._mqttSubscribedTopics = new Set();
 
@@ -60,6 +63,12 @@ class XSenseAdapter extends utils.Adapter {
                 this.log.warn('[XSense] Login übersprungen – Konfiguration unvollständig');
                 return;
             }
+
+            this.deviceController = new DeviceController(
+                this,
+                this.houseCache,
+                this.config
+            );
 
             await this.setAllAvailableToFalse();
 
@@ -179,17 +188,13 @@ class XSenseAdapter extends utils.Adapter {
             // - MQTT aktiv: getState überspringen (Push liefert States in Echtzeit)
             // - kein MQTT:  getState per REST-API aufrufen
             const mqttActive = mqttClient && !mqttClient.closed;
-            const needsGetState = forceFullRefresh || !mqttActive;
 
             for (const house of Object.values(this.xsenseClient.houses)) {
                 for (const station of Object.values(house.stations)) {
                     try {
                         // Station-eigene Daten (Bridge: wifiRSSI, sw-Version etc.) immer laden
-                        await this.xsenseClient.getStationState(station);
-
-                        if (needsGetState) {
-                            await this.xsenseClient.getState(station);
-                        }
+                        await this.xsenseClient.getStationState(station);   // station-spezifische Daten immer laden (z.B. Bridge-Infos)
+                        await this.xsenseClient.getState(station);              // Gerätezustände bei jedem Polling laden (auch mit MQTT, da manche Daten nicht per Push kommen)
                     } catch (e) {
                         this.log.warn(`[XSense] Zustand für Station ${station.serial} Fehler: ${e.message}`);
                     }
@@ -254,8 +259,9 @@ class XSenseAdapter extends utils.Adapter {
 
     async messageParse(message) {
         // Mutex: parallele Aufrufe serialisieren
-        let release = () => {};  // Default-Wert statt undefined
-       const lock = new Promise(resolve => (release = resolve));
+        let release = () => {
+        };  // Default-Wert statt undefined
+        const lock = new Promise(resolve => (release = resolve));
         const prev = messageParseMutex;
         messageParseMutex = lock;
         await prev;
