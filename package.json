@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.1045.0",
-    "@iobroker/adapter-core": "^3.3.2",
+    "@iobroker/adapter-core": "^3.4.1",
     "@iobroker/dm-utils": "^3.0.19",
     "aedes": "^0.51.3",
     "aedes-persistence-nedb": "^2.0.3",
