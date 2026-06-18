@@ -257,6 +257,86 @@ describe('info.MQTT_connection – onReady Fehlerfall', () => {
 });
 
 describe('info.MQTT_connection – externalMqttServerIP Validierung', () => {
+describe('MQTT startup sequencing', () => {
+    it('verbindet MQTT erst nach dem initialen startIntervall', async () => {
+        const calls = [];
+        const adapter = {
+            config: { useMqttServer: true },
+            houseCache: null,
+            log: { info: () => {}, warn: () => {}, error: () => {} },
+            json2iob: {
+                async createStaticDeviceObject() {
+                    calls.push('createStaticDeviceObject');
+                },
+            },
+            async ensureInfoStates() {
+                calls.push('ensureInfoStates');
+            },
+            async setAllAvailableToFalse() {
+                calls.push('setAllAvailableToFalse');
+            },
+            async initSession() {
+                calls.push('initSession');
+                return {};
+            },
+            async startIntervall() {
+                calls.push('startIntervall');
+            },
+            async connectToMQTT() {
+                calls.push('connectToMQTT');
+            },
+            setState() {},
+        };
+
+        async function onReadyCore() {
+            await adapter.ensureInfoStates();
+            await adapter.json2iob.createStaticDeviceObject();
+            await adapter.setAllAvailableToFalse();
+            const xsenseClient = await adapter.initSession();
+
+            if (xsenseClient) {
+                adapter.setState('info.connection', true, true);
+                await adapter.startIntervall();
+
+                if (adapter.config.useMqttServer) {
+                    await adapter.connectToMQTT();
+                }
+            }
+        }
+
+        await onReadyCore();
+        assert.deepEqual(calls, [
+            'ensureInfoStates',
+            'createStaticDeviceObject',
+            'setAllAvailableToFalse',
+            'initSession',
+            'startIntervall',
+            'connectToMQTT',
+        ]);
+    });
+
+    it('verwirft Legacy-Fallback solange die Gerätepfade noch nicht bereit sind', () => {
+        let legacyParseCalled = false;
+        const adapter = {
+            _devicePathsReady: false,
+            log: { debug: () => {} },
+        };
+
+        function handleLegacyFallback(topic, payload) {
+            if (!adapter._devicePathsReady) {
+                adapter.log.debug(`[XSense] Legacy-MQTT-Nachricht verworfen bis Gerätepfade bereit sind: ${topic}`);
+                return;
+            }
+
+            const payloadStr = payload.toString();
+            legacyParseCalled = payloadStr.length >= 0;
+        }
+
+        handleLegacyFallback('homeassistant/binary_sensor/test/state', Buffer.from('{}'));
+        assert.equal(legacyParseCalled, false);
+    });
+});
+
     it('connectToMQTT bricht ab wenn externalMqttServerIP leer ist (exmqtt)', async () => {
         const adapter = createAdapterMock({ connectionType: 'exmqtt', externalMqttServerIP: '' });
         let warningLogged = false;

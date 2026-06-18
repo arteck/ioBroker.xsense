@@ -24,6 +24,7 @@ class XSenseAdapter extends utils.Adapter {
         this.xsenseClient = null;
         this.deviceController = null;
         this._requestInterval = null;
+        this._devicePathsReady = false;
         this.houseCache = null; // Cache für Haus-Objekte (für MQTT-Topic-Auflösung)
 
         /** Bereits beim MQTT-Broker subscribed Topics – verhindert Duplikate */
@@ -55,10 +56,6 @@ class XSenseAdapter extends utils.Adapter {
             }
 
             // MQTT-Verbindung (unabhängig vom Cloud-Login)
-            if (this.config.useMqttServer && loginGo) {
-                await this.connectToMQTT();
-            }
-
             if (!loginGo) {
                 this.log.warn('[XSense] Login übersprungen – Konfiguration unvollständig');
                 return;
@@ -78,6 +75,10 @@ class XSenseAdapter extends utils.Adapter {
             if (this.xsenseClient) {
                 this.setState('info.connection', true, true);
                 await this.startIntervall();
+
+                if (this.config.useMqttServer) {
+                    await this.connectToMQTT();
+                }
             }
         } catch (err) {
             this.setState('info.connection', false, true);
@@ -203,6 +204,7 @@ class XSenseAdapter extends utils.Adapter {
 
             // In ioBroker-States schreiben
             await this.json2iob.parseHouses(this.namespace, this.xsenseClient.houses);
+            this._devicePathsReady = true;
 
             this.setState('info.connection', true, true);
             this.log.debug(`[XSense] datenVerarbeiten abgeschlossen (MQTT-aktiv: ${mqttActive}, force: ${forceFullRefresh})`);
@@ -582,7 +584,12 @@ class XSenseAdapter extends utils.Adapter {
                     }
                 }
 
-                // Fallback: Legacy SBS50-Parsing
+                // Fallback: Legacy SBS50-Parsing erst nutzen, wenn die Hauspfade bekannt sind
+                if (!this._devicePathsReady) {
+                    this.log.debug(`[XSense] Legacy-MQTT-Nachricht verworfen bis Gerätepfade bereit sind: ${topic}`);
+                    return;
+                }
+
                 const payloadStr = payload.toString();
                 const slashIdx = topic.indexOf('/');
                 const topicSuffix = slashIdx >= 0 ? topic.slice(slashIdx + 1) : topic;
