@@ -91,6 +91,12 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.6.4 (2026-06-18)
+* (Jailobeam) fixed house-based device paths and delayed MQTT startup until paths are ready
+* (Jailobeam) reused cached topology for offline startup and MQTT path recovery
+* (Jailobeam) fixed battery percentage conversion from `batInfo`
+* (Jailobeam) fixed `test_Alarm` / self-test payloads for smoke detectors and reset the trigger state after use
+
 ### 0.6.3 (2026-05-20)
 * (arteck) Dependencies have been updated
 
@@ -134,4 +140,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-

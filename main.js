@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('@iobroker/adapter-core');
-const {XSenseClient} = require('./lib/xsenseClient');
+const {XSenseClient, batInfoToPercent} = require('./lib/xsenseClient');
 const Json2iobXSense = require('./lib/json2iob');
 const MqttServerController = require('./lib/mqttServerController').MqttServerController;
 const DeviceController = require('./lib/deviceController').DeviceController;
@@ -24,6 +24,7 @@ class XSenseAdapter extends utils.Adapter {
         this.xsenseClient = null;
         this.deviceController = null;
         this._requestInterval = null;
+        this._devicePathsReady = false;
         this.houseCache = null; // Cache für Haus-Objekte (für MQTT-Topic-Auflösung)
 
         /** Bereits beim MQTT-Broker subscribed Topics – verhindert Duplikate */
@@ -42,6 +43,7 @@ class XSenseAdapter extends utils.Adapter {
 
             await this.ensureInfoStates();
             await this.json2iob.createStaticDeviceObject();
+            await this.loadCachedTopology();
 
             let loginGo = true;
 
@@ -55,10 +57,6 @@ class XSenseAdapter extends utils.Adapter {
             }
 
             // MQTT-Verbindung (unabhängig vom Cloud-Login)
-            if (this.config.useMqttServer && loginGo) {
-                await this.connectToMQTT();
-            }
-
             if (!loginGo) {
                 this.log.warn('[XSense] Login übersprungen – Konfiguration unvollständig');
                 return;
@@ -73,11 +71,25 @@ class XSenseAdapter extends utils.Adapter {
             await this.setAllAvailableToFalse();
 
             // Session wiederherstellen oder neu einloggen
-            this.xsenseClient = await this.initSession();
+            try {
+                this.xsenseClient = await this.initSession();
+            } catch (err) {
+                if (!this.houseCache || Object.keys(this.houseCache).length === 0) {
+                    throw err;
+                }
+
+                this.log.warn(`[XSense] Cloud-Session nicht verfügbar, starte mit gecachter Gerätetopologie: ${err.message}`);
+                this.xsenseClient = new XSenseClient(this.log);
+            }
 
             if (this.xsenseClient) {
-                this.setState('info.connection', true, true);
+                this.applyCachedTopology(this.xsenseClient);
+                this.setState('info.connection', !this.xsenseClient._offlineFromCache && !this.xsenseClient.isAccessTokenExpiring(), true);
                 await this.startIntervall();
+
+                if (this.config.useMqttServer) {
+                    await this.connectToMQTT();
+                }
             }
         } catch (err) {
             this.setState('info.connection', false, true);
@@ -96,12 +108,14 @@ class XSenseAdapter extends utils.Adapter {
      */
     async initSession() {
         let client = null;
+        let restoredClient = null;
 
         // Gespeicherte Session laden
         const savedState = await this.getStateAsync('info.session');
         if (savedState?.val) {
             try {
-                client = XSenseClient.deserialize(String(savedState.val), this.log);
+                restoredClient = XSenseClient.deserialize(String(savedState.val), this.log);
+                client = restoredClient;
                 this.log.info('[XSense] Session aus Speicher wiederhergestellt');
             } catch (e) {
                 this.log.warn(`[XSense] Session-Wiederherstellung fehlgeschlagen: ${e.message}`);
@@ -111,15 +125,35 @@ class XSenseAdapter extends utils.Adapter {
 
         // Client-Infos müssen immer neu geladen werden (init ist unauthenticated)
         client = client || new XSenseClient(this.log);
-        await client.init();
+        try {
+            await client.init();
+        } catch (e) {
+            if (restoredClient) {
+                restoredClient._offlineFromCache = true;
+                this.log.warn(`[XSense] Cloud-Init fehlgeschlagen, nutze gespeicherte Session offline weiter: ${e.message}`);
+                return restoredClient;
+            }
+            throw e;
+        }
 
         // Login wenn nötig
         if (client.isAccessTokenExpiring()) {
             this.log.info('[XSense] Führe Login durch...');
-            await client.login(this.config.userEmail, this.config.userPassword);
-            await this.saveSession(client);
-            this.log.info('[XSense] Login erfolgreich');
+            try {
+                await client.login(this.config.userEmail, this.config.userPassword);
+                await this.saveSession(client);
+                client._offlineFromCache = false;
+                this.log.info('[XSense] Login erfolgreich');
+            } catch (e) {
+                if (restoredClient) {
+                    restoredClient._offlineFromCache = true;
+                    this.log.warn(`[XSense] Login fehlgeschlagen, nutze gespeicherte Session offline weiter: ${e.message}`);
+                    return restoredClient;
+                }
+                throw e;
+            }
         } else {
+            client._offlineFromCache = false;
             this.log.info('[XSense] Nutze bestehende Session');
         }
 
@@ -136,6 +170,121 @@ class XSenseAdapter extends utils.Adapter {
             this.setState('info.session', {val: client.serialize(), ack: true});
         } catch (e) {
             this.log.warn(`[XSense] Session konnte nicht gespeichert werden: ${e.message}`);
+        }
+    }
+
+    getKnownHouses() {
+        if (this.xsenseClient?.houses && Object.keys(this.xsenseClient.houses).length > 0) {
+            return this.xsenseClient.houses;
+        }
+        if (this.houseCache && Object.keys(this.houseCache).length > 0) {
+            return this.houseCache;
+        }
+        return null;
+    }
+
+    applyCachedTopology(client) {
+        if (!client || !this.houseCache || Object.keys(this.houseCache).length === 0) {
+            return false;
+        }
+        if (!client.houses || Object.keys(client.houses).length === 0) {
+            client.houses = this.houseCache;
+        }
+        return true;
+    }
+
+    async loadCachedTopology() {
+        try {
+            const objects = await this.getAdapterObjectsAsync();
+            const states = await this.getStatesAsync('devices.*');
+            const houses = {};
+
+            const ensureHouse = houseFolderId => {
+                if (!houses[houseFolderId]) {
+                    const housePath = `devices.${houseFolderId}`;
+                    houses[houseFolderId] = {
+                        houseId: String(states?.[`${housePath}.home_id`]?.val || houseFolderId),
+                        name: String(states?.[`${housePath}.houseName`]?.val || houseFolderId),
+                        region: String(states?.[`${housePath}.region`]?.val || ''),
+                        mqttRegion: String(states?.[`${housePath}.mqttRegion`]?.val || ''),
+                        mqttServer: String(states?.[`${housePath}.mqttServer`]?.val || ''),
+                        rooms: {},
+                        stations: {},
+                    };
+                }
+                return houses[houseFolderId];
+            };
+
+            for (const [id, obj] of Object.entries(objects || {})) {
+                const parts = id.split('.');
+                if (parts[0] !== 'devices') {
+                    continue;
+                }
+
+                if (obj.type === 'device' && parts.length === 3) {
+                    const [, houseFolderId, bridgeSerial] = parts;
+                    const house = ensureHouse(houseFolderId);
+                    const stationPath = `devices.${houseFolderId}.${bridgeSerial}`;
+
+                    house.stations[bridgeSerial] = house.stations[bridgeSerial] || {
+                        stationId: String(states?.[`${stationPath}.stationId`]?.val || ''),
+                        name: String(states?.[`${stationPath}.name`]?.val || obj.common?.name || bridgeSerial),
+                        serial: bridgeSerial,
+                        type: String(states?.[`${stationPath}.type`]?.val || ''),
+                        online: states?.[`${stationPath}.online`]?.val ?? false,
+                        data: {},
+                        devices: {},
+                        houseId: house.houseId,
+                        mqttRegion: house.mqttRegion,
+                        mqttServer: house.mqttServer,
+                    };
+                }
+
+                if (obj.type === 'channel' && parts.length === 4) {
+                    const [, houseFolderId, bridgeSerial, deviceSerial] = parts;
+                    const house = ensureHouse(houseFolderId);
+                    const stationPath = `devices.${houseFolderId}.${bridgeSerial}`;
+                    const devicePath = `${stationPath}.${deviceSerial}`;
+
+                    house.stations[bridgeSerial] = house.stations[bridgeSerial] || {
+                        stationId: String(states?.[`${stationPath}.stationId`]?.val || ''),
+                        name: String(states?.[`${stationPath}.name`]?.val || bridgeSerial),
+                        serial: bridgeSerial,
+                        type: String(states?.[`${stationPath}.type`]?.val || ''),
+                        online: states?.[`${stationPath}.online`]?.val ?? false,
+                        data: {},
+                        devices: {},
+                        houseId: house.houseId,
+                        mqttRegion: house.mqttRegion,
+                        mqttServer: house.mqttServer,
+                    };
+
+                    house.stations[bridgeSerial].devices[deviceSerial] = house.stations[bridgeSerial].devices[deviceSerial] || {
+                        deviceId: String(states?.[`${devicePath}.deviceId`]?.val || ''),
+                        name: String(states?.[`${devicePath}.name`]?.val || obj.common?.name || deviceSerial),
+                        serial: deviceSerial,
+                        type: String(states?.[`${devicePath}.type`]?.val || ''),
+                        online: states?.[`${devicePath}.online`]?.val ?? false,
+                        data: {},
+                        stationSerial: bridgeSerial,
+                    };
+                }
+            }
+
+            const stationCount = Object.values(houses)
+                .reduce((count, house) => count + Object.keys(house.stations).length, 0);
+
+            if (stationCount === 0) {
+                return null;
+            }
+
+            this.houseCache = houses;
+            this._devicePathsReady = true;
+            this.log.info(`[XSense] Gecachte Gerätetopologie geladen (${stationCount} Stationen)`);
+            return houses;
+        } catch (e) {
+            this.log.debug(`[XSense] Keine gecachte Gerätetopologie verfügbar: ${e.message}`);
+            return null;
         }
     }
 
@@ -203,6 +352,8 @@ class XSenseAdapter extends utils.Adapter {
 
             // In ioBroker-States schreiben
             await this.json2iob.parseHouses(this.namespace, this.xsenseClient.houses);
+            this.houseCache = this.xsenseClient.houses;
+            this._devicePathsReady = true;
 
             this.setState('info.connection', true, true);
             this.log.debug(`[XSense] datenVerarbeiten abgeschlossen (MQTT-aktiv: ${mqttActive}, force: ${forceFullRefresh})`);
@@ -240,8 +391,9 @@ class XSenseAdapter extends utils.Adapter {
      * @returns {string}  z.B. "devices.Mein_Zuhause.15298924.00000001"
      */
     resolveDevicePath(bridgeSerial, deviceSerial) {
-        if (this.xsenseClient?.houses) {
-            for (const house of Object.values(this.xsenseClient.houses)) {
+        const houses = this.getKnownHouses();
+        if (houses) {
+            for (const house of Object.values(houses)) {
                 for (const station of Object.values(house.stations)) {
                     if (station.serial === bridgeSerial) {
                         // Gleiche Bereinigung wie json2iob.name2id(): Leerzeichen + Punkte + FORBIDDEN_CHARS
@@ -309,7 +461,7 @@ class XSenseAdapter extends utils.Adapter {
                                 messageObj.payload.status === 'Normal' ? 3 :
                                     messageObj.payload.status === 'Low' ? 2 :
                                         messageObj.payload.status === 'Critical' ? 1 : 0;
-                            this.setState(`${devicePath}.batInfo`, {val: batLevel, ack: true});
+                            this.setState(`${devicePath}.batInfo`, {val: batInfoToPercent(batLevel), ack: true});
                             break;
                         }
                         case 'lifeend': {
@@ -427,6 +579,8 @@ class XSenseAdapter extends utils.Adapter {
         } catch (err) {
             this.log.error(`[XSense] testAlarm Fehler: ${err.message}`);
             this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
+        } finally {
+            this.setState(stateId, {val: false, ack: true});
         }
     }
 
@@ -465,7 +619,7 @@ class XSenseAdapter extends utils.Adapter {
             this.setState('info.MQTT_connection', false, true);
 
             callback();
-        } catch (e) {
+        } catch {
             callback();
         }
     }
@@ -568,7 +722,7 @@ class XSenseAdapter extends utils.Adapter {
                     if (station) {
                         // Hausname für den ioBroker-Pfad auflösen
                         let houseFolderId = station.houseId;
-                        for (const house of Object.values(this.xsenseClient.houses)) {
+                        for (const house of Object.values(this.getKnownHouses() || {})) {
                             if (house.houseId === station.houseId) {
                                 houseFolderId = (house.name || house.houseId)
                                     .replace(/\s+/g, '_').replace(/\./g, '_').replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -582,7 +736,12 @@ class XSenseAdapter extends utils.Adapter {
                     }
                 }
 
-                // Fallback: Legacy SBS50-Parsing
+                // Fallback: Legacy SBS50-Parsing erst nutzen, wenn die Hauspfade bekannt sind
+                if (!this._devicePathsReady) {
+                    this.log.debug(`[XSense] Legacy-MQTT-Nachricht verworfen bis Gerätepfade bereit sind: ${topic}`);
+                    return;
+                }
+
                 const payloadStr = payload.toString();
                 const slashIdx = topic.indexOf('/');
                 const topicSuffix = slashIdx >= 0 ? topic.slice(slashIdx + 1) : topic;
@@ -636,11 +795,12 @@ class XSenseAdapter extends utils.Adapter {
      * Wird nur im connect-Event aufgerufen – nie im Poll-Zyklus.
      */
     subscribeMqttTopics() {
-        if (!mqttClient || !this.xsenseClient) {
+        const houses = this.getKnownHouses();
+        if (!mqttClient || !this.xsenseClient || !houses) {
             return;
         }
 
-        for (const house of Object.values(this.xsenseClient.houses)) {
+        for (const house of Object.values(houses)) {
             for (const station of Object.values(house.stations)) {
                 const topics = this.xsenseClient.getMqttTopics(station);
                 for (const topic of topics) {
@@ -655,11 +815,12 @@ class XSenseAdapter extends utils.Adapter {
      * Quelle: HA coordinator.py → request_device_updates() [STH51/STH0A]
      */
     requestTemperatureUpdates() {
-        if (!mqttClient || !this.xsenseClient) {
+        const houses = this.getKnownHouses();
+        if (!mqttClient || !this.xsenseClient || !houses) {
             return;
         }
 
-        for (const house of Object.values(this.xsenseClient.houses)) {
+        for (const house of Object.values(houses)) {
             for (const station of Object.values(house.stations)) {
                 const req = this.xsenseClient.buildTemperatureUpdateRequest(station);
                 if (!req) {

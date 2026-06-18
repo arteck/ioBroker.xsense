@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.3",
+    "version": "0.6.4",
     "news": {
+      "0.6.4": {
+        "en": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "de": "Hausbasierte Geraetepfade korrigiert und MQTT-Start verschoben bis die Pfade bereit sind\nGecachte Topologie fuer Offline-Start und MQTT-Pfadwiederherstellung wiederverwendet\nBatterie-Prozentberechnung aus batInfo korrigiert\nTest_Alarm/Selbsttest-Payloads fuer Rauchmelder korrigiert und den Trigger nach Benutzung zurueckgesetzt",
+        "ru": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "pt": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "nl": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "fr": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "it": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "es": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "pl": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "uk": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use",
+        "zh-cn": "Fixed house-based device paths and delayed MQTT startup until paths are ready\nReused cached topology for offline startup and MQTT path recovery\nFixed battery percentage conversion from batInfo\nFixed test_Alarm/self-test payloads for smoke detectors and reset the trigger state after use"
+      },
       "0.6.3": {
         "en": "Dependencies have been updated",
         "de": "Abhängigkeiten wurden aktualisiert",
