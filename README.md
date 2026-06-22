@@ -91,6 +91,9 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### 0.6.4 (2026-06-22)
+* (arteck) Dependencies have been updated
+
 ### 0.6.3 (2026-05-20)
 * (arteck) Dependencies have been updated
 
@@ -104,10 +107,6 @@ or if you have a VM on proxmox check your CPU settings
 ### 0.6.0 (2026-05-03)
 * (arteck) fix battery info
 * (arteck) add deviceManager
-
-### 0.5.1 (2026-05-02)
-* (arteck) fix battery info
-* (arteck) mqtt message as info in log
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
@@ -134,4 +133,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.3",
+    "version": "0.6.4",
     "news": {
+      "0.6.4": {
+        "en": "Dependencies have been updated",
+        "de": "Die Abhängigkeiten wurden aktualisiert.",
+        "ru": "Зависимости обновлены.",
+        "pt": "As dependências foram atualizadas.",
+        "nl": "Afhankelijkheden zijn bijgewerkt.",
+        "fr": "Les dépendances ont été mises à jour",
+        "it": "Le dipendenze sono state aggiornate",
+        "es": "Se han actualizado las dependencias.",
+        "pl": "Zaktualizowano zależności",
+        "uk": "Залежності оновлено",
+        "zh-cn": "依赖项已更新"
+      },
       "0.6.3": {
         "en": "Dependencies have been updated",
         "de": "Abhängigkeiten wurden aktualisiert",
@@ -80,19 +93,6 @@
         "pl": "dodaj logikę powtórzenia",
         "uk": "додати логіку птиця",
         "zh-cn": "添加重试逻辑"
-      },
-      "0.4.0": {
-        "en": "see Readme",
-        "de": "Siehe Readme",
-        "ru": "см. файл Readme",
-        "pt": "Consulte o arquivo Leia-me.",
-        "nl": "zie Readme",
-        "fr": "Voir le fichier Lisez-moi",
-        "it": "vedi il file Readme",
-        "es": "ver Léame",
-        "pl": "zobacz Readme",
-        "uk": "див. файл Readme",
-        "zh-cn": "请参阅自述文件"
       }
     },
     "titleLang": {

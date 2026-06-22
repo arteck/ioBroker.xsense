@@ -1,4 +1,8 @@
 # Older changes
+## 0.5.1 (2026-05-02)
+* (arteck) fix battery info
+* (arteck) mqtt message as info in log
+
 ## 0.5.0 (2026-04-26)
 * (arteck) fix translations
 * (arteck) del deprectated setStateAsync
