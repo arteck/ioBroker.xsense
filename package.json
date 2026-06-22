@@ -25,7 +25,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.1045.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.1066.0",
     "@iobroker/adapter-core": "^3.3.2",
     "@iobroker/dm-utils": "^3.0.19",
     "aedes": "^0.51.3",
