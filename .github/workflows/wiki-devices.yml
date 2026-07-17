@@ -27,7 +27,7 @@ jobs:
           path: wiki
 
       - name: Setup Node.js 24
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "24"
 
