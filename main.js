@@ -587,7 +587,8 @@ class XSenseAdapter extends utils.Adapter {
                 const slashIdx = topic.indexOf('/');
                 const topicSuffix = slashIdx >= 0 ? topic.slice(slashIdx + 1) : topic;
                 const newMessage = `{"payload":${payloadStr === '' ? '"null"' : payloadStr},"topic":"${topicSuffix}"}`;
-                this.messageParse(newMessage);
+                this.messageParse(newMessage)
+                    .catch(err => this.log.error(`[XSense] MQTT messageParse Fehler: ${err.message}`));
             });
 
             mqttClient.on('error', err => {
