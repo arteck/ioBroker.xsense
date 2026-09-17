@@ -28,7 +28,7 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.1107.0",
     "@iobroker/adapter-core": "^3.4.3",
     "@iobroker/dm-utils": "^3.2.0",
-    "aedes": "^0.51.3",
+    "aedes": "^1.1.2",
     "aedes-persistence-nedb": "^2.0.3",
     "amazon-cognito-identity-js": "^6.3.20",
     "mqtt": "^5.15.2",
