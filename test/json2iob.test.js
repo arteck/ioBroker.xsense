@@ -28,6 +28,9 @@ function createAdapterMock() {
                 objects[id] = obj;
             }
         },
+        setState(id, state) {
+            states[id] = state;
+        },
         async setStateAsync(id, state) {
             states[id] = state;
         },
@@ -54,7 +57,7 @@ describe('Json2iobXSense – name2id()', () => {
     });
 
     it('leaves valid id untouched', async () => {
-        assert.equal(await j2i.name2id('devices.ABC123'), 'devices.ABC123');
+        assert.equal(await j2i.name2id('devices.ABC123'), 'devices_ABC123');
     });
 
     it('handles null/undefined gracefully', async () => {
@@ -185,7 +188,7 @@ describe('Json2iobXSense – parse()', () => {
             },
         };
         await j2i.parse('xsense.0', input);
-        assert.ok(adapter.objects['devices.BRIDGEABC'], 'Bridge device object should be created');
+        assert.ok(adapter.objects['devices_BRIDGEABC'], 'Bridge device object should be created');
     });
 
     it('handles child device under bridge (no wifiRSSI)', async () => {
@@ -198,7 +201,7 @@ describe('Json2iobXSense – parse()', () => {
             },
         };
         await j2i.parse('xsense.0', input);
-        assert.ok(adapter.objects['devices.BRIDGEABC.SENSOR001'], 'Child device object should be created');
+        assert.ok(adapter.objects['devices_BRIDGEABC_SENSOR001'], 'Child device object should be created');
     });
 
     it('skips child device with null/empty serial', async () => {
