@@ -92,7 +92,7 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.6.6 (2026-09-30)
 * (arteck) Dependencies have been updated
 * (arteck) fix internal mqtt with node 24
 
@@ -110,9 +110,6 @@ or if you have a VM on proxmox check your CPU settings
 ### 0.6.2 (2026-05-20)
 * (copilot) Adapter requires node.js >= 22 now
 * (arteck) Dependencies have been updated
-
-### 0.6.1 (2026-05-03)
-* (arteck) fix deviceManager
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

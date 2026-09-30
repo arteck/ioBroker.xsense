@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.5",
+    "version": "0.6.6",
     "news": {
+      "0.6.6": {
+        "en": "Dependencies have been updated\nfix internal mqtt with node 24",
+        "de": "Abhängigkeiten wurden aktualisiert\nFix internes MQTT mit Node 24",
+        "ru": "Зависимости обновлены\nисправить внутренний matt с помощью узла 24",
+        "pt": "As dependências foram atualizadas\nfixe mqtt interno com o nó 24",
+        "nl": "Afhankelijkheden zijn bijgewerkt\ninterne mqtt repareren met knooppunt 24",
+        "fr": "Les dépendances ont été mises à jour\nrégler le problème interne au nœud 24",
+        "it": "Le dipendenze sono aggiornate\nfix mqtt interno al nodo 24",
+        "es": "Se han actualizado las dependencias\narreglar mqtt interno con nodo 24",
+        "pl": "Zależności zostały zaktualizowane\nnapraw wewnętrzny mqtt za pomocą węzła 24",
+        "uk": "Залежності оновлено\nвиправлення внутрішнього mqtt з вузлом 24",
+        "zh-cn": "依赖关系已更新\n使用节点 24 修复内部 mqtt"
+      },
       "0.6.5": {
         "en": "async fix\nfix battery info\nfix orphaned states without house folder from MQTT messages for stations not yet known (startup race and newly added devices)",
         "de": "asynchrone Korrektur\nBatterieinformationen reparieren\nBehebung von verwaisten Zuständen ohne Hausordner aus MQTT-Nachrichten für noch unbekannte Stationen (Startrennen und neu hinzugefügte Geräte)",
@@ -80,19 +93,6 @@
         "pl": "naprawić informacje o baterii\nwiadomość mqtt jako info w dzienniku",
         "uk": "інформація про акумулятор\nmqtt повідомлення як інформація в журналі",
         "zh-cn": "固定电池信息\nmqtt 消息作为日志中的信息"
-      },
-      "0.5.0": {
-        "en": "fix translations\ndel deprectated setStateAsync",
-        "de": "übersetzungen anpassen\ndel deprected setStateAsync",
-        "ru": "исправление переводов\nобсуждение StateAsync",
-        "pt": "corrigir traduções\ndel deprectated setStateAsync",
-        "nl": "vertalingen herstellen\ndel deprectated setStateAsync",
-        "fr": "corriger les traductions\nset dépréciéStateAsync",
-        "it": "correggere le traduzioni\ndel set deprettatoStateAsync",
-        "es": "arreglar traducciones\ndel deprectated setStateAsync",
-        "pl": "poprawianie tłumaczeń\ndel deprectated setStateAsync",
-        "uk": "фіксувати переклади\ndeprectated setStateAsync",
-        "zh-cn": "固定翻译\n已贬值的设置"
       }
     },
     "titleLang": {
