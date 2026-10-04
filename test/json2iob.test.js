@@ -315,6 +315,19 @@ describe('Json2iobXSense – parseHouses() multi-station', () => {
         await j2i.parseHouses('xsense.0', makeHouses(2));
         assert.equal(adapter.objects['devices.Mein_Zuhause.BRIDGE001.DEV1A'].type, 'channel');
         assert.equal(adapter.objects['devices.Mein_Zuhause.BRIDGE002.DEV2A'].type, 'channel');
+        assert.equal(adapter.objects['devices.Mein_Zuhause.BRIDGE001.DEV1A.message'].common.type, 'string');
+        assert.equal(adapter.states['devices.Mein_Zuhause.BRIDGE001.DEV1A.message'].val, '');
+    });
+
+    it('setzt die letzte Gerätenachricht beim Polling nicht zurück', async () => {
+        const houses = makeHouses(1);
+        await j2i.parseHouses('xsense.0', houses);
+        const messageId = 'devices.Mein_Zuhause.BRIDGE001.DEV1A.message';
+        adapter.states[messageId] = {val: 'Stummschaltung angefordert', ack: true};
+
+        await j2i.parseHouses('xsense.0', houses);
+
+        assert.equal(adapter.states[messageId].val, 'Stummschaltung angefordert');
     });
 
     it('schreibt deviceId und type für jedes Sub-Gerät', async () => {
@@ -384,4 +397,3 @@ describe('Json2iobXSense – parseHouses() multi-station', () => {
         assert.equal(channel.common.statusStates.onlineId, 'xsense.0.devices.Mein_Zuhause.BRIDGE001.DEV1A.online');
     });
 });
-

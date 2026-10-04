@@ -426,21 +426,19 @@ class XSenseAdapter extends utils.Adapter {
 
         // Pfad: xsense.0.devices.<Haus>.<bridge>.<deviceSerial>.test_Alarm
         // deviceSerial = vorletztes Segment
-        const parts = stateId.split('.');
-        const deviceSerial = parts[parts.length - 2];
-        const msgStateId = stateId.replace(/\.test_Alarm$/, '.test_Alarm_Message');
+        const deviceSerial = stateId.split('.').at(-2);
 
-        this.setState(msgStateId, {val: 'in progress...', ack: true});
+        this.setActionMessage(stateId, 'in progress...');
 
         try {
             if (!this.xsenseClient) {
                 throw new Error('XSenseClient nicht initialisiert');
             }
             const result = await this.xsenseClient.testAlarm(deviceSerial);
-            this.setState(msgStateId, {val: result || 'done', ack: true});
+            this.setActionMessage(stateId, result || 'done');
         } catch (err) {
             this.log.error(`[XSense] testAlarm Fehler: ${err.message}`);
-            this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
+            this.setActionMessage(stateId, `Fehler: ${err.message}`);
         }
     }
 
@@ -452,11 +450,9 @@ class XSenseAdapter extends utils.Adapter {
     async muteAlarm(stateId) {
         this.log.debug(`[XSense] muteAlarm: ${stateId}`);
 
-        const parts = stateId.split('.');
-        const deviceSerial = parts[parts.length - 2];
-        const msgStateId = stateId.replace(/\.mute_Alarm$/, '.mute_Alarm_Message');
+        const deviceSerial = stateId.split('.').at(-2);
 
-        this.setState(msgStateId, {val: 'in progress...', ack: true});
+        this.setActionMessage(stateId, 'in progress...');
 
         try {
             if (!this.xsenseClient) {
@@ -469,7 +465,7 @@ class XSenseAdapter extends utils.Adapter {
             }
 
             const result = await this.xsenseClient.executeAction(station, device, 'mute');
-            this.setState(msgStateId, {val: result || 'done', ack: true});
+            this.setActionMessage(stateId, result || 'done');
 
             try {
                 await this.xsenseClient.getState(station);
@@ -484,29 +480,45 @@ class XSenseAdapter extends utils.Adapter {
             }
         } catch (err) {
             this.log.error(`[XSense] muteAlarm Fehler: ${err.message}`);
-            this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
+            this.setActionMessage(stateId, `Fehler: ${err.message}`);
         }
     }
 
     async fireDrillAlarm(stateId) {
         this.log.debug(`[XSense] fireDrillAlarm: ${stateId}`);
 
-        const parts = stateId.split('.');
-        const deviceSerial = parts[parts.length - 2];
-        const msgStateId = stateId.replace(/\.fire_Drill_Alarm$/, '.fire_Drill_Alarm_Message');
+        const deviceSerial = stateId.split('.').at(-2);
 
-        this.setState(msgStateId, {val: 'in progress...', ack: true});
+        this.setActionMessage(stateId, 'in progress...');
 
         try {
             if (!this.xsenseClient) {
                 throw new Error('XSenseClient nicht initialisiert');
             }
             const result = await this.xsenseClient.fireDrillAlarm(deviceSerial);
-            this.setState(msgStateId, {val: result || 'done', ack: true});
+            this.setActionMessage(stateId, result || 'done');
         } catch (err) {
             this.log.error(`[XSense] fireDrillAlarm Fehler: ${err.message}`);
-            this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
+            this.setActionMessage(stateId, `Fehler: ${err.message}`);
         }
+    }
+
+    setActionMessage(stateId, message) {
+        const devicePath = stateId.replace(/\.[^.]+$/, '');
+        const actionName = stateId.split('.').at(-1);
+        const messageStateNames = {
+            test_Alarm: 'test_Alarm_Message',
+            mute_Alarm: 'mute_Alarm_Message',
+            fire_Drill_Alarm: 'fire_Drill_Alarm_Message',
+        };
+        const actionMessageName = messageStateNames[actionName];
+        if (!actionMessageName) {
+            throw new Error(`Unbekannter Action-State: ${actionName}`);
+        }
+
+        const state = {val: message, ack: true};
+        this.setState(`${devicePath}.${actionMessageName}`, state);
+        this.setState(`${devicePath}.message`, state);
     }
 
     findDeviceBySerial(serial) {
