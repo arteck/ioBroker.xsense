@@ -148,6 +148,28 @@ describe('Json2iobXSense – setStateObject()', () => {
         assert.ok(adapter.subscriptions.includes('devices.bridge.sensor.test_Alarm'));
     });
 
+    it('creates fire_Drill_Alarm and mute_Alarm states only for supported devices', async () => {
+        adapter.xsenseClient = {
+            houses: {
+                h1: {
+                    stations: {
+                        s1: {
+                            devices: {
+                                d1: { serial: 'sensor', type: 'XS0B-MR' },
+                            },
+                        },
+                    },
+                },
+            },
+        };
+
+        await j2i.setStateObject('devices.bridge.sensor.alarmStatus', 'false');
+        assert.ok(adapter.objects['devices.bridge.sensor.mute_Alarm'], 'mute_Alarm object should exist for supported device');
+        assert.ok(adapter.objects['devices.bridge.sensor.fire_Drill_Alarm'], 'fire_Drill_Alarm object should exist for supported device');
+        assert.ok(adapter.objects['devices.bridge.sensor.mute_Alarm_Message'], 'mute_Alarm_Message object should exist');
+        assert.ok(adapter.objects['devices.bridge.sensor.fire_Drill_Alarm_Message'], 'fire_Drill_Alarm_Message object should exist');
+    });
+
     it('sets dBm unit for wifi fields', async () => {
         await j2i.setStateObject('devices.test.wifiRSSI', '-65');
         assert.equal(adapter.objects['devices.test.wifiRSSI'].common.unit, 'dBm');

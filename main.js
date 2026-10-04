@@ -402,9 +402,13 @@ class XSenseAdapter extends utils.Adapter {
                     this.setState(stateId, {val: false, ack: true});
                     break;
                 default:
-                    // test_Alarm ist das letzte Segment – unabhängig von Haus-Ebene
+                    // Command-States sind letzte Segmente – unabhängig von Haus-Ebene
                     if (lastPart === 'test_Alarm') {
                         await this.testAlarm(stateId);
+                    } else if (lastPart === 'mute_Alarm') {
+                        await this.muteAlarm(stateId);
+                    } else if (lastPart === 'fire_Drill_Alarm') {
+                        await this.fireDrillAlarm(stateId);
                     }
             }
         } catch (err) {
@@ -438,6 +442,89 @@ class XSenseAdapter extends utils.Adapter {
             this.log.error(`[XSense] testAlarm Fehler: ${err.message}`);
             this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
         }
+    }
+
+    /**
+     * Fire-Drill-Übungsalarm.
+     *
+     * @param {string} stateId  z.B. "xsense.0.devices.Haus.BRIDGE.DEVICE.fire_Drill_Alarm"
+     */
+    async muteAlarm(stateId) {
+        this.log.debug(`[XSense] muteAlarm: ${stateId}`);
+
+        const parts = stateId.split('.');
+        const deviceSerial = parts[parts.length - 2];
+        const msgStateId = stateId.replace(/\.mute_Alarm$/, '.mute_Alarm_Message');
+
+        this.setState(msgStateId, {val: 'in progress...', ack: true});
+
+        try {
+            if (!this.xsenseClient) {
+                throw new Error('XSenseClient nicht initialisiert');
+            }
+            const result = await this.xsenseClient.executeAction(this.findStationByDeviceSerial(deviceSerial), this.findDeviceBySerial(deviceSerial), 'mute');
+            this.setState(msgStateId, {val: result || 'done', ack: true});
+        } catch (err) {
+            this.log.error(`[XSense] muteAlarm Fehler: ${err.message}`);
+            this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
+        }
+    }
+
+    async fireDrillAlarm(stateId) {
+        this.log.debug(`[XSense] fireDrillAlarm: ${stateId}`);
+
+        const parts = stateId.split('.');
+        const deviceSerial = parts[parts.length - 2];
+        const msgStateId = stateId.replace(/\.fire_Drill_Alarm$/, '.fire_Drill_Alarm_Message');
+
+        this.setState(msgStateId, {val: 'in progress...', ack: true});
+
+        try {
+            if (!this.xsenseClient) {
+                throw new Error('XSenseClient nicht initialisiert');
+            }
+            const result = await this.xsenseClient.fireDrillAlarm(deviceSerial);
+            this.setState(msgStateId, {val: result || 'done', ack: true});
+        } catch (err) {
+            this.log.error(`[XSense] fireDrillAlarm Fehler: ${err.message}`);
+            this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
+        }
+    }
+
+    findDeviceBySerial(serial) {
+        if (!this.xsenseClient?.houses) {
+            return null;
+        }
+
+        for (const house of Object.values(this.xsenseClient.houses)) {
+            for (const station of Object.values(house.stations || {})) {
+                for (const device of Object.values(station.devices || {})) {
+                    if (device.serial === serial) {
+                        return device;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    findStationByDeviceSerial(serial) {
+        if (!this.xsenseClient?.houses) {
+            return null;
+        }
+
+        for (const house of Object.values(this.xsenseClient.houses)) {
+            for (const station of Object.values(house.stations || {})) {
+                for (const device of Object.values(station.devices || {})) {
+                    if (device.serial === serial) {
+                        return station;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     // ─── onUnload ─────────────────────────────────────────────────────────────
