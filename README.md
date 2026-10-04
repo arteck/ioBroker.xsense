@@ -92,6 +92,10 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (arteck) Dependencies have been updated
+* (arteck) update new Devices
+
 ### 0.6.6 (2026-09-30)
 * (arteck) Dependencies have been updated
 * (arteck) fix internal mqtt with node 24

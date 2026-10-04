@@ -357,6 +357,42 @@ describe('XSenseClient – buildTemperatureUpdateRequest()', () => {
     });
 });
 
+// ─── Action-Definitionen (python entity_map.py) ─────────────────────────────
+
+describe('resolveAction() / executeAction()', () => {
+    it('synchronisiert die zentrale Upstream-Entity-Map mit den bekannten Modellen', () => {
+        const { ENTITY_MAP, resolveAction } = require('../lib/xsenseClient');
+        assert.equal(ENTITY_MAP.SBS50.entityType, 'BASESTATION');
+        assert.equal(ENTITY_MAP['XS0B-MR'].entityType, 'SMOKE');
+        assert.deepEqual(ENTITY_MAP.SMA51.supportedActions, ['mute']);
+
+        const action = resolveAction('SWS51', 'mute', { serial: 'DEV321' });
+        assert.equal(action.shadow, 'appWater');
+        assert.equal(action.topic, '2nd_appwater');
+        assert.deepEqual(action.data, { silencetime: '', setType: '0' });
+    });
+
+    it('kennt die Upstream-Action-Definitionen für Wasser- und Mailbox-Sensoren', async () => {
+        const { XSenseClient } = require('../lib/xsenseClient');
+        const c = new XSenseClient(mockLog());
+        c.userId = 'user-42';
+
+        let captured;
+        c.doThingShadow = async (station, topic, body) => {
+            captured = { station, topic, body };
+        };
+
+        const station = { serial: 'BRIDGE001' };
+        await c.executeAction(station, { serial: 'DEV123', type: 'SWS51' }, 'mute');
+        assert.equal(captured.topic, '2nd_appwater');
+        assert.deepEqual(captured.body.state.desired.extra, { silencetime: '', setType: '0' });
+
+        await c.executeAction(station, { serial: 'DEV124', type: 'SMA51' }, 'mute');
+        assert.equal(captured.topic, '2nd_appmailmute');
+        assert.deepEqual(captured.body.state.desired.extra, { silenceTime: '', setType: '' });
+    });
+});
+
 // ─── batInfoToPercent / rfLevelToString ──────────────────────────────────────
 
 describe('batInfoToPercent()', () => {
