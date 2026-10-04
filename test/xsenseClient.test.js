@@ -383,9 +383,10 @@ describe('resolveAction() / executeAction()', () => {
         };
 
         const station = { serial: 'BRIDGE001' };
-        await c.executeAction(station, { serial: 'DEV123', type: 'SWS51' }, 'mute');
+        const muteResult = await c.executeAction(station, { serial: 'DEV123', type: 'SWS51' }, 'mute');
         assert.equal(captured.topic, '2nd_appwater');
         assert.deepEqual(captured.body.state.desired.extra, { silencetime: '', setType: '0' });
+        assert.equal(muteResult, 'Stummschaltung angefordert für DEV123');
 
         await c.executeAction(station, { serial: 'DEV124', type: 'SMA51' }, 'mute');
         assert.equal(captured.topic, '2nd_appmailmute');

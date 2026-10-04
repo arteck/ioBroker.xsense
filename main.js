@@ -462,8 +462,26 @@ class XSenseAdapter extends utils.Adapter {
             if (!this.xsenseClient) {
                 throw new Error('XSenseClient nicht initialisiert');
             }
-            const result = await this.xsenseClient.executeAction(this.findStationByDeviceSerial(deviceSerial), this.findDeviceBySerial(deviceSerial), 'mute');
+            const station = this.findStationByDeviceSerial(deviceSerial);
+            const device = this.findDeviceBySerial(deviceSerial);
+            if (!station || !device) {
+                throw new Error(`Gerät ${deviceSerial} nicht gefunden`);
+            }
+
+            const result = await this.xsenseClient.executeAction(station, device, 'mute');
             this.setState(msgStateId, {val: result || 'done', ack: true});
+
+            try {
+                await this.xsenseClient.getState(station);
+                if (Object.hasOwn(device.data || {}, 'muteStatus')) {
+                    const muteStatusId = stateId.replace(/\.mute_Alarm$/, '.muteStatus');
+                    await this.json2iob.setStateObject(muteStatusId, device.data.muteStatus);
+                } else {
+                    this.log.debug(`[XSense] Kein muteStatus für Gerät ${deviceSerial} im aktualisierten Shadow`);
+                }
+            } catch (refreshError) {
+                this.log.warn(`[XSense] muteStatus konnte nach Mute-Aktion nicht aktualisiert werden: ${refreshError.message}`);
+            }
         } catch (err) {
             this.log.error(`[XSense] muteAlarm Fehler: ${err.message}`);
             this.setState(msgStateId, {val: `Fehler: ${err.message}`, ack: true});
