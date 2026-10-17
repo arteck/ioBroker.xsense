@@ -29,7 +29,7 @@
     "@iobroker/adapter-core": "^3.4.3",
     "@iobroker/dm-utils": "^3.2.0",
     "aedes": "^1.2.0",
-    "amazon-cognito-identity-js": "^6.3.20",
+    "amazon-cognito-identity-js": "^6.3.21",
     "mqtt": "^5.15.2",
     "net": "^1.0.2",
     "node-fetch-commonjs": "^3.3.2"
