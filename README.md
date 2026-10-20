@@ -92,7 +92,7 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.6.7 (2026-10-20)
 * (arteck) Dependencies have been updated
 * (arteck) update new Devices
 * (arteck) add fire_drill_alarm for devices that support it
@@ -111,10 +111,6 @@ or if you have a VM on proxmox check your CPU settings
 * (arteck) Dependencies have been updated
 
 ### 0.6.3 (2026-05-20)
-* (arteck) Dependencies have been updated
-
-### 0.6.2 (2026-05-20)
-* (copilot) Adapter requires node.js >= 22 now
 * (arteck) Dependencies have been updated
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)

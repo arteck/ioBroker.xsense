@@ -1,4 +1,8 @@
 # Older changes
+## 0.6.2 (2026-05-20)
+* (copilot) Adapter requires node.js >= 22 now
+* (arteck) Dependencies have been updated
+
 ## 0.6.1 (2026-05-03)
 * (arteck) fix deviceManager
 

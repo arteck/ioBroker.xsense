@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.6",
+    "version": "0.6.7",
     "news": {
+      "0.6.7": {
+        "en": "Dependencies have been updated\nupdate new Devices\nadd fire_drill_alarm for devices that support it\nadd mute_alarm for devices that support it",
+        "de": "Abhängigkeiten wurden aktualisiert\nneue Geräte updaten\nFire_Drill_Alarm für Geräte, die das unterstützen\nfüge mute_alarm für Geräte hinzu, die es unterstützen",
+        "ru": "Зависимости обновлены\nобновить новые устройства\nдобавьте fire_drill_alarm для устройств, которые его поддерживают\nдобавьте mute_alarm для устройств, которые его поддерживают",
+        "pt": "As dependências foram atualizadas\natualizar novos aparelhos\nadicione fire_drill_alarm para suportá-lo\nadicione mute_alarm para suportá-lo",
+        "nl": "Afhankelijkheden zijn bijgewerkt\nnieuwe apparaten updaten\nfire_drill_alarm toevoegen voor apparaten die dit ondersteunen\nmute_alarm toevoegen voor apparaten die dit ondersteunen",
+        "fr": "Les dépendances ont été mises à jour\nmettre à jour de nouveaux appareils\najouter fire_drill_alarm pour les appareils compatibles\najouter mute_alarm pour les appareils compatibles",
+        "it": "Le dipendenze sono aggiornate\nnuovi device\naggiunga fire_drill_alarm per chi lo supporta\naggiunga mute_alarm per chi lo supporta",
+        "es": "Se han actualizado las dependencias\nactualizar nuevos\nañadir fire_drill_alarm para los equipos que lo admiten\nañadir mute_alarm para los equipos que lo admiten",
+        "pl": "Zależności zostały zaktualizowane\naktualizuj nowe urządzenia\ndodaj fire_drill_alarm dla urządzeń, które go obsługują\ndodaj mute_alarm dla urządzeń, które go obsługują",
+        "uk": "Залежності оновлено\nоновити нові пристрої\nдодати fire_drill_alert для пристроїв, які підтримують його\nдодати mute_alert для пристроїв, які підтримують його",
+        "zh-cn": "依赖关系已更新\n更新新设备\n为支持它的设备添加 fire_drill_alarm\n为支持 mute_alarm 的设备添加 mute_alarm"
+      },
       "0.6.6": {
         "en": "Dependencies have been updated\nfix internal mqtt with node 24",
         "de": "Abhängigkeiten wurden aktualisiert\nFix internes MQTT mit Node 24",
@@ -80,19 +93,6 @@
         "pl": "fix deviceManager",
         "uk": "фіксатор",
         "zh-cn": "固定设备管理器"
-      },
-      "0.5.1": {
-        "en": "fix battery info\nmqtt message as info in log",
-        "de": "batterie info\nmqtt nachricht als info in log",
-        "ru": "исправить информацию о батарее\nmqtt сообщение как информация в log",
-        "pt": "corrigir informações da bateria\nmensagem mqtt como informação no log",
-        "nl": "fix batterij info\nmqtt-bericht als info in log",
-        "fr": "corriger les informations sur la batterie\nmessage mqtt comme info dans le journal",
-        "it": "correzione della batteria info\nmessaggio di mqtt come info in log",
-        "es": "actualización de la batería\nmqtt mensaje as info in log",
-        "pl": "naprawić informacje o baterii\nwiadomość mqtt jako info w dzienniku",
-        "uk": "інформація про акумулятор\nmqtt повідомлення як інформація в журналі",
-        "zh-cn": "固定电池信息\nmqtt 消息作为日志中的信息"
       }
     },
     "titleLang": {
