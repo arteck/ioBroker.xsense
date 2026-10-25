@@ -141,6 +141,12 @@ describe('Json2iobXSense – setStateObject()', () => {
         assert.equal(adapter.objects['devices.test.alarmStatus'].common.role, 'indicator.alarm');
     });
 
+    it('converts numeric forceArm values to string for SBS50 states', async () => {
+        await j2i.setStateObject('devices.home.15298924.forceArm', 0);
+        assert.equal(adapter.objects['devices.home.15298924.forceArm'].common.type, 'string');
+        assert.equal(adapter.states['devices.home.15298924.forceArm'].val, '0');
+    });
+
     it('creates test_Alarm and test_Alarm_Message states for alarm fields', async () => {
         await j2i.setStateObject('devices.bridge.sensor.alarmStatus', 'false');
         assert.ok(adapter.objects['devices.bridge.sensor.test_Alarm'], 'test_Alarm object should exist');
