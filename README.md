@@ -110,6 +110,10 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (arteck) Dependencies have been updated
+* (arteck) add SBS50-Alarmstatus
+
 ### 0.6.7 (2026-10-20)
 * (arteck) Dependencies have been updated
 * (arteck) update new Devices
