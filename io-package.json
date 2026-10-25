@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.7",
+    "version": "0.6.8",
     "news": {
+      "0.6.8": {
+        "en": "Dependencies have been updated\nadd SBS50-Alarmstatus\nmore MQTT messages from devices",
+        "de": "Abhängigkeiten wurden aktualisiert\nSBS50-Alarmstatus\nmehr MQTT-Nachrichten von Geräten",
+        "ru": "Зависимости обновлены\nдобавить статус сигнала тревоги SBS50\nбольше сообщений MQTT с устройств",
+        "pt": "As dependências foram atualizadas\nadd SBS50 Alarm Status\nmais mensagens MQTT de aparelhos",
+        "nl": "Afhankelijkheden zijn bijgewerkt\nSBS50-alarmstatus toevoegen\nmeer MQTT-berichten van apparaten",
+        "fr": "Les dépendances ont été mises à jour\najouter le statut d'alarme SBS50\nplus de messages MQTT sur appareils",
+        "it": "Le dipendenze sono aggiornate\naggiungere allarme SBS50\npiù messaggi MQTT da device",
+        "es": "Se han actualizado las dependencias\nañadir alarma SBS50\nmás mensajes MQTT de dispositivos",
+        "pl": "Zależności zostały zaktualizowane\ndodaj status alarmu SBS50-\nwięcej wiadomości MQTT z urządzeń",
+        "uk": "Залежності оновлено\nдодати SBS50-статус сигналізації\nбільше повідомлень MQTT з пристроїв",
+        "zh-cn": "依赖关系已更新\n添加 sbs50 警报状态\n更多来自设备的 MQTT 消息"
+      },
       "0.6.7": {
         "en": "Dependencies have been updated\nupdate new Devices\nadd fire_drill_alarm for devices that support it\nadd mute_alarm for devices that support it",
         "de": "Abhängigkeiten wurden aktualisiert\nneue Geräte updaten\nFire_Drill_Alarm für Geräte, die das unterstützen\nfüge mute_alarm für Geräte hinzu, die es unterstützen",
@@ -80,19 +93,6 @@
         "pl": "Adapter wymaga node.js > = 22\nZaktualizowano zależności",
         "uk": "Адаптер вимагає node.js >= 22 тепер\nЗалежність було оновлено",
         "zh-cn": "适配器需要节点.js 现在22\n依赖关系已更新"
-      },
-      "0.6.1": {
-        "en": "fix deviceManager",
-        "de": "einrichtungManager",
-        "ru": "исправить DeviceManager",
-        "pt": "dispositivo de correçãoManager",
-        "nl": "apparaatbeheer herstellen",
-        "fr": "réparer deviceManager",
-        "it": "dispositivo di correzioneManager",
-        "es": "dispositivo de fijaciónManager",
-        "pl": "fix deviceManager",
-        "uk": "фіксатор",
-        "zh-cn": "固定设备管理器"
       }
     },
     "titleLang": {

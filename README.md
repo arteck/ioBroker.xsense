@@ -111,7 +111,7 @@ or if you have a VM on proxmox check your CPU settings
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.6.8 (2026-10-25)
 * (arteck) Dependencies have been updated
 * (arteck) add SBS50-Alarmstatus
 * (arteck) more MQTT messages from devices
@@ -132,9 +132,6 @@ or if you have a VM on proxmox check your CPU settings
 * (arteck) fix orphaned states without house folder from MQTT messages for stations not yet known (startup race and newly added devices)
 
 ### 0.6.4 (2026-06-22)
-* (arteck) Dependencies have been updated
-
-### 0.6.3 (2026-05-20)
 * (arteck) Dependencies have been updated
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
