@@ -28,6 +28,8 @@ class XSenseAdapter extends utils.Adapter {
 
         /** Bereits beim MQTT-Broker subscribed Topics – verhindert Duplikate */
         this._mqttSubscribedTopics = new Set();
+        /** Bereits angeforderte Temperatur-Live-Updates – verhindert Spamming */
+        this._mqttTemperatureRequests = new Set();
 
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
@@ -389,8 +391,12 @@ class XSenseAdapter extends utils.Adapter {
 
     // ─── State-Change Handler ─────────────────────────────────────────────────
 
+    isMqttActive() {
+        return !!mqttClient && !mqttClient.closed;
+    }
+
     publishShadowUpdate(station, shadowName, desired) {
-        if (!station || !mqttClient || mqttClient.closed) {
+        if (!station || !this.isMqttActive()) {
             return false;
         }
 
@@ -768,8 +774,9 @@ class XSenseAdapter extends utils.Adapter {
                 this.log.info(`[XSense] Verbunden mit ${mode} MQTT-Server`);
                 this.setState('info.MQTT_connection', true, true);
 
-                // Bei (Re-)Connect Set leeren, damit alle Topics neu subscribed werden
+                // Bei (Re-)Connect Sets leeren, damit alle Topics und Live-Requests neu gestartet werden
                 this._mqttSubscribedTopics.clear();
+                this._mqttTemperatureRequests.clear();
 
                 // Legacy baseTopic (SBS50-Bridge direkt)
                 if (this.config.baseTopic) {
@@ -853,7 +860,7 @@ class XSenseAdapter extends utils.Adapter {
      * @param {string} topic
      */
     mqttSubscribeOncetates(topic) {
-        if (!mqttClient || this._mqttSubscribedTopics.has(topic)) {
+        if (!this.isMqttActive() || this._mqttSubscribedTopics.has(topic)) {
             return;
         }
         this._mqttSubscribedTopics.add(topic);
@@ -873,7 +880,7 @@ class XSenseAdapter extends utils.Adapter {
      * Wird nur im connect-Event aufgerufen – nie im Poll-Zyklus.
      */
     subscribeMqttTopics() {
-        if (!mqttClient || !this.xsenseClient) {
+        if (!this.isMqttActive() || !this.xsenseClient) {
             return;
         }
 
@@ -892,7 +899,7 @@ class XSenseAdapter extends utils.Adapter {
      * Quelle: HA coordinator.py → request_device_updates() [STH51/STH0A]
      */
     requestTemperatureUpdates() {
-        if (!mqttClient || !this.xsenseClient) {
+        if (!this.isMqttActive() || !this.xsenseClient) {
             return;
         }
 
@@ -903,8 +910,14 @@ class XSenseAdapter extends utils.Adapter {
                     continue;
                 }
 
+                if (this._mqttTemperatureRequests.has(req.topic)) {
+                    continue;
+                }
+                this._mqttTemperatureRequests.add(req.topic);
+
                 mqttClient.publish(req.topic, req.payload, {qos: 0, retain: false}, err => {
                     if (err) {
+                        this._mqttTemperatureRequests.delete(req.topic);
                         this.log.warn(`[XSense] Temperature-Update-Request fehlgeschlagen: ${err.message}`);
                     } else {
                         this.log.debug(`[XSense] Temperature-Update angefordert für ${station.serial}`);
