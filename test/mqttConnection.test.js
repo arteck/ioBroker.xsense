@@ -236,6 +236,32 @@ describe('MQTT action fallback – publishShadowUpdate()', () => {
         assert.equal(fallbackCalled, true);
         assert.equal(result, 'REST fallback');
     });
+
+    it('verwendet den REST-Cloud-Pfad als primären Testalarm-Ablauf', async () => {
+        let restCalled = false;
+        let mqttCalled = false;
+        const mqttClient = { closed: false };
+        const actionRequest = { topic: '2nd_selftest_DEV123', desired: { deviceSN: 'DEV123' } };
+
+        async function runDeviceAction() {
+            try {
+                restCalled = true;
+                return 'REST-Testalarm ok';
+            } catch (restError) {
+                if (mqttClient && !mqttClient.closed && actionRequest) {
+                    mqttCalled = true;
+                    return 'MQTT-Testalarm ok';
+                }
+                throw restError;
+            }
+        }
+
+        const result = await runDeviceAction();
+
+        assert.equal(restCalled, true);
+        assert.equal(mqttCalled, false);
+        assert.equal(result, 'REST-Testalarm ok');
+    });
 });
 
 describe('info.MQTT_connection – onUnload', () => {

@@ -510,24 +510,32 @@ class XSenseAdapter extends utils.Adapter {
             }
 
             const actionRequest = this.xsenseClient.buildActionRequest(station, device, 'test');
-            if (mqttClient && !mqttClient.closed && actionRequest) {
-                const mqttSent = await this.publishShadowUpdate(
-                    station,
-                    actionRequest.topic,
-                    actionRequest.desired,
-                    async () => await this.xsenseClient.testAlarm(deviceSerial),
-                );
-                if (mqttSent === true) {
-                    this.setActionMessage(stateId, `Testalarm per MQTT ausgelöst für ${device.serial}`);
-                    return;
-                }
-                const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.testAlarm(deviceSerial);
+
+            try {
+                // Die X-Sense-Cloud/Shadow-Action ist der zuverlässige Originalpfad für Testalarme.
+                // Der MQTT-Pfad wird nur als Fallback genutzt, da er in der Praxis nicht immer das
+                // tatsächliche Auslösen des Gerätes bestätigt.
+                const result = await this.xsenseClient.testAlarm(deviceSerial);
                 this.setActionMessage(stateId, result || 'done');
                 return;
+            } catch (restError) {
+                if (mqttClient && !mqttClient.closed && actionRequest) {
+                    const mqttSent = await this.publishShadowUpdate(
+                        station,
+                        actionRequest.topic,
+                        actionRequest.desired,
+                        async () => await this.xsenseClient.testAlarm(deviceSerial),
+                    );
+                    if (mqttSent === true) {
+                        this.setActionMessage(stateId, `Testalarm per MQTT ausgelöst für ${device.serial}`);
+                        return;
+                    }
+                    const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.testAlarm(deviceSerial);
+                    this.setActionMessage(stateId, result || 'done');
+                    return;
+                }
+                throw restError;
             }
-
-            const result = await this.xsenseClient.testAlarm(deviceSerial);
-            this.setActionMessage(stateId, result || 'done');
         } catch (err) {
             this.log.error(`[XSense] testAlarm Fehler: ${err.message}`);
             this.setActionMessage(stateId, `Fehler: ${err.message}`);
@@ -559,24 +567,29 @@ class XSenseAdapter extends utils.Adapter {
             }
 
             const actionRequest = this.xsenseClient.buildActionRequest(station, device, 'mute');
-            if (mqttClient && !mqttClient.closed && actionRequest) {
-                const mqttSent = await this.publishShadowUpdate(
-                    station,
-                    actionRequest.topic,
-                    actionRequest.desired,
-                    async () => await this.xsenseClient.executeAction(station, device, 'mute'),
-                );
-                if (mqttSent === true) {
-                    this.setActionMessage(stateId, `Stummschaltung per MQTT angefordert für ${device.serial}`);
-                    return;
-                }
-                const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.executeAction(station, device, 'mute');
+
+            try {
+                const result = await this.xsenseClient.executeAction(station, device, 'mute');
                 this.setActionMessage(stateId, result || 'done');
                 return;
+            } catch (restError) {
+                if (mqttClient && !mqttClient.closed && actionRequest) {
+                    const mqttSent = await this.publishShadowUpdate(
+                        station,
+                        actionRequest.topic,
+                        actionRequest.desired,
+                        async () => await this.xsenseClient.executeAction(station, device, 'mute'),
+                    );
+                    if (mqttSent === true) {
+                        this.setActionMessage(stateId, `Stummschaltung per MQTT angefordert für ${device.serial}`);
+                        return;
+                    }
+                    const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.executeAction(station, device, 'mute');
+                    this.setActionMessage(stateId, result || 'done');
+                    return;
+                }
+                throw restError;
             }
-
-            const result = await this.xsenseClient.executeAction(station, device, 'mute');
-            this.setActionMessage(stateId, result || 'done');
 
             try {
                 await this.xsenseClient.getState(station);
@@ -615,24 +628,29 @@ class XSenseAdapter extends utils.Adapter {
             }
 
             const actionRequest = this.xsenseClient.buildActionRequest(station, device, 'firedrill');
-            if (mqttClient && !mqttClient.closed && actionRequest) {
-                const mqttSent = await this.publishShadowUpdate(
-                    station,
-                    actionRequest.topic,
-                    actionRequest.desired,
-                    async () => await this.xsenseClient.fireDrillAlarm(deviceSerial),
-                );
-                if (mqttSent === true) {
-                    this.setActionMessage(stateId, `Feuer-Übungsalarm per MQTT ausgelöst für ${device.serial}`);
-                    return;
-                }
-                const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.fireDrillAlarm(deviceSerial);
+
+            try {
+                const result = await this.xsenseClient.fireDrillAlarm(deviceSerial);
                 this.setActionMessage(stateId, result || 'done');
                 return;
+            } catch (restError) {
+                if (mqttClient && !mqttClient.closed && actionRequest) {
+                    const mqttSent = await this.publishShadowUpdate(
+                        station,
+                        actionRequest.topic,
+                        actionRequest.desired,
+                        async () => await this.xsenseClient.fireDrillAlarm(deviceSerial),
+                    );
+                    if (mqttSent === true) {
+                        this.setActionMessage(stateId, `Feuer-Übungsalarm per MQTT ausgelöst für ${device.serial}`);
+                        return;
+                    }
+                    const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.fireDrillAlarm(deviceSerial);
+                    this.setActionMessage(stateId, result || 'done');
+                    return;
+                }
+                throw restError;
             }
-
-            const result = await this.xsenseClient.fireDrillAlarm(deviceSerial);
-            this.setActionMessage(stateId, result || 'done');
         } catch (err) {
             this.log.error(`[XSense] fireDrillAlarm Fehler: ${err.message}`);
             this.setActionMessage(stateId, `Fehler: ${err.message}`);
