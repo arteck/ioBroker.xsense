@@ -24,6 +24,24 @@ It is designed to receive data from XSense smoke detectors, CO detectors, and ot
 The adapter communicates with the XSense cloud server and provides an easy way to integrate XSense devices into existing ioBroker setups.  
 An XSense Bridge SBS50 is required.
 
+### SBS50 alarm mode support
+
+For SBS50 base stations the adapter now exposes the same core alarm state data that the X-Sense app uses:
+
+- `safeMode` – current station mode (`Disarmed`, `Home`, `Away`)
+- `requestedSafeMode` – last requested app mode
+- `force_arm_pending` – true when a confirmation is waiting because sensors are open
+- `force_arm_mode` – the pending mode to confirm
+- `force_reason` – notably reason text if the app sends it
+
+The adapter also creates station-level commands for quick control:
+
+- `disarm`
+- `arm_home`
+- `arm_away`
+
+These button states send the corresponding shadow request to the `2nd_appmode` endpoint and keep the station state in sync.
+
 ---
 
 ## ❗ WARNING
