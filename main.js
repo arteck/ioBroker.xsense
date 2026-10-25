@@ -409,6 +409,22 @@ class XSenseAdapter extends utils.Adapter {
                         await this.muteAlarm(stateId);
                     } else if (lastPart === 'fire_Drill_Alarm') {
                         await this.fireDrillAlarm(stateId);
+                    } else if (lastPart === 'arm_home' || lastPart === 'arm_away' || lastPart === 'disarm') {
+                        const stationSerial = parts.at(-2);
+                        const station = this.findStationBySerial(stationSerial);
+                        if (!station) {
+                            throw new Error(`Station ${stationSerial} nicht gefunden`);
+                        }
+                        const modeMap = {
+                            arm_home: 'Home',
+                            arm_away: 'Away',
+                            disarm: 'Disarmed',
+                        };
+                        const mode = modeMap[lastPart];
+                        await this.xsenseClient.setStationMode(station, mode, '0');
+                        this.setState(stateId, {val: false, ack: true});
+                        const stationPath = stateId.replace(/\.[^.]+$/, '');
+                        this.setState(`${stationPath}.safeMode`, {val: mode, ack: true});
                     }
             }
         } catch (err) {
@@ -550,6 +566,22 @@ class XSenseAdapter extends utils.Adapter {
                     if (device.serial === serial) {
                         return station;
                     }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    findStationBySerial(serial) {
+        if (!this.xsenseClient?.houses) {
+            return null;
+        }
+
+        for (const house of Object.values(this.xsenseClient.houses)) {
+            for (const station of Object.values(house.stations || {})) {
+                if (station.serial === serial) {
+                    return station;
                 }
             }
         }

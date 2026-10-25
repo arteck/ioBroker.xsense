@@ -235,6 +235,43 @@ describe('XSenseClient – parseReported()', () => {
         c.parseReported(station, { DEV001: { onlineTime: '1710000000', batInfo: '1' } });
         assert.equal(device.online, true);
     });
+
+    it('merkt Alarmzustand der Station aus reported-Shadow', () => {
+        const c = new XSenseClient(mockLog());
+        const station = makeStation();
+
+        c.parseReported(station, {
+            safeMode: 'Home',
+            requestedSafeMode: 'Away',
+            forceReason: ['door'],
+            forceArm: '1',
+        });
+
+        assert.equal(station.safe_mode, 'Home');
+        assert.equal(station.data.safeMode, 'Home');
+        assert.equal(station.data.requestedSafeMode, 'Away');
+        assert.equal(station.alarm_data.forceArm, '1');
+    });
+});
+
+describe('XSenseClient – setStationMode()', () => {
+    it('schreibt MQTT-Shadow für Arm/Disarm-Befehle', async () => {
+        const c = new XSenseClient(mockLog());
+        c.doThingShadow = async (station, topic, body) => {
+            assert.equal(station.serial, 'BRIDGE001');
+            assert.equal(topic, '2nd_appmode');
+            assert.equal(body.state.desired.safeMode, 'Away');
+            assert.equal(body.state.desired.forceArm, '0');
+            return { ok: true };
+        };
+
+        const station = { serial: 'BRIDGE001', type: 'SBS50', data: {}, alarm_data: {} };
+        const result = await c.setStationMode(station, 'Away', '0');
+
+        assert.deepEqual(result, { ok: true });
+        assert.equal(station.safe_mode, 'Away');
+        assert.equal(station.data.safeMode, 'Away');
+    });
 });
 
 // ─── processMqttMessage ───────────────────────────────────────────────────────
