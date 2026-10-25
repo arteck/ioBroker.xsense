@@ -571,6 +571,17 @@ class XSenseAdapter extends utils.Adapter {
             try {
                 const result = await this.xsenseClient.executeAction(station, device, 'mute');
                 this.setActionMessage(stateId, result || 'done');
+                try {
+                    await this.xsenseClient.getState(station);
+                    if (Object.hasOwn(device.data || {}, 'muteStatus')) {
+                        const muteStatusId = stateId.replace(/\.mute_Alarm$/, '.muteStatus');
+                        await this.json2iob.setStateObject(muteStatusId, device.data.muteStatus);
+                    } else {
+                        this.log.debug(`[XSense] Kein muteStatus für Gerät ${deviceSerial} im aktualisierten Shadow`);
+                    }
+                } catch (refreshError) {
+                    this.log.warn(`[XSense] muteStatus konnte nach Mute-Aktion nicht aktualisiert werden: ${refreshError.message}`);
+                }
                 return;
             } catch (restError) {
                 if (mqttClient && !mqttClient.closed && actionRequest) {
@@ -589,18 +600,6 @@ class XSenseAdapter extends utils.Adapter {
                     return;
                 }
                 throw restError;
-            }
-
-            try {
-                await this.xsenseClient.getState(station);
-                if (Object.hasOwn(device.data || {}, 'muteStatus')) {
-                    const muteStatusId = stateId.replace(/\.mute_Alarm$/, '.muteStatus');
-                    await this.json2iob.setStateObject(muteStatusId, device.data.muteStatus);
-                } else {
-                    this.log.debug(`[XSense] Kein muteStatus für Gerät ${deviceSerial} im aktualisierten Shadow`);
-                }
-            } catch (refreshError) {
-                this.log.warn(`[XSense] muteStatus konnte nach Mute-Aktion nicht aktualisiert werden: ${refreshError.message}`);
             }
         } catch (err) {
             this.log.error(`[XSense] muteAlarm Fehler: ${err.message}`);
@@ -764,7 +763,7 @@ class XSenseAdapter extends utils.Adapter {
             this.setState('info.MQTT_connection', false, true);
 
             callback();
-        } catch (e) {
+        } catch {
             callback();
         }
     }
