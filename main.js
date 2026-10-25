@@ -395,7 +395,7 @@ class XSenseAdapter extends utils.Adapter {
         return !!mqttClient && !mqttClient.closed;
     }
 
-    publishShadowUpdate(station, shadowName, desired) {
+    async publishShadowUpdate(station, shadowName, desired, fallbackAction) {
         if (!station || !this.isMqttActive()) {
             return false;
         }
@@ -405,15 +405,29 @@ class XSenseAdapter extends utils.Adapter {
             return false;
         }
 
-        mqttClient.publish(update.topic, update.payload, {qos: 0, retain: false}, err => {
-            if (err) {
-                this.log.warn(`[XSense] MQTT Shadow-Update fehlgeschlagen: ${update.topic} – ${err.message}`);
-            } else {
-                this.log.debug(`[XSense] MQTT Shadow-Update gesendet: ${update.topic}`);
-            }
-        });
+        try {
+            await new Promise((resolve, reject) => {
+                mqttClient.publish(update.topic, update.payload, {qos: 0, retain: false}, err => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
 
-        return true;
+            this.log.debug(`[XSense] MQTT Shadow-Update gesendet: ${update.topic}`);
+            return true;
+        } catch (err) {
+            this.log.warn(`[XSense] MQTT Shadow-Update fehlgeschlagen: ${update.topic} – ${err.message}`);
+
+            if (typeof fallbackAction === 'function') {
+                this.log.warn(`[XSense] Fallback auf REST/Cloud für ${shadowName} aktiviert`);
+                return await fallbackAction();
+            }
+
+            return false;
+        }
     }
 
     async onStateChange(stateId, stateObj) {
@@ -454,7 +468,7 @@ class XSenseAdapter extends utils.Adapter {
                             disarm: 'Disarmed',
                         };
                         const mode = modeMap[lastPart];
-                        const mqttSent = this.publishShadowUpdate(station, '2nd_appmode', {
+                        const mqttSent = await this.publishShadowUpdate(station, '2nd_appmode', {
                             safeMode: mode,
                             appMode: mode,
                             forceArm: '0',
@@ -497,8 +511,18 @@ class XSenseAdapter extends utils.Adapter {
 
             const actionRequest = this.xsenseClient.buildActionRequest(station, device, 'test');
             if (mqttClient && !mqttClient.closed && actionRequest) {
-                this.publishShadowUpdate(station, actionRequest.topic, actionRequest.desired);
-                this.setActionMessage(stateId, `Testalarm per MQTT ausgelöst für ${device.serial}`);
+                const mqttSent = await this.publishShadowUpdate(
+                    station,
+                    actionRequest.topic,
+                    actionRequest.desired,
+                    async () => await this.xsenseClient.testAlarm(deviceSerial),
+                );
+                if (mqttSent === true) {
+                    this.setActionMessage(stateId, `Testalarm per MQTT ausgelöst für ${device.serial}`);
+                    return;
+                }
+                const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.testAlarm(deviceSerial);
+                this.setActionMessage(stateId, result || 'done');
                 return;
             }
 
@@ -536,8 +560,18 @@ class XSenseAdapter extends utils.Adapter {
 
             const actionRequest = this.xsenseClient.buildActionRequest(station, device, 'mute');
             if (mqttClient && !mqttClient.closed && actionRequest) {
-                this.publishShadowUpdate(station, actionRequest.topic, actionRequest.desired);
-                this.setActionMessage(stateId, `Stummschaltung per MQTT angefordert für ${device.serial}`);
+                const mqttSent = await this.publishShadowUpdate(
+                    station,
+                    actionRequest.topic,
+                    actionRequest.desired,
+                    async () => await this.xsenseClient.executeAction(station, device, 'mute'),
+                );
+                if (mqttSent === true) {
+                    this.setActionMessage(stateId, `Stummschaltung per MQTT angefordert für ${device.serial}`);
+                    return;
+                }
+                const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.executeAction(station, device, 'mute');
+                this.setActionMessage(stateId, result || 'done');
                 return;
             }
 
@@ -582,8 +616,18 @@ class XSenseAdapter extends utils.Adapter {
 
             const actionRequest = this.xsenseClient.buildActionRequest(station, device, 'firedrill');
             if (mqttClient && !mqttClient.closed && actionRequest) {
-                this.publishShadowUpdate(station, actionRequest.topic, actionRequest.desired);
-                this.setActionMessage(stateId, `Feuer-Übungsalarm per MQTT ausgelöst für ${device.serial}`);
+                const mqttSent = await this.publishShadowUpdate(
+                    station,
+                    actionRequest.topic,
+                    actionRequest.desired,
+                    async () => await this.xsenseClient.fireDrillAlarm(deviceSerial),
+                );
+                if (mqttSent === true) {
+                    this.setActionMessage(stateId, `Feuer-Übungsalarm per MQTT ausgelöst für ${device.serial}`);
+                    return;
+                }
+                const result = typeof mqttSent === 'string' ? mqttSent : await this.xsenseClient.fireDrillAlarm(deviceSerial);
+                this.setActionMessage(stateId, result || 'done');
                 return;
             }
 

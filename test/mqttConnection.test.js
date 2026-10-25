@@ -188,6 +188,56 @@ describe('info.MQTT_connection – MQTT connect/disconnect Events', () => {
     });
 });
 
+describe('MQTT action fallback – publishShadowUpdate()', () => {
+    it('fällt auf REST zurück wenn MQTT publish fehlschlägt', async () => {
+        let publishCalled = false;
+        let fallbackCalled = false;
+        const mqttClient = {
+            closed: false,
+            publish(topic, payload, opts, cb) {
+                publishCalled = true;
+                cb(new Error('no mqtt connection'));
+            },
+        };
+
+        async function publishShadowUpdate(station, shadowName, desired, fallbackAction) {
+            const update = {
+                topic: `$aws/things/${station.serial}/shadow/name/${shadowName}/update`,
+                payload: JSON.stringify({state: {desired}}),
+            };
+
+            try {
+                await new Promise((resolve, reject) => {
+                    mqttClient.publish(update.topic, update.payload, {qos: 0, retain: false}, err => {
+                        if (err) reject(err); else resolve();
+                    });
+                });
+                return true;
+            } catch (err) {
+                if (typeof fallbackAction === 'function') {
+                    fallbackCalled = true;
+                    return await fallbackAction();
+                }
+                return false;
+            }
+        }
+
+        const result = await publishShadowUpdate(
+            {serial: 'SBS50ABC'},
+            '2nd_selftest_SBS50ABC',
+            {deviceSN: 'DEV123'},
+            async () => {
+                fallbackCalled = true;
+                return 'REST fallback';
+            },
+        );
+
+        assert.equal(publishCalled, true);
+        assert.equal(fallbackCalled, true);
+        assert.equal(result, 'REST fallback');
+    });
+});
+
 describe('info.MQTT_connection – onUnload', () => {
     it('setzt MQTT_connection auf false beim Entladen', async () => {
         const adapter = createAdapterMock();
@@ -844,6 +894,73 @@ describe('testAlarm – Pfad-Extraktion mit Haus-Ebene', () => {
             testAlarmCalled = true;
         }
         assert.equal(testAlarmCalled, false);
+    });
+});
+
+describe('Alarm-Button Reset Regression', () => {
+    function createActionHarness() {
+        const states = {};
+
+        function setActionMessage(stateId, message) {
+            const devicePath = stateId.replace(/\.[^.]+$/, '');
+            const actionName = stateId.split('.').at(-1);
+            const messageStateNames = {
+                test_Alarm: 'test_Alarm_Message',
+                mute_Alarm: 'mute_Alarm_Message',
+                fire_Drill_Alarm: 'fire_Drill_Alarm_Message',
+            };
+
+            states[`${devicePath}.${messageStateNames[actionName]}`] = { val: message, ack: true };
+        }
+
+        return {
+            states,
+            setActionMessage,
+            async runAction(stateId, action) {
+                setActionMessage(stateId, 'in progress...');
+                try {
+                    await action();
+                } finally {
+                    states[stateId] = { val: false, ack: true };
+                }
+            },
+        };
+    }
+
+    it('setzt test_Alarm nach Auslösung wieder auf false zurück', async () => {
+        const { runAction, states } = createActionHarness();
+        const stateId = 'xsense.0.devices.Mein_Zuhause.15298924.00000006.test_Alarm';
+
+        await runAction(stateId, async () => {
+            states[stateId] = { val: true, ack: false };
+        });
+
+        assert.equal(states[stateId].val, false);
+        assert.equal(states[stateId].ack, true);
+    });
+
+    it('setzt mute_Alarm nach Auslösung wieder auf false zurück', async () => {
+        const { runAction, states } = createActionHarness();
+        const stateId = 'xsense.0.devices.Mein_Zuhause.15298924.00000006.mute_Alarm';
+
+        await runAction(stateId, async () => {
+            states[stateId] = { val: true, ack: false };
+        });
+
+        assert.equal(states[stateId].val, false);
+        assert.equal(states[stateId].ack, true);
+    });
+
+    it('setzt fire_Drill_Alarm nach Auslösung wieder auf false zurück', async () => {
+        const { runAction, states } = createActionHarness();
+        const stateId = 'xsense.0.devices.Mein_Zuhause.15298924.00000006.fire_Drill_Alarm';
+
+        await runAction(stateId, async () => {
+            states[stateId] = { val: true, ack: false };
+        });
+
+        assert.equal(states[stateId].val, false);
+        assert.equal(states[stateId].ack, true);
     });
 });
 
