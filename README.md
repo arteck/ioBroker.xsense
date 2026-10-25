@@ -46,7 +46,8 @@ These button states send the corresponding shadow request to the `2nd_appmode` e
 
 ## ❗ WARNING
 The adapter is **not** intended for alarm purposes — it is primarily for monitoring the device battery status.
-I accept no liability if the place burns down.
+
+ I accept no liability if the place burns down.
 
 ---
 
