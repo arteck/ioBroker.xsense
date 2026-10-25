@@ -507,6 +507,8 @@ class XSenseAdapter extends utils.Adapter {
         } catch (err) {
             this.log.error(`[XSense] testAlarm Fehler: ${err.message}`);
             this.setActionMessage(stateId, `Fehler: ${err.message}`);
+        } finally {
+            this.setState(stateId, {val: false, ack: true});
         }
     }
 
@@ -556,6 +558,8 @@ class XSenseAdapter extends utils.Adapter {
         } catch (err) {
             this.log.error(`[XSense] muteAlarm Fehler: ${err.message}`);
             this.setActionMessage(stateId, `Fehler: ${err.message}`);
+        } finally {
+            this.setState(stateId, {val: false, ack: true});
         }
     }
 
@@ -588,6 +592,8 @@ class XSenseAdapter extends utils.Adapter {
         } catch (err) {
             this.log.error(`[XSense] fireDrillAlarm Fehler: ${err.message}`);
             this.setActionMessage(stateId, `Fehler: ${err.message}`);
+        } finally {
+            this.setState(stateId, {val: false, ack: true});
         }
     }
 
