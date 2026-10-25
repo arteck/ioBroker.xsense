@@ -274,6 +274,38 @@ describe('XSenseClient – setStationMode()', () => {
     });
 });
 
+describe('XSenseClient – buildShadowUpdateMessage()', () => {
+    it('erzeugt korrektes MQTT-Shadow-Update für SBS50', () => {
+        const c = new XSenseClient(mockLog());
+        const station = { serial: 'BRIDGE001', type: 'SBS50' };
+
+        const result = c.buildShadowUpdateMessage(station, '2nd_appmode', {
+            safeMode: 'Home',
+            appMode: 'Home',
+            forceArm: '0',
+        });
+
+        assert.equal(result.topic, '$aws/things/BRIDGE001/shadow/name/2nd_appmode/update');
+        assert.equal(JSON.parse(result.payload).state.desired.safeMode, 'Home');
+        assert.equal(JSON.parse(result.payload).state.desired.forceArm, '0');
+    });
+
+    it('erzeugt korrektes MQTT-Action-Request für Testalarm', () => {
+        const c = new XSenseClient(mockLog());
+        c.userId = 'user-42';
+        const station = { serial: 'BRIDGE001', type: 'SBS50' };
+        const device = { serial: 'DEV001', type: 'XS01-M' };
+
+        const request = c.buildActionRequest(station, device, 'test');
+
+        assert.equal(request.topic, '2nd_selftest_DEV001');
+        assert.equal(request.desired.deviceSN, 'DEV001');
+        assert.equal(request.desired.stationSN, 'BRIDGE001');
+        assert.equal(request.desired.userId, 'user-42');
+        assert.equal(request.desired.shadow, 'appSelfTest');
+    });
+});
+
 // ─── processMqttMessage ───────────────────────────────────────────────────────
 
 describe('XSenseClient – processMqttMessage()', () => {
