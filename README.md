@@ -40,7 +40,7 @@ The adapter also creates station-level commands for quick control:
 - `arm_home`
 - `arm_away`
 
-These button states send the corresponding shadow request to the `2nd_appmode` endpoint and keep the station state in sync.
+These button states send an app-compatible `appMode` request to the `2nd_appmode` shadow. The confirmed `safeMode` is read from the separate `2nd_safemode` shadow on each polling cycle; it is not changed optimistically when a command is sent. `requestedSafeMode` shows the most recently sent mode request.
 
 ---
 

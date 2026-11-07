@@ -317,6 +317,11 @@ describe('Json2iobXSense – parseHouses() multi-station', () => {
         assert.equal(adapter.states['devices.Mein_Zuhause.BRIDGE001.type'].val,      'SBS50');
     });
 
+    it('erfindet keinen Disarmed-Status, bevor die Station ihn bestätigt hat', async () => {
+        await j2i.parseHouses('xsense.0', makeHouses(1));
+        assert.equal(adapter.states['devices.Mein_Zuhause.BRIDGE001.safeMode'], undefined);
+    });
+
     it('erstellt channel-Objekte für Sub-Geräte (nicht device)', async () => {
         await j2i.parseHouses('xsense.0', makeHouses(2));
         assert.equal(adapter.objects['devices.Mein_Zuhause.BRIDGE001.DEV1A'].type, 'channel');

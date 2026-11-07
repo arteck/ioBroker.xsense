@@ -254,40 +254,91 @@ describe('XSenseClient – parseReported()', () => {
     });
 });
 
-describe('XSenseClient – setStationMode()', () => {
-    it('schreibt MQTT-Shadow für Arm/Disarm-Befehle', async () => {
+describe('XSenseClient – getAlarmState()', () => {
+    it('liest den bestätigten Modus aus dem 2nd_safemode-Shadow', async () => {
         const c = new XSenseClient(mockLog());
+        const station = {
+            serial: 'BRIDGE001',
+            type: 'SBS50',
+            data: {},
+            alarm_data: {},
+        };
+        c.getThingShadow = async (target, shadow) => {
+            assert.equal(target, station);
+            assert.equal(shadow, '2nd_safemode');
+            return {state: {reported: {safeMode: 'Away', requestedSafeMode: 'Home'}}};
+        };
+
+        await c.getAlarmState(station);
+
+        assert.equal(station.safe_mode, 'Away');
+        assert.equal(station.data.safeMode, 'Away');
+        assert.equal(station.data.requestedSafeMode, 'Home');
+    });
+
+    it('ignoriert einen nicht vorhandenen Alarm-Shadow', async () => {
+        const c = new XSenseClient(mockLog());
+        c.getThingShadow = async () => null;
+        await assert.doesNotReject(() => c.getAlarmState({type: 'SBS50', serial: 'BRIDGE001'}));
+    });
+});
+
+describe('XSenseClient – setStationMode()', () => {
+    it('schreibt einen App-kompatiblen Befehl ohne den bestätigten Modus vorwegzunehmen', async () => {
+        const c = new XSenseClient(mockLog());
+        c.userId = 'cognito-user';
+        c.idToken = `header.${Buffer.from(JSON.stringify({user_id_code: 'user-code'})).toString('base64url')}.signature`;
         c.doThingShadow = async (station, topic, body) => {
             assert.equal(station.serial, 'BRIDGE001');
             assert.equal(topic, '2nd_appmode');
-            assert.equal(body.state.desired.safeMode, 'Away');
-            assert.equal(body.state.desired.forceArm, '0');
+            assert.deepEqual(body.state.desired, {
+                shadow: 'appMode',
+                stationSN: 'BRIDGE001',
+                userParam: 'source=1',
+                source: '1',
+                safeMode: 'Away',
+                forceArm: '0',
+                userId: 'user-code',
+            });
             return { ok: true };
         };
 
-        const station = { serial: 'BRIDGE001', type: 'SBS50', data: {}, alarm_data: {} };
+        const station = {
+            serial: 'BRIDGE001',
+            type: 'SBS50',
+            safe_mode: 'Home',
+            data: {safeMode: 'Home'},
+            alarm_data: {forceReason: ['door']},
+        };
         const result = await c.setStationMode(station, 'Away', '0');
 
         assert.deepEqual(result, { ok: true });
-        assert.equal(station.safe_mode, 'Away');
-        assert.equal(station.data.safeMode, 'Away');
+        assert.equal(station.safe_mode, 'Home');
+        assert.equal(station.data.safeMode, 'Home');
+        assert.equal(station.data.requestedSafeMode, 'Away');
+        assert.equal(station.alarm_data.forceReason, null);
     });
 });
 
 describe('XSenseClient – buildShadowUpdateMessage()', () => {
-    it('erzeugt korrektes MQTT-Shadow-Update für SBS50', () => {
+    it('erzeugt den App-kompatiblen MQTT-Shadow-Befehl für SBS50', () => {
         const c = new XSenseClient(mockLog());
+        c.userId = 'cognito-user';
         const station = { serial: 'BRIDGE001', type: 'SBS50' };
 
-        const result = c.buildShadowUpdateMessage(station, '2nd_appmode', {
-            safeMode: 'Home',
-            appMode: 'Home',
-            forceArm: '0',
-        });
+        const desired = c.buildStationModeDesired(station, 'Home', '0');
+        const result = c.buildShadowUpdateMessage(station, '2nd_appmode', desired);
 
         assert.equal(result.topic, '$aws/things/BRIDGE001/shadow/name/2nd_appmode/update');
-        assert.equal(JSON.parse(result.payload).state.desired.safeMode, 'Home');
-        assert.equal(JSON.parse(result.payload).state.desired.forceArm, '0');
+        assert.deepEqual(JSON.parse(result.payload).state.desired, {
+            shadow: 'appMode',
+            stationSN: 'BRIDGE001',
+            userParam: 'source=1',
+            source: '1',
+            safeMode: 'Home',
+            forceArm: '0',
+            userId: 'cognito-user',
+        });
     });
 
     it('erzeugt korrektes MQTT-Action-Request für Testalarm', () => {

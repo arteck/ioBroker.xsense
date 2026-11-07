@@ -190,21 +190,37 @@ class XSenseAdapter extends utils.Adapter {
             // - MQTT aktiv: getState nur noch als Fallback verwenden; Live-Updates kommen per MQTT
             // - kein MQTT:  getState per REST-API aufrufen
             const mqttActive = mqttClient && !mqttClient.closed;
+            const alarmClient = this.xsenseClient;
+            if (!alarmClient) {
+                throw new Error('[XSense] Client ist nicht initialisiert');
+            }
 
-            for (const house of Object.values(this.xsenseClient.houses)) {
+            for (const house of Object.values(alarmClient.houses)) {
                 for (const station of Object.values(house.stations)) {
                     try {
                         // Station-eigene Daten (Bridge: wifiRSSI, sw-Version etc.) immer laden
                         await this.xsenseClient.getStationState(station);   // station-spezifische Daten immer laden (z.B. Bridge-Infos)
-
-                        const shouldFetchShadow = forceFullRefresh || !mqttActive;
-                        if (shouldFetchShadow) {
-                            await this.xsenseClient.getState(station);
-                        } else {
-                            this.log.debug(`[XSense] MQTT aktiv – überspringe REST-Shadow für Station ${station.serial}`);
-                        }
                     } catch (e) {
-                        this.log.warn(`[XSense] Zustand für Station ${station.serial} Fehler: ${e.message}`);
+                        this.log.warn(`[XSense] Stationsdaten für ${station.serial} Fehler: ${e.message}`);
+                    }
+
+                    if (station.type === 'SBS50') {
+                        try {
+                            await alarmClient.getAlarmState(station);
+                        } catch (e) {
+                            this.log.warn(`[XSense] Alarmstatus für Station ${station.serial} Fehler: ${e.message}`);
+                        }
+                    }
+
+                    const shouldFetchShadow = forceFullRefresh || !mqttActive;
+                    if (shouldFetchShadow) {
+                        try {
+                            await this.xsenseClient.getState(station);
+                        } catch (e) {
+                            this.log.warn(`[XSense] Gerätezustand für Station ${station.serial} Fehler: ${e.message}`);
+                        }
+                    } else {
+                        this.log.debug(`[XSense] MQTT aktiv – überspringe REST-Shadow für Station ${station.serial}`);
                     }
                 }
             }
@@ -468,17 +484,14 @@ class XSenseAdapter extends utils.Adapter {
                             disarm: 'Disarmed',
                         };
                         const mode = modeMap[lastPart];
-                        const mqttSent = await this.publishShadowUpdate(station, '2nd_appmode', {
-                            safeMode: mode,
-                            appMode: mode,
-                            forceArm: '0',
-                        });
+                        const desired = this.xsenseClient.buildStationModeDesired(station, mode, '0');
+                        const mqttSent = await this.publishShadowUpdate(station, '2nd_appmode', desired);
                         if (!mqttSent) {
                             await this.xsenseClient.setStationMode(station, mode, '0');
+                        } else {
+                            this.xsenseClient.recordStationModeRequest(station, mode, '0');
                         }
                         this.setState(stateId, {val: false, ack: true});
-                        const stationPath = stateId.replace(/\.[^.]+$/, '');
-                        this.setState(`${stationPath}.safeMode`, {val: mode, ack: true});
                     }
             }
         } catch (err) {
