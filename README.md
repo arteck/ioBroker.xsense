@@ -110,7 +110,12 @@ or if you have a VM on proxmox check your CPU settings
       ### **WORK IN PROGRESS**
 -->
 
+
+
 ## Changelog
+### 0.6.9 (2026-11-07)
+* (arteck) fix for arm disarm
+
 ### 0.6.8 (2026-10-25)
 * (arteck) Dependencies have been updated
 * (arteck) add SBS50-Alarmstatus
@@ -130,9 +135,6 @@ or if you have a VM on proxmox check your CPU settings
 * (arteck) async fix
 * (arteck) fix battery info
 * (arteck) fix orphaned states without house folder from MQTT messages for stations not yet known (startup race and newly added devices)
-
-### 0.6.4 (2026-06-22)
-* (arteck) Dependencies have been updated
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

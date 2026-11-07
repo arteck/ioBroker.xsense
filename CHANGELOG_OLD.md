@@ -1,4 +1,7 @@
 # Older changes
+## 0.6.4 (2026-06-22)
+* (arteck) Dependencies have been updated
+
 ## 0.6.3 (2026-05-20)
 * (arteck) Dependencies have been updated
 

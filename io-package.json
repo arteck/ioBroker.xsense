@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.8",
+    "version": "0.6.9",
     "news": {
+      "0.6.9": {
+        "en": "fix for arm disarm",
+        "de": "Fix für Armabwehr",
+        "ru": "исправление для обезоруживания рук",
+        "pt": "fix for arm arm",
+        "nl": "oplossing voor arm en ontwapening",
+        "fr": "fix for arm disarm",
+        "it": "fix for arm disarm",
+        "es": "solución Arm Disarm",
+        "pl": "naprawa do rozbrojenia ramienia",
+        "uk": "фіксація для зняття зброї",
+        "zh-cn": "修复解除武装的问题"
+      },
       "0.6.8": {
         "en": "Dependencies have been updated\nadd SBS50-Alarmstatus\nmore MQTT messages from devices",
         "de": "Abhängigkeiten wurden aktualisiert\nSBS50-Alarmstatus\nmehr MQTT-Nachrichten von Geräten",
@@ -80,19 +93,6 @@
         "pl": "Zaktualizowano zależności",
         "uk": "Залежність було оновлено",
         "zh-cn": "依赖关系已更新"
-      },
-      "0.6.2": {
-        "en": "Adapter requires node.js >= 22 now\nDependencies have been updated",
-        "de": "Adapter benötigt node.js >= 22 jetzt\nAbhängigkeiten wurden aktualisiert",
-        "ru": "Адаптер требует node.js >= 22 сейчас\nЗависимости были обновлены",
-        "pt": "Adaptador requer nod.js >= 22 agora\nAs dependências foram atualizadas",
-        "nl": "Voor de adapter zijn node.js < 22 nu nodig\nAfhankelijkheden zijn bijgewerkt",
-        "fr": "Adaptateur nécessite node.js >= 22 maintenant\nLes dépendances ont été actualisées",
-        "it": "Adattatore richiede node.js >= 22 ora\nLe dipendenze sono state aggiornate",
-        "es": "Adaptador requiere node.js ю= 22 ahora\nSe han actualizado las dependencias",
-        "pl": "Adapter wymaga node.js > = 22\nZaktualizowano zależności",
-        "uk": "Адаптер вимагає node.js >= 22 тепер\nЗалежність було оновлено",
-        "zh-cn": "适配器需要节点.js 现在22\n依赖关系已更新"
       }
     },
     "titleLang": {
