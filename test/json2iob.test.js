@@ -147,6 +147,18 @@ describe('Json2iobXSense – setStateObject()', () => {
         assert.equal(adapter.states['devices.home.15298924.forceArm'].val, '0');
     });
 
+    it('stringifies object-valued forceReason states', async () => {
+        await j2i.setStateObject('devices.home.15298924.forceReason', { door: true });
+        assert.equal(adapter.objects['devices.home.15298924.forceReason'].common.type, 'string');
+        assert.equal(adapter.states['devices.home.15298924.forceReason'].val, '{"door":true}');
+    });
+
+    it('formats array-valued forceReason states as a readable string', async () => {
+        await j2i.setStateObject('devices.home.15298924.forceReason', ['door', 'window']);
+        assert.equal(adapter.objects['devices.home.15298924.forceReason'].common.type, 'string');
+        assert.equal(adapter.states['devices.home.15298924.forceReason'].val, 'door, window');
+    });
+
     it('creates test_Alarm and test_Alarm_Message states for alarm fields', async () => {
         await j2i.setStateObject('devices.bridge.sensor.alarmStatus', 'false');
         assert.ok(adapter.objects['devices.bridge.sensor.test_Alarm'], 'test_Alarm object should exist');

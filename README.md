@@ -113,6 +113,9 @@ or if you have a VM on proxmox check your CPU settings
 
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (arteck) fixed forceReason 
+
 ### 0.6.9 (2026-11-07)
 * (arteck) fix for arm disarm
 
