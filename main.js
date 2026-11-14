@@ -183,6 +183,7 @@ class XSenseAdapter extends utils.Adapter {
             if (mqttClient && !mqttClient.closed) {
                 this.subscribeMqttTopics();
                 this.requestTemperatureUpdates();
+                this.replayBaseTopic();
             }
 
             // Gerätezustände:
@@ -857,6 +858,7 @@ class XSenseAdapter extends utils.Adapter {
                 // Bei (Re-)Connect Sets leeren, damit alle Topics und Live-Requests neu gestartet werden
                 this._mqttSubscribedTopics.clear();
                 this._mqttTemperatureRequests.clear();
+                this._baseTopicReplayed = false;
 
                 // Legacy baseTopic (SBS50-Bridge direkt)
                 if (this.config.baseTopic) {
@@ -951,6 +953,26 @@ class XSenseAdapter extends utils.Adapter {
             } else {
                 this.log.debug(`[XSense] MQTT subscribed: ${topic}`);
             }
+        });
+    }
+
+    /**
+     * Retained Nachrichten des baseTopic kommen direkt beim Connect an, bevor die Häuser
+     * geladen sind, und werden dann verworfen. Einmalig nach dem ersten loadAll() neu
+     * subscriben, damit der Broker die retained States erneut ausliefert.
+     */
+    replayBaseTopic() {
+        const topic = this.config.baseTopic;
+        if (!topic || this._baseTopicReplayed || !this.isMqttActive()) {
+            return;
+        }
+        if (!this.xsenseClient?.houses || Object.keys(this.xsenseClient.houses).length === 0) {
+            return;
+        }
+        this._baseTopicReplayed = true;
+        mqttClient.unsubscribe(topic, () => {
+            this._mqttSubscribedTopics.delete(topic);
+            this.mqttSubscribeOncetates(topic);
         });
     }
 
