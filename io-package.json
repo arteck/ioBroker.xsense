@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "xsense",
-    "version": "0.6.9",
+    "version": "0.6.10",
     "news": {
+      "0.6.10": {
+        "en": "fixed forceReason",
+        "de": "fester Grund",
+        "ru": "фиксированная сила и причина",
+        "pt": "ForceReason fixo",
+        "nl": "fixed ForceReason",
+        "fr": "raison de force fixe",
+        "it": "Forza fissa Motivo",
+        "es": "razón de fuerza fija",
+        "pl": "stała siłaPowód",
+        "uk": "фіксована силаСезон",
+        "zh-cn": "固定力度原因"
+      },
       "0.6.9": {
         "en": "fix for arm disarm",
         "de": "Fix für Armabwehr",
@@ -80,19 +93,6 @@
         "pl": "Zaktualizowano zależności",
         "uk": "Залежності оновлено",
         "zh-cn": "依赖项已更新"
-      },
-      "0.6.3": {
-        "en": "Dependencies have been updated",
-        "de": "Abhängigkeiten wurden aktualisiert",
-        "ru": "Зависимости были обновлены",
-        "pt": "As dependências foram atualizadas",
-        "nl": "Afhankelijkheden zijn bijgewerkt",
-        "fr": "Les dépendances ont été actualisées",
-        "it": "Le dipendenze sono state aggiornate",
-        "es": "Se han actualizado las dependencias",
-        "pl": "Zaktualizowano zależności",
-        "uk": "Залежність було оновлено",
-        "zh-cn": "依赖关系已更新"
       }
     },
     "titleLang": {

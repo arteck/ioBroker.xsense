@@ -1,4 +1,9 @@
 # Older changes
+## 0.6.5 (2026-08-27)
+* (arteck) async fix
+* (arteck) fix battery info
+* (arteck) fix orphaned states without house folder from MQTT messages for stations not yet known (startup race and newly added devices)
+
 ## 0.6.4 (2026-06-22)
 * (arteck) Dependencies have been updated
 
