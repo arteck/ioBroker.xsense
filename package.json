@@ -30,7 +30,7 @@
     "@iobroker/dm-utils": "^3.2.1",
     "aedes": "^1.2.0",
     "amazon-cognito-identity-js": "^6.3.21",
-    "mqtt": "^5.16.0",
+    "mqtt": "^5.16.1",
     "net": "^1.0.2",
     "node-fetch-commonjs": "^3.3.2"
   },
