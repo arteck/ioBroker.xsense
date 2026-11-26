@@ -37,6 +37,12 @@ function createAdapterMock() {
         async getStateAsync(id) {
             return states[id] ?? null;
         },
+        async getObjectAsync(id) {
+            return objects[id] ?? null;
+        },
+        async extendObjectAsync(id, obj) {
+            objects[id] = {...objects[id], ...obj, common: {...objects[id]?.common, ...obj.common}};
+        },
         async subscribeStates(id) {
             subscriptions.push(id);
         },
@@ -129,6 +135,19 @@ describe('Json2iobXSense – setStateObject()', () => {
         await j2i.setStateObject('devices.test.serial', '12345678');
         assert.equal(adapter.objects['devices.test.serial'].common.type, 'string');
         assert.equal(adapter.states['devices.test.serial'].val, '12345678');
+    });
+
+    it('stores numeric online (API onLine=1) as boolean', async () => {
+        await j2i.setStateObject('devices.st.online', 1);
+        assert.equal(adapter.objects['devices.st.online'].common.type, 'boolean');
+        assert.equal(adapter.states['devices.st.online'].val, true);
+    });
+
+    it('migrates existing number-typed online object to boolean', async () => {
+        adapter.objects['devices.old.online'] = {type: 'state', common: {name: 'online', type: 'number'}, native: {}};
+        await j2i.setStateObject('devices.old.online', 0);
+        assert.equal(adapter.objects['devices.old.online'].common.type, 'boolean');
+        assert.equal(adapter.states['devices.old.online'].val, false);
     });
 
     it('sets role indicator.reachable for online state', async () => {

@@ -62,6 +62,12 @@ function createAdapterMock(config = {}) {
             states[id] = stateObj;
         },
         async getStateAsync(id) { return states[id] ?? null; },
+        async getObjectAsync(id) {
+            return objects[id] ?? null;
+        },
+        async extendObjectAsync(id, obj) {
+            objects[id] = {...objects[id], ...obj, common: {...objects[id]?.common, ...obj.common}};
+        },
         async setObjectNotExistsAsync(id, obj) {
             if (!objects[id]) objects[id] = obj;
         },

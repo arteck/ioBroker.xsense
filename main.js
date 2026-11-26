@@ -377,6 +377,27 @@ class XSenseAdapter extends utils.Adapter {
                             });
                             break;
 
+                        case 'muted': {
+                            // Ab SBS50-Firmware v1.8.7: binary_sensor …_muted/state
+                            const id = `${devicePath}.muted`;
+                            await this.setObjectNotExistsAsync(id, {
+                                type: 'state',
+                                common: {
+                                    name: 'muted',
+                                    type: 'boolean',
+                                    role: 'indicator',
+                                    read: true,
+                                    write: false
+                                },
+                                native: {},
+                            });
+                            const raw = messageObj.payload?.status ?? messageObj.payload;
+                            const val = ['muted', 'mute', 'on', 'true', '1', 'yes'].includes(String(raw).toLowerCase());
+                            this.log.debug(`[XSense] muted-Payload für ${devicePath}: ${JSON.stringify(messageObj.payload)} → ${val}`);
+                            this.setState(id, {val, ack: true});
+                            break;
+                        }
+
                         case 'smokefault':
                         case 'heatfault':
                         case 'cofault':

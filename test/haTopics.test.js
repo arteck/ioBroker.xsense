@@ -136,6 +136,11 @@ async function runMessageParse(adapter, messageJson) {
         case 'online':
             adapter.setState(`${devicePath}.online`, { val: status === 'Online', ack: true });
             break;
+        case 'muted':
+            adapter.setState(`${devicePath}.muted`, {
+                val: ['muted', 'mute', 'on', 'true', '1', 'yes'].includes(String(status).toLowerCase()), ack: true,
+            });
+            break;
         case 'smokealarm':
         case 'heatalarm':
         case 'coalarm':
@@ -380,6 +385,25 @@ describe('Vollständige HA-Topic-Pipeline (echte Log-Daten)', () => {
             'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_online/state',
             '{ "status": "Offline"}');
         assert.equal(adapter.states['devices.home.15298924.00000009.online'], false);
+    });
+
+    // ── muted (ab Firmware v1.8.7) ────────────────────────────────────────────
+
+    it('[muted] Muted → muted = true', async () => {
+        const adapter = createAdapterMock(DEFAULT_HOUSES);
+        const result = await pipelineHA(adapter,
+            'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_muted/state',
+            '{ "status": "Muted"}');
+        assert.equal(result.skipped, undefined);
+        assert.equal(adapter.states['devices.home.15298924.00000009.muted'], true);
+    });
+
+    it('[muted] Unmuted → muted = false', async () => {
+        const adapter = createAdapterMock(DEFAULT_HOUSES);
+        await pipelineHA(adapter,
+            'homeassistant/binary_sensor/SBS5015298924_00000009/SBS5015298924_00000009_muted/state',
+            '{ "status": "Unmuted"}');
+        assert.equal(adapter.states['devices.home.15298924.00000009.muted'], false);
     });
 
     // ── lifeend ───────────────────────────────────────────────────────────────
